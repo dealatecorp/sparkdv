@@ -1,22 +1,22 @@
 .home-editorial .brand-principles {padding-block:24px;font-size:13px;border-bottom:0;margin-bottom:45px;}
-.home-editorial .home-research {background:#e6ede7;padding-block:85px 35px;scroll-margin-top:100px;}
+.home-editorial .home-research {background:#f2ecf7;padding-block:85px 35px;scroll-margin-top:100px;}
 .home-editorial .home-research-intro {display:grid;grid-template-columns:1.3fr 1fr;gap:9%;align-items:end;margin-bottom:60px;}
 .home-editorial .home-research h2,.home-editorial .home-community h2 {font-size:clamp(36px,3.9vw,58px);line-height:1.08;letter-spacing:-.035em;margin:0;}
 .home-editorial .home-research-intro>p {font-size:17px;line-height:1.7;max-width:410px;margin:0;}
 .home-editorial .home-research-spread {display:grid;grid-template-columns:1.35fr 1fr;gap:8%;align-items:start;}
 .home-editorial .home-research-visual {position:sticky;top:126px;min-width:0;}
-.home-editorial .home-research-tabs {display:flex;border-block:1px solid #bacbc0;justify-content:space-between;gap:14px;}
-.home-editorial .home-research-tabs button {background:transparent;border:0;border-bottom:2px solid transparent;padding:15px 0;font-size:13px;line-height:1.4;min-height:50px;color:#435d50;border-radius:0;text-align:left;}
+.home-editorial .home-research-tabs {display:flex;border-block:1px solid #d3c9dd;justify-content:space-between;gap:14px;}
+.home-editorial .home-research-tabs button {background:transparent;border:0;border-bottom:2px solid transparent;padding:15px 0;font-size:13px;line-height:1.4;min-height:50px;color:#46576d;border-radius:0;text-align:left;}
 .home-editorial .home-research-tabs button[aria-pressed=true] {border-bottom-color:var(--ink);color:var(--ink);}
 .home-editorial .home-research-visual figure {margin:22px 0 0;}
-.home-editorial .home-research-images {position:relative;width:100%;height:400px;background:#f7f8f4;overflow:hidden;}
+.home-editorial .home-research-images {position:relative;width:100%;height:400px;background:#fffcf8;overflow:hidden;}
 .home-editorial .home-research-images img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:20px;}
-.home-editorial .home-research-visual figcaption {font-size:11px;line-height:1.5;color:#435d50;margin-top:14px;}
-.home-editorial .home-research-copy article {min-height:450px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding-block:45px;border-bottom:1px solid #bacbc0;scroll-margin-top:120px;}
+.home-editorial .home-research-visual figcaption {font-size:11px;line-height:1.5;color:#46576d;margin-top:14px;}
+.home-editorial .home-research-copy article {min-height:450px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding-block:45px;border-bottom:1px solid #d3c9dd;scroll-margin-top:120px;}
 .home-editorial .home-research-copy article:last-child {border-bottom:0;}
 .home-editorial .home-research-copy h3 {font-size:clamp(32px,3vw,45px);line-height:1.12;letter-spacing:-.035em;margin:0 0 24px;}
 .home-editorial .home-research-copy p {font-size:17px;line-height:1.75;margin:0 0 26px;max-width:36ch;}
-.home-editorial .home-research-foot {display:flex;justify-content:space-between;gap:24px;padding-block:25px;border-top:1px solid #bacbc0;margin-top:45px;font-size:13px;}
+.home-editorial .home-research-foot {display:flex;justify-content:space-between;gap:24px;padding-block:25px;border-top:1px solid #d3c9dd;margin-top:45px;font-size:13px;}
 .home-editorial .portfolio-section {padding-block:100px 50px;}
 .home-editorial .portfolio-section>.text-link {margin-top:28px;}
 .home-editorial .clinical-highlights {padding-top:60px;}

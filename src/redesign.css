@@ -1,12 +1,12 @@
 :root {
-  --ink: #122f3c;
-  --ink2: #254650;
-  --teal: #326962;
-  --teal-dark: #234f4a;
-  --mint: #e9eeea;
-  --paper: #f6f5f1;
-  --muted: #526366;
-  --line: #d7dcd7;
+  --ink: #073763;
+  --ink2: #24496b;
+  --teal: #ad4b09;
+  --teal-dark: #873908;
+  --mint: #f7e9de;
+  --paper: #fffcf8;
+  --muted: #526174;
+  --line: #ded8d4;
   --content: 1320px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   background: var(--paper);
@@ -72,7 +72,7 @@ textarea {
   caret-color: var(--teal);
 }
 html {
-  scrollbar-color: #657e78 var(--paper);
+  scrollbar-color: #526174 var(--paper);
 }
 .eyebrow,
 .section-number,
@@ -166,7 +166,7 @@ html {
   background: var(--paper);
   border: 1px solid var(--line);
   padding: 20px;
-  box-shadow: 0 16px 35px #122f3c12;
+  box-shadow: 0 16px 35px #07376312;
 }
 .mega-menu a {
   display: flex;
@@ -185,7 +185,7 @@ html {
 }
 .new-hero {
   margin: 24px 24px 0;
-  background: #e9ece5;
+  background: #f7e9de;
   min-height: 700px;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -203,7 +203,7 @@ html {
   letter-spacing: -0.045em;
 }
 .hero-heading h1 span {
-  color: #536c63;
+  color: #526174;
 }
 .hero-heading > p {
   font-size: 19px;
@@ -219,7 +219,7 @@ html {
 }
 .hero-product {
   position: relative;
-  background: #dce1da;
+  background: #ded8d4;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -270,9 +270,9 @@ html {
   padding: 19px 32px;
   display: flex;
   justify-content: space-between;
-  border-top: 1px solid #122f3c22;
+  border-top: 1px solid #07376322;
   font-size: 12px;
-  background: #e9ece5;
+  background: #f7e9de;
 }
 .brand-principles {
   display: flex;
@@ -332,7 +332,7 @@ html {
   margin-bottom: 45px;
 }
 .product-stage {
-  background: #eeefea;
+  background: #f7e9de;
   height: 340px;
   display: grid;
   place-items: center;
@@ -379,7 +379,7 @@ html {
 }
 .science-feature {
   padding: 90px 0;
-  background: #dae5df;
+  background: #e9dfef;
 }
 .science-feature > .wrap {
   display: grid;
@@ -398,7 +398,7 @@ html {
   padding-top: 20px;
 }
 .science-pillars > div {
-  border-top: 1px solid #122f3c44;
+  border-top: 1px solid #07376344;
   padding-top: 25px;
 }
 .science-pillars h3 {
@@ -408,7 +408,7 @@ html {
 .science-pillars p {
   font-size: 15px;
   margin: 0;
-  color: #354f48;
+  color: #314b68;
 }
 .community {
   padding-block: 110px;
@@ -648,7 +648,7 @@ html {
 .product-photo,
 .product-grid .product-photo {
   height: 280px;
-  background: #eeefea;
+  background: #f7e9de;
   border: 0;
   border-radius: 0;
 }
@@ -693,7 +693,7 @@ html {
 }
 .detail-image {
   height: 620px;
-  background: #eeefea;
+  background: #f7e9de;
   border-radius: 0;
 }
 .detail-image img {
@@ -736,7 +736,7 @@ html {
 .enquiry-form {
   padding: 35px;
   border: 1px solid var(--line);
-  background: #ecefe9;
+  background: #f7e9de;
 }
 .enquiry-form h3 {
   font-size: 28px;
@@ -1368,3 +1368,13 @@ html.motion-ready .reveal:not(.in-view) {
     translate: none;
   }
 }
+
+/* Logo-derived brand roles; deeper orange keeps action labels readable. */
+:root {--brand-navy:#073763;--brand-orange:#e78308;--brand-coral:#e55e36;--brand-purple:#63218b;--brand-gradient:linear-gradient(115deg,#e78308 0%,#e55e36 45%,#63218b 100%);--accent: #ad4b09;--accent-hover:#873908;--teal:var(--accent);--teal-dark:var(--accent-hover);}
+::selection{background:#f4cba3;color:var(--brand-navy)}
+.button-dark{background:var(--accent);color:#fff}
+.button-dark:hover{background:var(--accent-hover)}
+.announcement{background:linear-gradient(110deg,#073763,#3f246b);color:#fff}
+.perspective-tunnel-hero{background:radial-gradient(ellipse at 75% 15%,#eee2f4 0%,transparent 58%),linear-gradient(125deg,#fff4e5,#f6d9c7 60%,#eadff2)}
+.home-editorial .home-research{background:linear-gradient(135deg,#f6ede6,#f0e9f6)}
+.cinematic-footer-wrapper .footer-cinema{background:radial-gradient(ellipse at 85% 90%,#63218b66,transparent 65%),linear-gradient(125deg,#062b50,#102d52 60%,#30214c)}

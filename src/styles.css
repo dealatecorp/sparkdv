@@ -1,19 +1,19 @@
 :root {
   font-family: "DM Sans", Arial, sans-serif;
-  color: #173440;
-  background: #f7f8f6;
+  color: #073763;
+  background: #fffcf8;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  --ink: #173440;
-  --ink2: #244b58;
-  --teal: #14746e;
-  --teal-dark: #0d5a55;
-  --mint: #e6f0ed;
-  --paper: #fbfaf6;
+  --ink: #073763;
+  --ink2: #24496b;
+  --teal: #ad4b09;
+  --teal-dark: #873908;
+  --mint: #f7e9de;
+  --paper: #fffcf8;
   --muted: #66777b;
-  --line: #d9e2df;
-  --orange: #d77638;
-  --purple: #713c82;
+  --line: #f7ece3;
+  --orange: #e78308;
+  --purple: #63218b;
   --content: 1240px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
@@ -27,7 +27,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  background: #f7f8f6;
+  background: #fffcf8;
 }
 button,
 input,
@@ -51,7 +51,7 @@ img {
   max-width: 100%;
 }
 ::selection {
-  background: #b8dcd2;
+  background: #ded8d4;
   color: var(--ink);
 }
 .wrap {
@@ -73,7 +73,7 @@ img {
 .announcement {
   height: 34px;
   background: var(--ink);
-  color: #eff6f3;
+  color: #f7ece3;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -86,7 +86,7 @@ img {
   display: flex;
   gap: 3px;
   align-items: center;
-  color: #c6e1d7;
+  color: #f7ece3;
 }
 .announcement button {
   position: absolute;
@@ -209,7 +209,7 @@ textarea:focus-visible {
   background: var(--teal-dark);
 }
 .button-outline {
-  border-color: #99aca9;
+  border-color: #ded8d4;
   background: transparent;
   color: var(--ink);
 }
@@ -356,7 +356,7 @@ textarea:focus-visible {
   top: 4%;
   overflow: hidden;
   border-radius: 42% 42% 4px 4px;
-  background: #edf0eb;
+  background: #f7ece3;
 }
 .hero-image-main img {
   width: 100%;
@@ -372,9 +372,9 @@ textarea:focus-visible {
   height: 37%;
   bottom: 10%;
   left: 5%;
-  border: 8px solid #f7f8f6;
+  border: 8px solid #fffcf8;
   overflow: hidden;
-  background: #e6efeb;
+  background: #f7ece3;
 }
 .hero-image-small img {
   width: 100%;
@@ -412,7 +412,7 @@ textarea:focus-visible {
   position: absolute;
   width: 440px;
   height: 440px;
-  border: 1px solid #bed1cb;
+  border: 1px solid #ded8d4;
   border-radius: 50%;
   top: 9%;
   right: 11%;
@@ -423,7 +423,7 @@ textarea:focus-visible {
   content: "";
   position: absolute;
   border-radius: 50%;
-  border: 1px solid #e1e8e4;
+  border: 1px solid #f7ece3;
   inset: 28px;
 }
 .hero-ring:after {
@@ -448,8 +448,8 @@ textarea:focus-visible {
   margin-left: 9px;
 }
 .proof-band {
-  background: #eef3f0;
-  border-block: 1px solid #e1e9e5;
+  background: #f7ece3;
+  border-block: 1px solid #f7ece3;
 }
 .proof-row {
   display: flex;
@@ -466,7 +466,7 @@ textarea:focus-visible {
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #91aaa5;
+  background: #526174;
 }
 .section {
   padding: 115px 0;
@@ -490,7 +490,7 @@ textarea:focus-visible {
 .section-marker i {
   width: 1px;
   height: 48px;
-  background: #b9cbc5;
+  background: #ded8d4;
 }
 .section-head-body {
   max-width: 730px;
@@ -535,7 +535,7 @@ textarea:focus-visible {
   height: 340px;
   position: relative;
   overflow: hidden;
-  background: #eff2ef;
+  background: #f7ece3;
   display: flex;
   justify-content: center;
 }
@@ -567,7 +567,7 @@ textarea:focus-visible {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #fbfaf6;
+  background: #fffcf8;
 }
 .featured-meta {
   display: grid;
@@ -654,12 +654,12 @@ textarea:focus-visible {
 }
 .product-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 13px 35px #1734400e;
+  box-shadow: 0 13px 35px #0737630e;
 }
 .product-photo {
   height: 220px;
   position: relative;
-  background: #f0f3f0;
+  background: #f7ece3;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -738,8 +738,8 @@ textarea:focus-visible {
 .tag-row span {
   font-size: 8px;
   padding: 5px 7px;
-  background: #eff4f1;
-  color: #506c6c;
+  background: #f7ece3;
+  color: #526174;
 }
 .product-buy {
   display: flex;
@@ -778,7 +778,7 @@ textarea:focus-visible {
   font-size: 9px;
 }
 .science-feature {
-  background: #eef3f0;
+  background: #f7ece3;
 }
 .science-layout {
   display: grid;
@@ -789,7 +789,7 @@ textarea:focus-visible {
 .science-image {
   height: 600px;
   position: relative;
-  background: #e3ece8;
+  background: #f7ece3;
   overflow: hidden;
   display: grid;
   place-items: center;
@@ -807,7 +807,7 @@ textarea:focus-visible {
   left: 18px;
   font-size: 8px;
   letter-spacing: 0.15em;
-  color: #617876;
+  color: #526174;
 }
 .science-copy .section-head {
   grid-template-columns: 55px 1fr;
@@ -817,7 +817,7 @@ textarea:focus-visible {
   font-size: 50px;
 }
 .science-steps {
-  border-top: 1px solid #d2ded9;
+  border-top: 1px solid #f7ece3;
   margin-bottom: 24px;
 }
 .science-step {
@@ -825,7 +825,7 @@ textarea:focus-visible {
   grid-template-columns: 35px 1fr 18px;
   gap: 13px;
   padding: 17px 0;
-  border-bottom: 1px solid #d2ded9;
+  border-bottom: 1px solid #f7ece3;
   align-items: start;
 }
 .science-step > span {
@@ -857,7 +857,7 @@ textarea:focus-visible {
 .protocol-visual {
   position: relative;
   height: 430px;
-  background: #edf2ef;
+  background: #f7ece3;
   overflow: hidden;
 }
 .protocol-visual > img {
@@ -916,7 +916,7 @@ textarea:focus-visible {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 570px;
-  background: #e5eeea;
+  background: #f7ece3;
 }
 .school-photo {
   min-height: 570px;
@@ -988,7 +988,7 @@ textarea:focus-visible {
     transform 0.2s;
 }
 .audience-card:hover {
-  background: #eff5f2;
+  background: #f7ece3;
   transform: translateY(-3px);
 }
 .audience-lead {
@@ -1007,7 +1007,7 @@ textarea:focus-visible {
 .audience-lead .audience-top,
 .audience-lead .eyebrow,
 .audience-lead .audience-action {
-  color: #a9d5c8;
+  color: #ded8d4;
 }
 .audience-card .eyebrow {
   font-size: 8px;
@@ -1028,10 +1028,10 @@ textarea:focus-visible {
   margin: 0;
 }
 .audience-lead > div:nth-child(2) > p:last-child {
-  color: #c1d1ce;
+  color: #ded8d4;
 }
 .audience-action {
-  border-top: 1px solid #dce5e1;
+  border-top: 1px solid #f7ece3;
   margin-top: 24px;
   padding-top: 15px;
   display: flex;
@@ -1044,7 +1044,7 @@ textarea:focus-visible {
   border-color: #ffffff36;
 }
 .testimonial-section {
-  background: #ecf1ee;
+  background: #f7ece3;
   padding: 95px 0;
 }
 .testimonial-inner {
@@ -1067,7 +1067,7 @@ textarea:focus-visible {
   margin-right: 10px;
 }
 .testimonial-controls button {
-  border: 1px solid #c5d3ce;
+  border: 1px solid #ded8d4;
   background: transparent;
   width: 34px;
   height: 34px;
@@ -1089,12 +1089,12 @@ textarea:focus-visible {
   min-height: 240px;
   padding: 24px;
   background: #fff;
-  border: 1px solid #e2e8e5;
+  border: 1px solid #f7ece3;
   display: flex;
   flex-direction: column;
 }
 .quote-muted {
-  background: #f6f7f5;
+  background: #f7ece3;
   margin-top: 28px;
 }
 .quote-mark {
@@ -1131,18 +1131,18 @@ textarea:focus-visible {
   color: white;
 }
 .closing-cta .eyebrow {
-  color: #afd6c9;
+  color: #ded8d4;
 }
 .closing-cta h2 {
   color: #fff;
   font-size: 55px;
 }
 .closing-cta h2 em {
-  color: #a7d9c7;
+  color: #ded8d4;
 }
 .closing-cta > div:first-child > p:last-child {
   font-size: 11px;
-  color: #c5d3d2;
+  color: #ded8d4;
   margin: 15px 0 0;
 }
 .cta-actions {
@@ -1153,12 +1153,12 @@ textarea:focus-visible {
   gap: 10px;
 }
 .button-paper {
-  background: #e7f0eb;
+  background: #f7ece3;
   color: var(--ink);
 }
 .button-ghost-light {
   background: transparent;
-  border-color: #92a9a6;
+  border-color: #526174;
   color: white;
 }
 .button-ghost-light:hover {
@@ -1178,8 +1178,8 @@ textarea:focus-visible {
   font: 500 70px Newsreader;
 }
 .footer {
-  background: #f0f2ef;
-  border-top: 1px solid #dce4e0;
+  background: #f7ece3;
+  border-top: 1px solid #f7ece3;
   padding: 55px 0 22px;
 }
 .footer-main {
@@ -1229,7 +1229,7 @@ textarea:focus-visible {
   margin-top: 4px;
 }
 .regulatory {
-  border-top: 1px solid #d8e0dc;
+  border-top: 1px solid #f7ece3;
   padding: 18px 0;
   display: grid;
   grid-template-columns: 190px 1fr;
@@ -1248,7 +1248,7 @@ textarea:focus-visible {
   color: #6f7d7f;
 }
 .footer-bottom {
-  border-top: 1px solid #d8e0dc;
+  border-top: 1px solid #f7ece3;
   padding: 18px 0 12px;
   display: flex;
   justify-content: space-between;
@@ -1282,7 +1282,7 @@ textarea:focus-visible {
   padding: 11px 14px;
   font-size: 10px;
   font-weight: 600;
-  box-shadow: 0 5px 22px #17344012;
+  box-shadow: 0 5px 22px #07376312;
 }
 .wa-dot {
   width: 8px;
@@ -1302,7 +1302,7 @@ textarea:focus-visible {
 .cart-drawer {
   width: min(460px, 100%);
   height: 100%;
-  background: #fbfcfa;
+  background: #f7ece3;
   padding: 28px 28px 20px;
   display: flex;
   flex-direction: column;
@@ -1349,7 +1349,7 @@ textarea:focus-visible {
   max-width: 270px;
 }
 .empty-cart > svg {
-  color: #7c9993;
+  color: #526174;
   margin-bottom: 16px;
 }
 .empty-cart h3 {
@@ -1374,7 +1374,7 @@ textarea:focus-visible {
   border-bottom: 1px solid var(--line);
 }
 .cart-thumb {
-  background: #eef3ef;
+  background: #f7ece3;
   height: 88px;
 }
 .cart-thumb img {
@@ -1513,7 +1513,7 @@ textarea:focus-visible {
 }
 .detail-image {
   height: 570px;
-  background: #edf1ed;
+  background: #f7ece3;
   position: relative;
   overflow: hidden;
 }
@@ -1546,9 +1546,9 @@ textarea:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: #e6f0ed;
+  background: #f7e9de;
   padding: 8px 10px;
-  color: #27635d;
+  color: #314b68;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   font-size: 8px;
@@ -1567,8 +1567,8 @@ textarea:focus-visible {
 }
 .detail-tags span {
   padding: 7px 9px;
-  background: #edf3f0;
-  color: #56706e;
+  background: #f7ece3;
+  color: #526174;
   font-size: 9px;
 }
 .variant-box,
@@ -1631,7 +1631,7 @@ textarea:focus-visible {
   position: sticky;
   top: 72px;
   z-index: 20;
-  background: #f7f8f6ed;
+  background: #fffcf8ed;
   backdrop-filter: blur(12px);
   border-block: 1px solid var(--line);
   display: flex;
@@ -1680,17 +1680,17 @@ textarea:focus-visible {
 .program-why,
 .parent-products,
 .protocol-section {
-  background: #eef3f0;
+  background: #f7ece3;
 }
 .feature-list {
   max-width: 850px;
-  border-top: 1px solid #d5e0dc;
+  border-top: 1px solid #f7ece3;
 }
 .feature-row {
   display: grid;
   grid-template-columns: 50px 1fr 18px;
   padding: 17px 0;
-  border-bottom: 1px solid #d5e0dc;
+  border-bottom: 1px solid #f7ece3;
   align-items: center;
 }
 .feature-row span {
@@ -1708,8 +1708,8 @@ textarea:focus-visible {
   grid-template-columns: 40px 1fr;
   gap: 19px;
   padding: 32px;
-  background: #e7f0ec;
-  border: 1px solid #d4e1db;
+  background: #f7ece3;
+  border: 1px solid #f7ece3;
   box-shadow: 0 3px 12px rgba(23, 52, 64, 0.05);
   max-width: 950px;
 }
@@ -1754,9 +1754,9 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid #bdcbc6;
+  border-bottom: 1px solid #ded8d4;
   width: min(400px, 100%);
-  color: #718280;
+  color: #526174;
 }
 .search-field input {
   border: 0;
@@ -1816,10 +1816,10 @@ textarea:focus-visible {
 }
 .filters > button span {
   font-size: 9px;
-  color: #96a2a1;
+  color: #526174;
 }
 .filters > button.filter-active {
-  background: #e7f0ec;
+  background: #f7ece3;
   color: var(--ink);
   font-weight: 700;
 }
@@ -1878,7 +1878,7 @@ textarea:focus-visible {
   align-items: center;
 }
 .no-results > svg {
-  color: #78958e;
+  color: #526174;
 }
 .no-results h3 {
   font: 500 26px Newsreader;
@@ -1890,7 +1890,7 @@ textarea:focus-visible {
   margin: 0 0 18px;
 }
 .need-help {
-  background: #e9f0ec;
+  background: #f7ece3;
   padding: 47px 0;
 }
 .need-help-inner {
@@ -1939,11 +1939,11 @@ textarea:focus-visible {
 .mechanism-orb {
   height: 100px;
   width: 100px;
-  border: 1px solid #c9d9d3;
+  border: 1px solid #ded8d4;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: #93b1a6;
+  color: #ded8d4;
   font: 400 30px Newsreader;
   justify-self: center;
   position: relative;
@@ -1952,7 +1952,7 @@ textarea:focus-visible {
   content: "";
   position: absolute;
   inset: 9px;
-  border: 1px solid #dce7e2;
+  border: 1px solid #f7ece3;
   border-radius: 50%;
 }
 .evidence-grid {
@@ -1963,8 +1963,8 @@ textarea:focus-visible {
 .evidence-card {
   min-height: 250px;
   padding: 20px;
-  border: 1px solid #d8e3df;
-  background: #f9faf8;
+  border: 1px solid #f7ece3;
+  background: #f7ece3;
   position: relative;
 }
 .evidence-count {
@@ -1993,7 +1993,7 @@ textarea:focus-visible {
   color: var(--muted);
 }
 .disabled-link {
-  color: #81918e;
+  color: #526174;
   cursor: default;
   border: 0;
   font-size: 9px;
@@ -2114,7 +2114,7 @@ textarea:focus-visible {
   margin: 0;
 }
 .contact-section {
-  background: #eef3f0;
+  background: #f7ece3;
 }
 .contact-layout {
   display: grid;
@@ -2156,8 +2156,8 @@ textarea:focus-visible {
 .enquiry-form input,
 .enquiry-form select,
 .enquiry-form textarea {
-  border: 1px solid #d4dfdb;
-  background: #fbfcfa;
+  border: 1px solid #f7ece3;
+  background: #f7ece3;
   padding: 11px;
   font-size: 10px;
   color: var(--ink);
@@ -2169,7 +2169,7 @@ textarea:focus-visible {
 }
 .enquiry-form input::placeholder,
 .enquiry-form textarea::placeholder {
-  color: #a2adab;
+  color: #ded8d4;
 }
 .form-row {
   display: grid;
@@ -2199,12 +2199,12 @@ textarea:focus-visible {
 }
 .enquiry-form > small {
   font-size: 8px;
-  color: #899594;
+  color: #526174;
 }
 .form-success {
   padding: 20px;
-  background: #edf5f1;
-  color: #31665b;
+  background: #f7ece3;
+  color: #526174;
   font-size: 11px;
 }
 .form-success > svg {
@@ -2225,7 +2225,7 @@ textarea:focus-visible {
 }
 .contact-details span {
   font-size: 10px;
-  color: #84908f;
+  color: #526174;
   margin-top: 6px;
 }
 .contact-page {
@@ -2258,7 +2258,7 @@ textarea:focus-visible {
   border-color: var(--ink);
 }
 .enquiry-tabs button.selected > span {
-  color: #a9d5c8;
+  color: #ded8d4;
 }
 .contact-strip {
   background: var(--ink);
@@ -2271,7 +2271,7 @@ textarea:focus-visible {
   justify-content: space-between;
 }
 .contact-strip .eyebrow {
-  color: #a9d5c8;
+  color: #ded8d4;
   margin-bottom: 7px;
 }
 .contact-strip h2 {
@@ -2340,7 +2340,7 @@ textarea:focus-visible {
 }
 .why-item {
   padding: 24px 20px 15px 0;
-  border-top: 1px solid #d1ddd8;
+  border-top: 1px solid #f7ece3;
 }
 .why-item span {
   font-size: 9px;
@@ -2367,7 +2367,7 @@ textarea:focus-visible {
   font-size: 11px;
 }
 .table-head {
-  background: #eaf1ed;
+  background: #f7ece3;
   color: #657679;
   text-transform: uppercase;
   font-size: 8px;
@@ -2386,11 +2386,11 @@ textarea:focus-visible {
   margin-top: 30px;
 }
 .journey-section {
-  background: #eef3f0;
+  background: #f7ece3;
 }
 .timeline {
   max-width: 800px;
-  border-left: 1px solid #afc5bc;
+  border-left: 1px solid #ded8d4;
   margin-left: 30px;
 }
 .timeline-row {
@@ -2428,10 +2428,10 @@ textarea:focus-visible {
   display: flex;
   gap: 14px;
   align-items: center;
-  background: #e6f0ec;
+  background: #f7ece3;
   padding: 16px 20px;
   margin-top: 22px;
-  color: #365d5b;
+  color: #314b68;
 }
 .parent-notice svg {
   flex: none;
@@ -2467,13 +2467,13 @@ textarea:focus-visible {
 }
 .education-illustration {
   height: 200px;
-  background: #e8f0ec;
+  background: #f7ece3;
   display: grid;
   place-items: center;
-  color: #8ba59d;
+  color: #526174;
   font-size: 9px;
   letter-spacing: 0.14em;
-  border: 1px solid #dae5df;
+  border: 1px solid #e9dfef;
 }
 .white-spot {
   background: #f2ede6;
@@ -2513,7 +2513,7 @@ textarea:focus-visible {
 }
 .parent-product-card {
   background: white;
-  border: 1px solid #d7e1dc;
+  border: 1px solid #f7ece3;
   display: grid;
   grid-template-columns: 0.8fr 1fr;
   align-items: center;
@@ -2749,7 +2749,7 @@ html.motion-ready .reveal:not(.in-view) {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #f7f8f6;
+    background: #fffcf8;
     display: none;
     flex-direction: column;
     align-items: stretch;

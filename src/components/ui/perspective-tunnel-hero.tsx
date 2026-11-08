@@ -73,7 +73,7 @@ export default function PerspectiveTunnelHero({products}: {products:TunnelProduc
     <div ref={stageRef} className="perspective-tunnel-stage">
       <div className="tunnel-guides" aria-hidden="true"><i/><i/></div>
       <motion.div className="tunnel-anchor" style={{scale:flat?1:titleScale}}>
-        <h1 id="tunnel-title"><LiquidText text="Small details." color="#122f3c" highlight="#7a989a" fontSize={84} viscosity={0.62}/><LiquidText text="Brighter futures." color="#326962" highlight="#9ab9a5" fontSize={84} viscosity={0.62}/></h1>
+        <h1 id="tunnel-title"><LiquidText text="Small details." color="#073763" highlight="#527ca0" fontSize={84} viscosity={0.62}/><LiquidText text="Brighter futures." color="#ad4b09" highlight="#f2a04b" fontSize={84} viscosity={0.62}/></h1>
         <p>Innovating the future of pediatric<br/>& preventive dentistry.</p>
         <div className="tunnel-actions"><Link className="button button-dark" to="/products">Explore products <ArrowUpRight size={18}/></Link><Link className="tunnel-specialist" to="/contact?type=Clinical%20enquiry">Talk to a specialist <ArrowRight size={17}/></Link></div>
       </motion.div>

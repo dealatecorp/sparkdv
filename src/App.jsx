@@ -1,7 +1,11 @@
-import {ProductShelf} from './components/ui/skincare-product-shelf';
+import FloatingMenu from './components/ui/liquid-morph-floating-menu';
+import {SparkProductShowcase} from './components/ui/spark-product-showcase';
 import {CinematicFooter} from './components/ui/motion-footer';
 import React, { useEffect, useMemo, useState, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {createPortal} from 'react-dom';
+import DemoCheckout from './components/ui/demo-checkout';
+import {Dock, DockItem} from './components/ui/dock';
 import {
   ArrowDown,
   ArrowLeft,
@@ -87,6 +91,28 @@ const scienceSteps = [
 
 function App() {
   const loc = useLocation();
+  const navigate = useNavigate();
+  const [contact, setContact] = useState(null);
+  useEffect(() => {
+    const open = (e) => {
+      if(e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const link = e.target.closest('a[href]');
+      if(!link || link.target === '_blank') return;
+      const url = new URL(link.href, window.location.href);
+      if(url.origin !== window.location.origin || url.pathname !== '/contact') return;
+      e.preventDefault(); e.stopPropagation();
+      setMenu(false); setCartOpen(false);
+      setContact({type:url.searchParams.get('type') || 'Clinical enquiry',product:url.searchParams.get('product') || 'General enquiry'});
+    };
+    document.addEventListener('click',open,true);
+    return ()=>document.removeEventListener('click',open,true);
+  },[]);
+  useEffect(()=>{
+    if(loc.pathname === '/contact') {
+      const query=new URLSearchParams(loc.search);
+      setContact({type:query.get('type') || 'Clinical enquiry',product:query.get('product') || 'General enquiry'});
+    }
+  },[loc.pathname,loc.search]);
   const [menu, setMenu] = useState(false),
     [cartOpen, setCartOpen] = useState(false),
     [cart, setCart] = useState(() => {
@@ -161,6 +187,7 @@ function App() {
           "/terms": "Terms of Service",
           "/shipping": "Shipping & Returns",
           "/cart": "Your selection",
+          "/checkout": "Demo payment",
         }[loc.pathname] ||
         "Page not found") + " | SPARK-DV";
     const description =
@@ -299,9 +326,10 @@ function App() {
             className={menu ? "nav open" : "nav"}
             aria-label="Main navigation"
           >
-            <details className="products-menu">
+            <Dock>
+            <DockItem baseWidth={90}><details className="products-menu">
               <summary>
-                Products <ChevronDown size={14} />
+                Products
               </summary>
               <div className="mega-menu">
                 <Link to="/products">
@@ -320,12 +348,13 @@ function App() {
                   </Link>
                 ))}
               </div>
-            </details>
-            <Link to="/science">Science</Link>
-            <Link to="/dentists">For Dentists</Link>
-            <Link to="/parents">For Parents</Link>
-            <Link to="/school-program">School Program</Link>
-            <Link to="/about">About</Link>
+            </details></DockItem>
+            {[
+              ['/science','Science',78],['/dentists','For Dentists',108],
+              ['/parents','For Parents',105],['/school-program','School Program',135],
+              ['/about','About',67],['/contact','Contact',82],
+            ].map(([to,label,width])=><DockItem key={to} baseWidth={width}><Link to={to} aria-current={loc.pathname===to?'page':undefined}>{label}</Link></DockItem>)}
+            </Dock>
             <div className="mobile-actions">
               <Link className="button button-dark" to="/contact">
                 Request pricing <ArrowUpRight size={16} />
@@ -333,9 +362,6 @@ function App() {
             </div>
           </nav>
           <div className="header-actions">
-            <Link className="header-contact" to="/contact">
-              Contact
-            </Link>
             <button
               className="cart-trigger"
               aria-label={`Open cart, ${qty} items`}
@@ -362,6 +388,7 @@ function App() {
         <RoutesView add={add} cartQty={qty} cart={cart} update={update} remove={remove} />
       </main>
       <CinematicFooter />
+      {contact && <ContactPopup options={contact} onClose={()=>{setContact(null);if(loc.pathname==='/contact')navigate('/',{replace:true})}}/>}
       <a
         className="whatsapp"
         href="https://wa.me/919246901870"
@@ -467,17 +494,9 @@ function App() {
                   </small>
                   <button
                     className="button button-dark checkout"
-                    onClick={() =>
-                      (window.location.href =
-                        "mailto:sparkdv310@gmail.com?subject=" +
-                        encodeURIComponent("SPARK-DV order enquiry") +
-                        "&body=" +
-                        encodeURIComponent(
-                          cart.map((i) => i.name + " × " + i.qty).join("\n"),
-                        ))
-                    }
+                    onClick={() => {setCartOpen(false); navigate('/checkout')}}
                   >
-                    Request this order <ArrowRight size={16} />
+                    Continue to demo payment <ArrowRight size={16} />
                   </button>
                 </div>
               </>
@@ -511,7 +530,8 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
   if (path === "/school-program")
     return <EditorialPage path="/school-program" />;
   if (path === "/about") return <EditorialPage path="/about" />;
-  if (path === "/contact") return <Contact />;
+  if (path === "/contact") return <Catalog add={add} />;
+  if (path === "/checkout") return <DemoCheckout cart={cart} />;
   if (["/privacy", "/terms", "/shipping"].includes(path))
     return <Policy path={path} />;
   if (path === "/cart") return <CartPage cart={cart} update={update} remove={remove} />;
@@ -644,22 +664,8 @@ function Catalog({ add }) {
           </label>
         </div>
         <div className="catalog-content">
-          <aside className="filters">
-            <p className="eyebrow">FILTER BY</p>
-            {categories.map((c) => (
-              <button
-                key={c}
-                className={cat === c ? "filter-active" : ""}
-                onClick={() => setCat(c)}
-              >
-                {c}
-                <span>
-                  {c === "All products"
-                    ? products.length
-                    : products.filter((p) => p.category === c).length}
-                </span>
-              </button>
-            ))}
+          <div className="catalog-filter-status"><p>Browse by category using the product menu below.</p><span>Search and sort your selection above.</span></div>
+          <FloatingMenu items={categories.map(c=>({label:c,count:c==='All products'?products.length:products.filter(p=>p.category===c).length,selected:cat===c,onClick:()=>setCat(c)}))}>
             <label className="check-filter">
               <input
                 type="checkbox"
@@ -678,7 +684,7 @@ function Catalog({ add }) {
             >
               Clear filters
             </button>
-          </aside>
+          </FloatingMenu>
           <div className="catalog-results">
             <div className="results-meta">
               <span>{filtered.length} products</span>
@@ -688,7 +694,7 @@ function Catalog({ add }) {
               </span>
             </div>
             {filtered.length ? (
-              <ProductShelf className="catalog-shelf" products={filtered.map(p=>({...p,image:productAssets[p.slug].local,imageWidth:productAssets[p.slug].width,imageHeight:productAssets[p.slug].height}))} onAdd={add}/>
+              <SparkProductShowcase className="catalog-showcase" products={filtered.map(p=>({...p,image:productAssets[p.slug].local,imageWidth:productAssets[p.slug].width,imageHeight:productAssets[p.slug].height}))} onAdd={add}/>
             ) : (
               <div className="no-results">
                 <Search size={28} />
@@ -1155,7 +1161,21 @@ function Contact() {
     </>
   );
 }
-function EnquiryForm({ defaultType }) {
+function ContactPopup({options,onClose}) {
+  const dialog=useRef(null);
+  useEffect(()=>{
+    const el=dialog.current;
+    const previous=document.activeElement;
+    const overflow=document.body.style.overflow;
+    el.showModal();document.body.style.overflow='hidden';
+    return ()=>{el.close();document.body.style.overflow=overflow;if(previous?.isConnected)previous.focus()};
+  },[]);
+  return createPortal(<dialog ref={dialog} className="contact-popup" aria-labelledby="contact-popup-title" onCancel={e=>{e.preventDefault();onClose()}} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)onClose()}}}>
+    <div className="contact-popup-head"><h2 id="contact-popup-title">Let’s talk.</h2><button type="button" aria-label="Close contact form" onClick={onClose}><X size={22}/></button></div>
+    <div className="contact-popup-body"><EnquiryForm defaultType={options.type} defaultProduct={options.product}/></div>
+  </dialog>,document.body);
+}
+function EnquiryForm({ defaultType, defaultProduct = 'General enquiry' }) {
   const [done, setDone] = useState(false),
     [error, setError] = useState("");
   const [type, setType] = useState(
@@ -1234,7 +1254,7 @@ function EnquiryForm({ defaultType }) {
       </label>
       <label>
         Product
-        <select name="Product">
+        <select name="Product" defaultValue={defaultProduct}>
           <option>General enquiry</option>
           {products.map((p) => (
             <option key={p.slug}>{p.name}</option>
@@ -1310,7 +1330,7 @@ function Policy({ path }) {
     </>
   );
 }
-function CartPage({cart,update,remove}) {return <section className="section wrap order-page"><h1>Your selection.</h1>{cart.length?<><div className="order-items">{cart.map(p=><article key={p.slug}><Link to={`/products/${p.slug}`}><ProductImage product={p}/></Link><div><h2>{p.name}</h2><p>{money(p.price)}</p><div className="quantity"><button onClick={()=>update(p.slug,-1)} aria-label={`Decrease ${p.name} quantity`}><Minus size={16}/></button><span>{p.qty}</span><button onClick={()=>update(p.slug,1)} aria-label={`Increase ${p.name} quantity`}><Plus size={16}/></button><button onClick={()=>remove(p.slug)} aria-label={`Remove ${p.name}`}><X size={16}/></button></div></div></article>)}</div><h2>Subtotal {money(cart.reduce((sum,p)=>sum+(p.price||0)*p.qty,0))}</h2><p>Pricing, availability and delivery are confirmed by our team.</p><a className="button button-dark" href={'mailto:sparkdv310@gmail.com?subject='+encodeURIComponent('SPARK-DV order enquiry')+'&body='+encodeURIComponent(cart.map(p=>p.name+' × '+p.qty).join('\n'))}>Prepare order enquiry <ArrowUpRight size={18}/></a></>:<><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Explore products <ArrowRight size={18}/></Link></>}</section>}
+function CartPage({cart,update,remove}) {return <section className="section wrap order-page"><h1>Your selection.</h1>{cart.length?<><div className="order-items">{cart.map(p=><article key={p.slug}><Link to={`/products/${p.slug}`}><ProductImage product={p}/></Link><div><h2>{p.name}</h2><p>{money(p.price)}</p><div className="quantity"><button onClick={()=>update(p.slug,-1)} aria-label={`Decrease ${p.name} quantity`}><Minus size={16}/></button><span>{p.qty}</span><button onClick={()=>update(p.slug,1)} aria-label={`Increase ${p.name} quantity`}><Plus size={16}/></button><button onClick={()=>remove(p.slug)} aria-label={`Remove ${p.name}`}><X size={16}/></button></div></div></article>)}</div><h2>Subtotal {money(cart.reduce((sum,p)=>sum+(p.price||0)*p.qty,0))}</h2><p>Pricing, availability and delivery are confirmed by our team.</p><Link className="button button-dark" to="/checkout">Continue to demo payment <ArrowRight size={18}/></Link><a className="button button-outline" href={'mailto:sparkdv310@gmail.com?subject='+encodeURIComponent('SPARK-DV order enquiry')+'&body='+encodeURIComponent(cart.map(p=>p.name+' × '+p.qty).join('\n'))}>Prepare order enquiry <ArrowUpRight size={18}/></a></>:<><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Explore products <ArrowRight size={18}/></Link></>}</section>}
 function NotFound() {
   return (
     <div className="section wrap not-found">

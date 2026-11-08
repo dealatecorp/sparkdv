@@ -1,0 +1,26 @@
+.liquid-product-menu{position:fixed;bottom:28px;left:50%;translate:-50% 0;z-index:80;max-width:calc(100vw - 32px);color:#fffcf8;}
+.liquid-menu-shell{position:relative;display:flex;flex-direction:column;overflow:hidden;max-width:calc(100vw - 32px);max-height:calc(100dvh - 155px);box-shadow:0 14px 40px #07376330;}
+.liquid-menu-base{position:absolute;inset:0;background:linear-gradient(115deg,#f6b450,#f3b39e 60%,#d9bce9);border:1px solid #c99169;border-radius:inherit;}
+.liquid-menu-wave{position:absolute;left:50%;translate:-50% 0;width:200%;height:200%;border-radius:50%;background:#073763;pointer-events:none;}
+.liquid-menu-options{position:relative;z-index:1;flex:1;overflow:auto;min-height:0;padding:23px 22px 5px;}
+.liquid-menu-options[hidden]{display:none;}
+.liquid-menu-categories{display:flex;flex-direction:column;gap:4px;}
+.liquid-menu-item{display:flex;align-items:center;justify-content:center;gap:12px;min-height:48px;width:100%;border:0;background:none;color:#fffcf8;font:500 17px "DM Sans",sans-serif;cursor:pointer;}
+.liquid-menu-item.filter-active{background:#ffffff16;border-radius:10px;color:#ffd29a;}
+.liquid-menu-word{display:inline-flex;white-space:nowrap;}
+.liquid-menu-char{display:inline-block;overflow:hidden;height:1.3em;}
+.liquid-menu-char>span{display:flex;flex-direction:column;transition-property:transform;transition-timing-function:cubic-bezier(.22,1,.36,1);}
+.liquid-menu-char>span>span{display:block;height:1.3em;line-height:1.3em;}
+.liquid-menu-count{font-size:11px;min-width:14px;}
+.liquid-menu-tools{margin-top:14px;padding-top:14px;border-top:1px solid #ffffff35;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;}
+.liquid-menu-tools .check-filter{display:flex;align-items:center;gap:10px;min-height:44px;margin:0;padding:0;border:0;font-size:13px;color:#fffcf8;}
+.liquid-menu-tools input{accent-color:#edaa54;}
+.liquid-menu-tools .clear-filter{min-height:44px;background:none;border:0;color:#ffd29a;text-decoration:underline;text-underline-offset:4px;font-size:13px;margin:0;padding:0 8px;}
+.liquid-menu-toggle{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:20px;width:100%;height:52px;min-height:52px;padding:0 23px;border:0;background:none;font:500 14px "DM Sans",sans-serif;cursor:pointer;}
+.liquid-menu-bars{position:relative;width:20px;height:20px;display:grid;place-items:center;}
+.liquid-menu-bars>span{position:absolute;width:18px;height:2px;background:currentColor;border-radius:2px;}
+.liquid-product-menu :focus-visible{outline:2px solid #edaa54;outline-offset:-3px;}
+.catalog-filter-status{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:18px 0;color:var(--muted);font-size:13px;border-bottom:1px solid var(--line);margin-bottom:22px;}
+.catalog-filter-status p{margin:0;}
+@media(max-width:760px){.liquid-product-menu{bottom:78px}.liquid-menu-shell{max-height:calc(100dvh - 180px)}.liquid-menu-item{font-size:16px}.catalog-filter-status{align-items:flex-start;font-size:12px}.catalog-filter-status>span{max-width:120px;text-align:right}}
+@media(prefers-reduced-motion:reduce){.liquid-menu-char>span{transition:none!important}}

@@ -4,7 +4,7 @@
   "Cart quantity, Escape and focus restoration pass",
   "Required fields and valid form pass; external email handoff not sent",
   {
-    "hover": "matrix(1.02497, 0, 0, 1.02497, 0, 0)"
+    "hover": "matrix(1.025, 0, 0, 1.025, 0, 0)"
   },
   "Sticky header after scrolling pass",
   "Mobile menu opens, navigates and closes",

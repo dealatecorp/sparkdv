@@ -1,0 +1,15 @@
+{
+  "errors": [],
+  "checks": [
+    "Product switch",
+    "Quantity pricing",
+    "Real cart quantity",
+    "Gallery and keyboard close",
+    "Focus restoration",
+    "Favourite toggle",
+    "Search empty state and recovery",
+    "Mobile overflow",
+    "Homepage category filters",
+    "Reduced motion"
+  ]
+}

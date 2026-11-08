@@ -18,3 +18,7 @@ import './components/ui/product-shelf.css';
 import './components/ui/motion-footer.css';
 import './components/ui/catalog-shelf.css';
 import './components/editorial/editorial.css';
+import './components/ui/spark-product-showcase.css';
+import './components/ui/checkout-contact.css';
+import './components/ui/dock.css';
+import './components/ui/liquid-morph-floating-menu.css';

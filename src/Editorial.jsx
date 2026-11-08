@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import content from "./source-content.json";
 import assets from "./product-assets.json";
 import { products } from "./data";
-import {ProductShelf} from './components/ui/skincare-product-shelf';
+import {SparkProductShowcase} from './components/ui/spark-product-showcase';
 import EditorialHeading from './components/editorial/editorial-heading';
 import {HomeResearchStory, HomeCommunity} from './components/home/home-editorial';
 import PerspectiveTunnelHero from './components/ui/perspective-tunnel-hero';
@@ -228,7 +228,7 @@ const testimonials=[["SPARK-DV products have helped streamline my pediatric work
             </button>
           ))}
         </div>
-        <ProductShelf products={items} onAdd={add}/>
+        <SparkProductShowcase products={items} onAdd={add}/>
         <Link className="text-link" to="/products">
           Explore all products & variants <ArrowRight size={18} />
         </Link>

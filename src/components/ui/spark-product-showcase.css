@@ -1,0 +1,55 @@
+.spark-showcase,.spark-product-viewer{--color-foreground:#073763;--color-background:#fffcf8;--color-muted-foreground:#41516a;color:var(--color-foreground);font-family:"DM Sans",sans-serif;}
+.spark-showcase{margin-block:25px 35px;}
+.spark-showcase .snp-root{--snp-like:#63218b;}
+.spark-showcase .snp-body{padding:5cqw 4cqw;grid-template-columns:23cqw minmax(0,1fr) 24cqw;gap:2cqw;}
+.spark-showcase .snp-bg{background:radial-gradient(ellipse at 50% 40%,color-mix(in oklab,var(--t) 58%,transparent),transparent 65%),linear-gradient(125deg,#fff2db 0%,color-mix(in oklab,var(--t) 24%,#fffcf8) 50%,#e7d9f0 100%);}
+.spark-showcase .snp-title{max-width:22cqw;font-size:clamp(26px,3cqw,42px);}
+.spark-showcase .snp-desc{max-width:23cqw;font-size:clamp(14px,1.25cqw,17px);line-height:1.7;font-style:normal;margin-top:24px;}
+.spark-showcase .snp-details{display:inline-flex;align-items:center;min-height:44px;font-size:14px;text-decoration:underline;text-underline-offset:5px;margin-top:15px;}
+.spark-showcase .snp-stage{min-height:37cqw;max-height:46cqw;}
+.spark-showcase .snp-shoe{height:30cqw;aspect-ratio:auto;top:53%;margin-top:-15cqw;translate:-50% 0;width:90%;}
+.spark-showcase .snp-word{font-size:6cqw;top:7%;max-width:62cqw;text-align:center;white-space:normal;line-height:.95;}
+.spark-showcase .snp-floor{top:69%;}
+.spark-showcase .snp-reflect{opacity:.12;}
+.spark-showcase .snp-shoe.snp-sheen{mask-size:contain;-webkit-mask-size:contain;mask-position:center;-webkit-mask-position:center;}
+.spark-showcase .snp-thumbs{margin-top:4cqw;gap:14px;}
+.spark-showcase .snp-thumb{width:60px;height:60px;background:#ffffff65;}
+.spark-showcase .snp-label{font-size:12px;letter-spacing:.08em;}
+.spark-showcase .snp-size,.spark-showcase .snp-swatch{min-width:44px;min-height:44px;}
+.spark-showcase .snp-sizes{gap:15px;}
+.spark-showcase .snp-stock{font-size:12px;line-height:1.5;}
+.spark-showcase .snp-stock::before{background:var(--brand-purple);}
+.spark-showcase .snp-row{gap:20px;align-items:baseline;}
+.spark-showcase .snp-product-category{font-size:13px;text-align:right;}
+.spark-showcase .snp-price{font-size:24px;white-space:nowrap;}
+.spark-showcase .snp-swatches{gap:12px;flex-wrap:wrap;margin-top:18px;max-height:155px;overflow:auto;padding:5px;}
+.spark-showcase .snp-swatch:disabled{cursor:wait;}
+.spark-showcase .snp-product-navigation{display:flex;gap:14px;margin-top:18px;}
+.spark-showcase .snp-product-navigation button{display:grid;place-items:center;width:52px;height:52px;border:1px solid #073763;border-radius:50%;background:transparent;color:#073763;transition:background .2s,color .2s;}
+.spark-showcase .snp-product-navigation button:hover:not(:disabled){background:#073763;color:#fffcf8;}
+.spark-showcase .snp-product-navigation button:disabled{opacity:.4;cursor:not-allowed;}
+.spark-showcase .snp-selection{display:flex;justify-content:space-between;gap:10px;font-size:12px;line-height:1.5;margin:12px 0 0;}
+.spark-showcase .snp-selection span{white-space:nowrap;}
+.spark-showcase .snp-actions{gap:16px;margin-top:28px;}
+.spark-showcase .snp-cta{background:#ad4b09;color:#fff;min-height:48px;font-size:13px;padding:0 20px;text-decoration:none;}
+.spark-showcase .snp-cta:hover{background:#873908;}
+.spark-showcase .snp-like{min-width:44px;min-height:44px;}
+.spark-showcase .snp-toast{white-space:normal;max-width:90%;bottom:20px;}
+.spark-product-viewer.snp-viewer{z-index:600;}
+.spark-product-viewer .snp-vbtn{border:0;min-width:44px;min-height:44px;color:#073763;cursor:pointer;}
+.spark-product-viewer .snp-scrim{border:0;}
+.spark-product-viewer .snp-rail button{border:0;min-height:48px;}
+@container(max-width:760px){
+ .spark-showcase .snp-body{grid-template-columns:1fr;padding:28px 20px 80px;gap:12px;}
+ .spark-showcase .snp-title{max-width:none;font-size:32px;}
+ .spark-showcase .snp-desc{max-width:none;font-size:15px;margin-top:18px;}
+ .spark-showcase .snp-stage{min-height:74cqw;max-height:none;}
+ .spark-showcase .snp-shoe{height:65cqw;margin-top:-32.5cqw;width:80%;}
+ .spark-showcase .snp-word{font-size:13cqw;max-width:90cqw;width:100%;top:8%;}
+ .spark-showcase .snp-floor{top:65%;}
+ .spark-showcase .snp-details{order:3;}
+ .spark-showcase .snp-thumbs{margin-top:12px;}
+ .spark-showcase .snp-row{margin-top:18px;}
+ .spark-showcase .snp-swatches{max-height:112px;}
+ .spark-showcase .snp-toast{border-radius:12px;width:90%;}
+}
