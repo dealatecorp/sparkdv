@@ -1,0 +1,22 @@
+import { chromium } from '@playwright/test';
+const browser = await chromium.launch({ channel: 'chromium' });
+const page = await browser.newPage({ viewport: { width: 1900, height: 900 } });
+await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' });
+await page.locator('[data-testid="landing-reveal"]').waitFor({ state: 'detached', timeout: 9000 });
+await page.getByRole('button', { name: 'Previous product' }).click();
+await page.waitForTimeout(900);
+await page.screenshot({ path: '.impeccable/review/elite-centered-desktop.png' });
+await page.setViewportSize({width:390,height:844});
+await page.goto('http://127.0.0.1:5173', { waitUntil: 'networkidle' });
+await page.locator('[data-testid="landing-reveal"]').waitFor({ state: 'detached', timeout: 9000 });
+await page.getByRole('button', { name: 'Previous product' }).click();
+await page.waitForTimeout(700);
+await page.evaluate(() => { history.scrollRestoration='manual'; document.scrollingElement.scrollTop=0; });
+await page.screenshot({path:'.impeccable/review/elite-centered-mobile.png'});
+console.log(await page.evaluate(() => {
+  const stage = document.querySelector('.brand-product-hero .snp-stage');
+  const image = [...document.querySelectorAll('.brand-product-hero .snp-shoe:not(.snp-reflect):not(.snp-sheen)')].find(el => getComputedStyle(el).visibility === 'visible');
+  const s = getComputedStyle(image);
+  return { title: document.querySelector('.snp-title')?.textContent, viewport: [innerWidth, innerHeight], stage: stage?.getBoundingClientRect().toJSON(), image: image?.getBoundingClientRect().toJSON(), source: image?.getAttribute('src'), natural: [image?.naturalWidth, image?.naturalHeight], css: {position:s.position,left:s.left,top:s.top,width:s.width,height:s.height,maxWidth:s.maxWidth,maxHeight:s.maxHeight,translate:s.translate,transform:s.transform,objectFit:s.objectFit}, noShopRange: !document.body.innerText.includes('Shop the range'), float:getComputedStyle(document.querySelector('.snp-float')).transform, tilt:getComputedStyle(document.querySelector('.snp-tilt')).transform };
+}));
+await browser.close();

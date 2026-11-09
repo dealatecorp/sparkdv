@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -6,13 +6,7 @@ import remarkGfm from "remark-gfm";
 import content from "./source-content.json";
 import assets from "./product-assets.json";
 import { products } from "./data";
-import {SparkProductShowcase} from './components/ui/spark-product-showcase';
 import EditorialHeading from './components/editorial/editorial-heading';
-import {HomeResearchStory, HomeCommunity} from './components/home/home-editorial';
-import PerspectiveTunnelHero from './components/ui/perspective-tunnel-hero';
-import './components/ui/perspective-tunnel-hero.css';
-import './components/home/home-editorial.css';
-const LandingReveal=lazy(()=>import('./components/ui/landing-reveal'));
 import protocols from "./protocols.json";
 
 export function ProductImage({ product, hero = false }) {
@@ -179,86 +173,4 @@ export function Partner() {
     </section>
   );
 }
-export function NewHome({add}) {
-const [quote,setQuote]=useState(0);
-const testimonials=[["SPARK-DV products have helped streamline my pediatric workflow. The clinical protocols are practical and well-researched.","Dr. P. Sharma","Pediatric Dentist"],["As a parent, I appreciate the clear safety information and easy-to-follow guidance for my child’s oral care.","Mrs. A. Reddy","Parent"],["The product range is comprehensive and the distribution support is excellent. A reliable partner for our network.","Mr. K. Patel","Distribution Partner"]];
-  const [category, setCategory] = useState("All products");
-  const items = products.filter(p=>category==='All products'||p.category===category).map(p=>({...p,image:assets[p.slug].local,imageWidth:assets[p.slug].width,imageHeight:assets[p.slug].height}));
-  return (
-    <div className="home-editorial">
-      <Suspense fallback={null}><LandingReveal/></Suspense>
-      <PerspectiveTunnelHero products={['nanion-lite-pro','nanion-swish','nanion-pro-plus-gummies','pedo-spark-single','pedo-spark-three','endo-spark-permanent'].map(slug=>({slug,title:assets[slug].name,src:assets[slug].local,width:assets[slug].width,height:assets[slug].height}))}/>
-      <div className="brand-principles wrap">
-        <span>Dentist-oriented</span>
-        <span>Evidence-led</span>
-        <span>R&D-driven</span>
-        <span>Made in India</span>
-      </div>
-      <HomeResearchStory/>
-      <section className="portfolio-section wrap" id="portfolio">
-        <div className="section-intro">
-          <h2>
-            Considered science.
-            <br />
-            Everyday possibilities.
-          </h2>
-          <p>
-            From daily prevention to specialized pediatric endodontics and
-            aesthetic restorations. Find your next step in care.
-          </p>
-        </div>
-        <div className="portfolio-tabs" aria-label="Filter product portfolio">
-          {[
-            "All products",
-            "Prevention",
-            "Pediatric endodontics",
-            "Restorations",
-            "Endodontic instruments",
-          ].map((c) => (
-            <button
-              key={c}
-              aria-pressed={category === c}
-              onClick={() => setCategory(c)}
-            >
-              {c === "Pediatric endodontics"
-                ? "Endodontics"
-                : c === "Endodontic instruments"
-                  ? "Instruments"
-                  : c}
-            </button>
-          ))}
-        </div>
-        <SparkProductShowcase products={items} onAdd={add}/>
-        <Link className="text-link" to="/products">
-          Explore all products & variants <ArrowRight size={18} />
-        </Link>
-      </section>
-      <section className="clinical-highlights wrap"><h2>From formulation to practice.</h2><div>{[['Biofilm + enamel defense','A combined approach that helps reduce biofilm burden while supporting natural remineralization.'],['High-risk patient focus','Designed for orthodontics, white spots, recurrent caries, and ECC — where prevention matters most.'],['Pediatric workflow optimized','Time-saving handling, moisture tolerance where relevant, and clinician-friendly protocols.']].map(([t,d])=><article key={t}><h3>{t}</h3><p>{d}</p></article>)}</div><Link className="text-link" to="/science">Explore the science <ArrowUpRight size={18}/></Link></section><HomeCommunity/>
-      <section className="audience-paths wrap">
-        {[
-          [
-            "For dentists",
-            "Protocols, product information and clinical resources.",
-            "/dentists",
-          ],
-          ["For parents", "Clear guidance for growing smiles.", "/parents"],
-          [
-            "For distributors",
-            "Build the next chapter of care with us.",
-            "/contact",
-          ],
-        ].map(([t, d, url]) => (
-          <Link to={url} key={t}>
-            <h3>
-              {t}
-              <ArrowUpRight size={23} />
-            </h3>
-            <p>{d}</p>
-          </Link>
-        ))}
-      </section>
-      <section className="home-testimonial wrap" aria-label="Testimonials"><div aria-live="polite"><div key={quote} className="home-quote-content"><blockquote>“{testimonials[quote][0]}”</blockquote><p>{testimonials[quote][1]}<span>{testimonials[quote][2]}</span></p></div></div><div className="quote-navigation">{testimonials.map((q,i)=><button key={i} onClick={()=>setQuote(i)} aria-label={`Read testimonial from ${q[1]}`} aria-pressed={quote===i}>{i+1}</button>)}</div></section>
-      
-    </div>
-  );
-}
+export { CommerceHome as NewHome } from './CommerceHome';

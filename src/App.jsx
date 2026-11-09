@@ -1,10 +1,6 @@
-import FloatingMenu from './components/ui/liquid-morph-floating-menu';
-import {SparkProductShowcase} from './components/ui/spark-product-showcase';
 import {CinematicFooter} from './components/ui/motion-footer';
-import React, { useEffect, useMemo, useState, useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import {createPortal} from 'react-dom';
-import DemoCheckout from './components/ui/demo-checkout';
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {Dock, DockItem} from './components/ui/dock';
 import {
   ArrowDown,
@@ -91,28 +87,6 @@ const scienceSteps = [
 
 function App() {
   const loc = useLocation();
-  const navigate = useNavigate();
-  const [contact, setContact] = useState(null);
-  useEffect(() => {
-    const open = (e) => {
-      if(e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      const link = e.target.closest('a[href]');
-      if(!link || link.target === '_blank') return;
-      const url = new URL(link.href, window.location.href);
-      if(url.origin !== window.location.origin || url.pathname !== '/contact') return;
-      e.preventDefault(); e.stopPropagation();
-      setMenu(false); setCartOpen(false);
-      setContact({type:url.searchParams.get('type') || 'Clinical enquiry',product:url.searchParams.get('product') || 'General enquiry'});
-    };
-    document.addEventListener('click',open,true);
-    return ()=>document.removeEventListener('click',open,true);
-  },[]);
-  useEffect(()=>{
-    if(loc.pathname === '/contact') {
-      const query=new URLSearchParams(loc.search);
-      setContact({type:query.get('type') || 'Clinical enquiry',product:query.get('product') || 'General enquiry'});
-    }
-  },[loc.pathname,loc.search]);
   const [menu, setMenu] = useState(false),
     [cartOpen, setCartOpen] = useState(false),
     [cart, setCart] = useState(() => {
@@ -123,10 +97,7 @@ function App() {
       }
     }),
     [toast, setToast] = useState(""),
-    [scrolled, setScrolled] = useState(false),
-    [announcement, setAnnouncement] = useState(
-      () => sessionStorage.getItem("spark-banner") !== "closed",
-    );
+    [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     localStorage.setItem("spark-cart", JSON.stringify(cart));
   }, [cart]);
@@ -187,7 +158,7 @@ function App() {
           "/terms": "Terms of Service",
           "/shipping": "Shipping & Returns",
           "/cart": "Your selection",
-          "/checkout": "Demo payment",
+          "/checkout": "Order enquiry",
         }[loc.pathname] ||
         "Page not found") + " | SPARK-DV";
     const description =
@@ -297,26 +268,11 @@ function App() {
     );
   const remove = (slug) =>
     setCart((prev) => prev.filter((i) => i.slug !== slug));
-  const closeBanner = () => {
-    sessionStorage.setItem("spark-banner", "closed");
-    setAnnouncement(false);
-  };
   return (
     <>
       <a className="skip" href="#main">
         Skip to content
       </a>
-      {announcement && (
-        <div className="announcement">
-          <span>Distributor & clinic enquiries open</span>
-          <a href="https://wa.me/919246901870" target="_blank" rel="noreferrer">
-            Talk with our team <ArrowUpRight size={14} />
-          </a>
-          <button aria-label="Close announcement" onClick={closeBanner}>
-            <X size={15} />
-          </button>
-        </div>
-      )}
       <header className={`site-header ${scrolled ? "compact" : ""}`}>
         <div className="header-inner">
           <Link to="/" className="brand" aria-label="SPARK-DV home">
@@ -370,8 +326,8 @@ function App() {
               <ShoppingBag size={19} />
               <span>{qty}</span>
             </button>
-            <Link className="button button-dark header-cta" to="/contact">
-              Request pricing <ArrowUpRight size={15} />
+            <Link className="button button-dark header-cta" to="/products">
+              Shop products <ArrowUpRight size={15} />
             </Link>
             <button
               className="menu-button"
@@ -388,7 +344,6 @@ function App() {
         <RoutesView add={add} cartQty={qty} cart={cart} update={update} remove={remove} />
       </main>
       <CinematicFooter />
-      {contact && <ContactPopup options={contact} onClose={()=>{setContact(null);if(loc.pathname==='/contact')navigate('/',{replace:true})}}/>}
       <a
         className="whatsapp"
         href="https://wa.me/919246901870"
@@ -496,7 +451,7 @@ function App() {
                     className="button button-dark checkout"
                     onClick={() => {setCartOpen(false); navigate('/checkout')}}
                   >
-                    Continue to demo payment <ArrowRight size={16} />
+                    Continue to order enquiry <ArrowRight size={16} />
                   </button>
                 </div>
               </>
@@ -530,8 +485,8 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
   if (path === "/school-program")
     return <EditorialPage path="/school-program" />;
   if (path === "/about") return <EditorialPage path="/about" />;
-  if (path === "/contact") return <Catalog add={add} />;
-  if (path === "/checkout") return <DemoCheckout cart={cart} />;
+  if (path === "/contact") return <Contact />;
+  if (path === "/checkout") return <CheckoutUnavailable cart={cart} />;
   if (["/privacy", "/terms", "/shipping"].includes(path))
     return <Policy path={path} />;
   if (path === "/cart") return <CartPage cart={cart} update={update} remove={remove} />;
@@ -600,143 +555,31 @@ function ProductCard({ product: p, add, compact = false }) {
 }
 function Catalog({ add }) {
   const params = new URLSearchParams(useLocation().search);
-  const [cat, setCat] = useState(
-      categories.includes(params.get("category"))
-        ? params.get("category")
-        : "All products",
-    ),
-    [query, setQuery] = useState(""),
-    [prof, setProf] = useState(false),
-    [sort, setSort] = useState("featured");
+  const [cat, setCat] = useState(categories.includes(params.get("category")) ? params.get("category") : "All products");
+  const [query, setQuery] = useState("");
+  const [prof, setProf] = useState(false);
+  const [sort, setSort] = useState("featured");
   const filtered = useMemo(() => {
-    let list = products.filter(
-      (p) =>
-        (cat === "All products" || p.category === cat) &&
-        (!prof || p.professional) &&
-        `${p.name} ${p.desc} ${p.tags.join(" ")}`
-          .toLowerCase()
-          .includes(query.toLowerCase()),
-    );
-    if (sort === "price-low")
-      list.sort((a, b) => (a.price || 999999) - (b.price || 999999));
-    if (sort === "price-high")
-      list.sort((a, b) => (b.price || 0) - (a.price || 0));
-    if (sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
+    const list = products.filter(p => (cat === "All products" || p.category === cat) && (!prof || p.professional) && `${p.name} ${p.desc} ${p.tags.join(" ")}`.toLowerCase().includes(query.toLowerCase()));
+    if (sort === "price-low") list.sort((a,b)=>(a.price??999999)-(b.price??999999));
+    if (sort === "price-high") list.sort((a,b)=>(b.price??0)-(a.price??0));
+    if (sort === "name") list.sort((a,b)=>a.name.localeCompare(b.name));
     return list;
   }, [cat, query, prof, sort]);
-  return (
-    <>
-      <PageHero
-        eyebrow="THE PORTFOLIO"
-        title={
-          <>
-            Products for
-            <br />
-            <em>pediatric care.</em>
-          </>
-        }
-        copy="Discover clinically oriented dental care solutions for prevention, pediatric endodontics, aesthetic restorations, and digital space maintenance."
-      />
-      <section className="catalog-section wrap">
-        <div className="catalog-toolbar">
-          <div className="search-field">
-            <Search size={17} />
-            <input
-              aria-label="Search products"
-              placeholder="Search the portfolio"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            {query && (
-              <button aria-label="Clear search" onClick={() => setQuery("")}>
-                <X size={15} />
-              </button>
-            )}
-          </div>
-          <label className="sort-label">
-            Sort by{" "}
-            <select value={sort} onChange={(e) => setSort(e.target.value)}>
-              <option value="featured">Featured</option>
-              <option value="name">Name</option>
-              <option value="price-low">Price: low to high</option>
-              <option value="price-high">Price: high to low</option>
-            </select>
-          </label>
-        </div>
-        <div className="catalog-content">
-          <div className="catalog-filter-status"><p>Browse by category using the product menu below.</p><span>Search and sort your selection above.</span></div>
-          <FloatingMenu items={categories.map(c=>({label:c,count:c==='All products'?products.length:products.filter(p=>p.category===c).length,selected:cat===c,onClick:()=>setCat(c)}))}>
-            <label className="check-filter">
-              <input
-                type="checkbox"
-                checked={prof}
-                onChange={(e) => setProf(e.target.checked)}
-              />{" "}
-              Professional products
-            </label>
-            <button
-              className="clear-filter"
-              onClick={() => {
-                setCat("All products");
-                setProf(false);
-                setQuery("");
-              }}
-            >
-              Clear filters
-            </button>
-          </FloatingMenu>
-          <div className="catalog-results">
-            <div className="results-meta">
-              <span>{filtered.length} products</span>
-              <span>
-                {cat !== "All products" ? cat : "Complete portfolio"}
-                {prof ? " · Professional" : ""}
-              </span>
-            </div>
-            {filtered.length ? (
-              <SparkProductShowcase className="catalog-showcase" products={filtered.map(p=>({...p,image:productAssets[p.slug].local,imageWidth:productAssets[p.slug].width,imageHeight:productAssets[p.slug].height}))} onAdd={add}/>
-            ) : (
-              <div className="no-results">
-                <Search size={28} />
-                <h3>No products found</h3>
-                <p>Try another search or clear the filters.</p>
-                <button
-                  className="button button-outline"
-                  onClick={() => {
-                    setCat("All products");
-                    setProf(false);
-                    setQuery("");
-                  }}
-                >
-                  Clear filters
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-      <section className="need-help">
-        <div className="wrap need-help-inner">
-          <div>
-            <p className="eyebrow">PERSONAL GUIDANCE</p>
-            <h2>Need help choosing?</h2>
-            <p>
-              Our clinical team can help you select the right products for your
-              practice or patients.
-            </p>
-          </div>
-          <Link className="button button-dark" to="/contact">
-            Request distributor pricing <ArrowRight size={16} />
-          </Link>
-          <Link className="text-link" to="/dentists">
-            Clinical resources <ArrowUpRight size={16} />
-          </Link>
-        </div>
-      </section>
-    </>
-  );
+  const clearFilters=()=>{setCat("All products");setProf(false);setQuery("")};
+  return <>
+    <section className="catalog-heading wrap"><div><p className="shop-hero-context">SPARK-DV / PRODUCTS</p><h1>Shop the range.</h1><p>Browse products for pediatric and preventive dental care.</p></div><Link className="button button-dark" to="/contact">Request professional pricing <ArrowUpRight size={16}/></Link></section>
+    <section className="catalog-section wrap" aria-label="Product catalogue">
+      <div className="catalog-toolbar"><div className="search-field"><Search size={18}/><input aria-label="Search products" placeholder="Search products" value={query} onChange={e=>setQuery(e.target.value)}/>{query&&<button aria-label="Clear search" onClick={()=>setQuery("")}><X size={15}/></button>}</div>
+        <label className="sort-label">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="featured">Featured</option><option value="name">Name</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
+      </div>
+      <div className="catalog-category-scroll" role="group" aria-label="Filter products by category">{categories.map(c=><button key={c} aria-pressed={cat===c} onClick={()=>setCat(c)}>{c}</button>)}</div>
+      <div className="catalog-meta-row"><span>{filtered.length} products</span><label className="check-filter"><input type="checkbox" checked={prof} onChange={e=>setProf(e.target.checked)}/> Professional products</label><button className="clear-filter" onClick={clearFilters}>Clear filters</button></div>
+      {filtered.length ? <div className="product-grid commerce-product-grid">{filtered.map(p=><ProductCard key={p.slug} product={p} add={add}/>)}</div> : <div className="no-results"><Search size={28}/><h2>No products found</h2><p>Try a different name or category.</p><button className="button button-outline" onClick={clearFilters}>Clear filters</button></div>}
+    </section>
+    <section className="need-help"><div className="wrap need-help-inner"><div><h2>Need help choosing?</h2><p>Ask our team about products, professional pricing or availability.</p></div><Link className="button button-dark" to="/contact">Talk to our team <ArrowUpRight size={16}/></Link></div></section>
+  </>;
 }
-
 function PageHero({ eyebrow, title, copy, actions, side }) {
   return (
     <section className="page-hero wrap">
@@ -791,7 +634,10 @@ function ProductFamilyDetail({ familySlug, add }) {
         }
       />
       <section className="wrap product-source">
-        <SourceArticle path={`/products/${familySlug}`} embedded />
+        <details className="product-information-disclosure">
+          <summary>Full product information and clinical details</summary>
+          <SourceArticle path={`/products/${familySlug}`} embedded />
+        </details>
       </section>
       <section className="section wrap">
         <SectionHead
@@ -819,10 +665,7 @@ function ProductFamilyDetail({ familySlug, add }) {
           }
         />
         <div className="detail-image family-image">
-          <img
-            src={img(variants[0].img)}
-            alt={`${title} products by SPARK-DV`}
-          />
+          <ProductImage product={variants[0]} hero />
         </div>
         <div className="detail-facts">
           {(files
@@ -928,6 +771,14 @@ function ProductDetail({ slug, add }) {
               <strong>{p.variant}</strong>
             </div>
           )}
+          {p.familySlug && products.filter((item) => item.familySlug === p.familySlug).length > 1 && (
+            <div className="variant-selector" aria-label="Choose a product variant">
+              <span>OTHER VARIANTS</span>
+              <div>{products.filter((item) => item.familySlug === p.familySlug).map((item) => (
+                <Link key={item.slug} aria-current={item.slug === p.slug ? "page" : undefined} to={`/products/${item.slug}`}>{item.name}</Link>
+              ))}</div>
+            </div>
+          )}
           {p.coming ? (
             <div className="coming-box">
               <span>COMING SOON</span>
@@ -962,7 +813,10 @@ function ProductDetail({ slug, add }) {
         <a href="#related">Related products</a>
       </div>
       <section className="wrap product-source" id="overview">
-        <SourceArticle path={`/products/${p.slug}`} embedded />
+        <details className="product-information-disclosure">
+          <summary>Full product information and clinical details</summary>
+          <SourceArticle path={`/products/${p.slug}`} embedded />
+        </details>
       </section>
       <section className="section wrap detail-body" id="overview-summary">
         <SectionHead
@@ -1161,20 +1015,7 @@ function Contact() {
     </>
   );
 }
-function ContactPopup({options,onClose}) {
-  const dialog=useRef(null);
-  useEffect(()=>{
-    const el=dialog.current;
-    const previous=document.activeElement;
-    const overflow=document.body.style.overflow;
-    el.showModal();document.body.style.overflow='hidden';
-    return ()=>{el.close();document.body.style.overflow=overflow;if(previous?.isConnected)previous.focus()};
-  },[]);
-  return createPortal(<dialog ref={dialog} className="contact-popup" aria-labelledby="contact-popup-title" onCancel={e=>{e.preventDefault();onClose()}} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)onClose()}}}>
-    <div className="contact-popup-head"><h2 id="contact-popup-title">Let’s talk.</h2><button type="button" aria-label="Close contact form" onClick={onClose}><X size={22}/></button></div>
-    <div className="contact-popup-body"><EnquiryForm defaultType={options.type} defaultProduct={options.product}/></div>
-  </dialog>,document.body);
-}
+
 function EnquiryForm({ defaultType, defaultProduct = 'General enquiry' }) {
   const [done, setDone] = useState(false),
     [error, setError] = useState("");
@@ -1330,7 +1171,18 @@ function Policy({ path }) {
     </>
   );
 }
-function CartPage({cart,update,remove}) {return <section className="section wrap order-page"><h1>Your selection.</h1>{cart.length?<><div className="order-items">{cart.map(p=><article key={p.slug}><Link to={`/products/${p.slug}`}><ProductImage product={p}/></Link><div><h2>{p.name}</h2><p>{money(p.price)}</p><div className="quantity"><button onClick={()=>update(p.slug,-1)} aria-label={`Decrease ${p.name} quantity`}><Minus size={16}/></button><span>{p.qty}</span><button onClick={()=>update(p.slug,1)} aria-label={`Increase ${p.name} quantity`}><Plus size={16}/></button><button onClick={()=>remove(p.slug)} aria-label={`Remove ${p.name}`}><X size={16}/></button></div></div></article>)}</div><h2>Subtotal {money(cart.reduce((sum,p)=>sum+(p.price||0)*p.qty,0))}</h2><p>Pricing, availability and delivery are confirmed by our team.</p><Link className="button button-dark" to="/checkout">Continue to demo payment <ArrowRight size={18}/></Link><a className="button button-outline" href={'mailto:sparkdv310@gmail.com?subject='+encodeURIComponent('SPARK-DV order enquiry')+'&body='+encodeURIComponent(cart.map(p=>p.name+' × '+p.qty).join('\n'))}>Prepare order enquiry <ArrowUpRight size={18}/></a></>:<><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Explore products <ArrowRight size={18}/></Link></>}</section>}
+function orderEnquiryHref(cart) {
+  const lines=cart.map(item=>`${item.name} × ${item.qty}`);
+  const body=["Hello SPARK-DV team,", "Please confirm current pricing and availability for:", ...lines, "", "Please share shipping and order details."];
+  return 'mailto:sparkdv310@gmail.com?subject='+encodeURIComponent('SPARK-DV product enquiry')+'&body='+encodeURIComponent(body.join('\n'));
+}
+function CartPage({cart,update,remove}) {
+  const subtotal=cart.reduce((sum,item)=>sum+(item.price||0)*item.qty,0);
+  return <section className="order-page wrap"><p className="shop-hero-context">SPARK-DV / YOUR SELECTION</p><h1>Your cart.</h1>{cart.length?<><div className="order-items">{cart.map(item=><article key={item.slug}><Link to={`/products/${item.slug}`}><ProductImage product={item}/></Link><div><h2>{item.name}</h2><p>{money(item.price)}</p><div className="quantity"><button onClick={()=>update(item.slug,-1)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16}/></button><span aria-live="polite">{item.qty}</span><button onClick={()=>update(item.slug,1)} aria-label={`Increase ${item.name} quantity`}><Plus size={16}/></button><button onClick={()=>remove(item.slug)} aria-label={`Remove ${item.name}`}><X size={16}/></button></div></div></article>)}</div><div className="cart-summary"><h2>Subtotal <strong>{money(subtotal)}</strong></h2><p>This is an enquiry selection. The team will confirm current pricing, availability, shipping and order details.</p><a className="button button-dark" href={orderEnquiryHref(cart)}>Prepare order enquiry <ArrowUpRight size={17}/></a></div></>:<div className="cart-empty"><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Shop products <ArrowRight size={17}/></Link></div>}</section>;
+}
+function CheckoutUnavailable({cart}) {
+  return <section className="order-page wrap"><p className="shop-hero-context">SPARK-DV / ORDER ENQUIRY</p><h1>Online payment isn’t available yet.</h1><p className="checkout-unavailable-copy">Your cart is saved on this device. Send the selected products to our team to confirm current pricing, availability and delivery details.</p>{cart.length?<div className="checkout-selected">{cart.map(item=><p key={item.slug}>{item.name} <span>× {item.qty}</span></p>)}<a className="button button-dark" href={orderEnquiryHref(cart)}>Prepare order enquiry <ArrowUpRight size={17}/></a></div>:<p>Your cart is empty. <Link to="/products">Browse products</Link>.</p>}<Link className="checkout-back-link" to="/cart">Back to cart <ArrowRight size={15}/></Link></section>;
+}
 function NotFound() {
   return (
     <div className="section wrap not-found">

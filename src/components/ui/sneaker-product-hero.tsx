@@ -101,6 +101,8 @@ export type SneakerProductHeroProps = {
   height?: number | string
   className?: string
   style?: React.CSSProperties
+  /** Hide gallery controls when only one verified package photo is available. */
+  showGallery?: boolean
 }
 
 const STAR = "M10 1.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.6 7.7l5.8-.8z"
@@ -209,6 +211,7 @@ export default function SneakerProductHero({
   height = "100svh",
   className,
   style,
+  showGallery = true,
 }: SneakerProductHeroProps) {
   const count = variants.length
   const [active, setActive] = React.useState(() => Math.min(Math.max(defaultVariant, 0), Math.max(count - 1, 0)))
@@ -234,7 +237,7 @@ export default function SneakerProductHero({
 
   const stats = sizeStats(
     sizes.find((s) => s.label === size),
-    { price: product ? (product.price ?? 0) * Number(size || 1) : price, rating, reviews },
+    { price: product ? (product.price ?? 0) : price, rating, reviews },
   )
 
   const shoeRefs = React.useRef([] as (HTMLImageElement | null)[])
@@ -810,7 +813,7 @@ export default function SneakerProductHero({
           <h2 className="snp-title">{title}</h2>
           <p className="snp-desc">{description}</p>
           {product && <Link className="snp-details" to={`/products/${product.slug}`}>Full product details ↗</Link>}
-          <div className="snp-thumbs">
+          {showGallery && <div className="snp-thumbs">
             <span className="snp-thumbset" ref={thumbsRef}>
               {views.slice(0, 3).map((vw, i) => (
                 <button key={i} type="button" className="snp-thumb" aria-label={`View ${vw.label ?? `photo ${i + 1}`}`} onClick={() => openViewer(i)}>
@@ -823,7 +826,7 @@ export default function SneakerProductHero({
                 +{more}
               </button>
             )}
-          </div>
+          </div>}
         </div>
 
         <div
@@ -834,7 +837,7 @@ export default function SneakerProductHero({
           onPointerUp={onStageUp}
           onPointerCancel={onStageUp}
           onClick={() => {
-            if (lastPointer.current === "touch") openViewer(0)
+            if (showGallery && lastPointer.current === "touch") openViewer(0)
           }}
         >
           {variants.map((vv, i) => (

@@ -2,6 +2,10 @@
 
 React 18 / Vite website with original SPARK-DV assets, a typed product shelf, a WebGL logo reveal and a contextual cinematic footer.
 
+## Ecommerce-first redesign direction
+
+The approved whole-site redesign brief prioritizes product discovery and shopping on the homepage, reduces long-form copy while preserving clinical and legal content, and specifies accessible scroll- and pointer-responsive interactions. See [the PRD](./SPARK-DV-Commerce-First-Redesign-PRD.md) and [the design brief](./SPARK-DV-Commerce-First-Redesign-Design.md). These documents describe the target direction; they do not mean the redesign has been implemented.
+
 ## Run
 
 ```sh
@@ -44,7 +48,7 @@ Before public launch, connect an approved submission/order service if automated 
 
 ## Review and validation
 
-- Homepage hero: `src/components/ui/perspective-tunnel-hero.tsx` adapts the supplied image-tunnel component with six original, individually matched product photographs. Native page scroll controls CSS perspective; mouse movement adds bounded parallax. Product cards link to their matching detail pages. Mobile uses a swipeable rail with previous/next controls; reduced motion removes the depth animation. It uses the existing `motion/react` package, not a duplicate Framer Motion installation. No WebGL models or 3D libraries were reintroduced.
+- Homepage: the supplied `glass-prism-hero.tsx` draws a scroll-rotating prism and cursor-controlled light in WebGL. It uses DM Sans, pauses offscreen, provides a text fallback when WebGL is unavailable, and caps narrow-screen rendering at 1.5x device resolution. The mapped 17-product selector appears immediately after the scroll animation; wide and portrait photos fit centered in the stage with `object-fit: contain`. The separate “Shop the range” card rail was removed from the homepage; the complete catalogue remains under Products. Legacy tunnel components remain in `src/components/ui/` but are not mounted on the homepage.
 - The homepage's scroll-linked research spread, mobile topic controls, and community/testimonial transitions remain intact. Other pages retain their existing layouts.
 
 - The 3D scenes were removed from all five editorial pages at the user's request. Responsive headings, original photography, clinical protocols and source articles remain. `src/components/editorial/editorial-heading.tsx` provides the shared heading layout.

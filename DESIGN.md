@@ -2,6 +2,12 @@
 
 Updated 8 November 2026. The prior serif direction is archived in audit/DESIGN-before.md. The Cleer reference and user-supplied shelf, glass reveal and footer define this redesign.
 
+## Commerce-first redesign — implemented
+
+On 9 November 2026, the user set a whole-site direction: prioritize ecommerce, reduce long introductory copy, and make browsing dynamic through scroll and pointer interaction. The implementation now begins with the scroll-responsive Glass Prism animation, followed directly by the featured product showcase. The full catalogue remains available through Products. Original mapped package photography, clinical and safety content, professional-use guidance and legal routes are retained. No 3D product models or generated/stock product substitutes are used.
+
+Use [SPARK-DV-Commerce-First-Redesign-PRD.md](./SPARK-DV-Commerce-First-Redesign-PRD.md) for requirements and [SPARK-DV-Commerce-First-Redesign-Design.md](./SPARK-DV-Commerce-First-Redesign-Design.md) for references, responsive behavior and motion safeguards. The older tunnel and liquid-morph components below are legacy source files, not active homepage sections.
+
 ## Identity and tokens
 
 Original SPARK-DV logo and product imagery. Logo navy #073763, footer #062b50, warm canvas #fffcf8, orange #e78308, coral #e55e36 and purple #63218b. Accessible action orange #ad4b09 (hover #873908), muted text #526174 and divider #ded8d4. Warm orange/coral/purple gradients on the hero and product showcase; pale lilac research surface.
@@ -13,8 +19,9 @@ Self-hosted DM Sans: regular/medium display 44–84px, route headings 43–68px,
 ## Components
 
 - Sticky header, original logo, accessible Products disclosure, mobile menu and real cart.
-- Supplied Perspective Tunnel hero adapted to six complete original product photographs, centered liquid brand typography and real product links. The supplied LiquidText shader renders both headline lines in brand colours, reacts to pointer/touch movement, and settles after release. Native text stays available for accessibility, reduced motion, loading and WebGL failure. Rendering is capped at 2x resolution (1.5x on touch), runs only during interaction/settling, and pauses offscreen or in hidden tabs. Native scroll and bounded pointer movement drive CSS perspective on desktop; mobile uses a swipeable product rail, and reduced motion shows a static arrangement. No 3D models are used.
-- User-supplied Sneaker Product Hero integrated on the homepage and /products with SPARK-DV photographs and data. Retains three-column composition, animated product swaps, changing gradient backdrops, reflections, pointer tilt/loupe, gallery and favourite feedback. Product selectors replace shoe colourways; quantity replaces shoe size; factual category replaces demo ratings. All 17 products remain accessible through filters and selectors, with the existing cart, search and sorting. Favourites persist locally.
+- User-supplied Glass Prism Hero on the homepage, with SPARK-DV wordmark, pointer-controlled light and scroll rotation/fade. WebGL resolution is capped at 2x desktop and 1.5x on narrow screens; the scene pauses when offscreen and has a semantic no-WebGL heading fallback.
+- User-supplied Sneaker Product Hero appears immediately after the prism scroll scene and uses the mapped SPARK-DV product records and photos. Product navigation updates image, name and price together; quantity controls add the selected quantity to the existing cart. Package photos use a full-frame `contain` image stage to center wide and tall images. Demo shoe ratings and unsupported gallery angles are hidden.
+- All 17 products are available in the Products catalogue with search, category filters, sorting, product pages and cart actions. The separate “Shop the range” homepage rail was removed by request.
 - Product dialog with original image zoom, source description, prices, professional-use status, quantity, existing-cart integration, disclosures and full product-page link. No invented ratings, sizes, delivery promises or back-of-pack view.
 - Source-specific product and editorial pages with original clinical diagrams, founder portrait, responsive tables, six recovered protocols and FAQs.
 - Supplied WebGL glass reveal with original SPARK-DV colours, bounded playback, skip, replay on reload and reduced-motion static logo.
@@ -22,7 +29,7 @@ Self-hosted DM Sans: regular/medium display 44–84px, route headings 43–68px,
 
 ## Motion and access
 
-The homepage has a separate `.home-editorial` surface: a perspective product-photo hero with an interactive liquid headline and uncropped original packaging, followed by a research spread. On desktop, a sticky illustration follows three editorial chapters; on mobile and reduced motion, explicit topic buttons select one article. Illustration transitions sequence the outgoing and incoming images so scientific labels do not overlap. Community photography uses one bounded reveal, and testimonial changes provide short feedback. This update is homepage-only and uses no 3D models.
+The homepage’s prism uses native page scrolling to rotate and dim the glass, while pointer movement adjusts its light. The product showcase immediately follows and floats, tilts gently on desktop, and stacks vertically on mobile. The product selector works with touch and keyboard. Product photos use `object-fit: contain`, and mobile WebGL rendering is capped at 1.5x device resolution. Reduced-motion preferences shorten the prism intro and disable the product float/tilt.
 
 CSS handles small hover feedback. Motion handles existing shelf, accordion and footer effects; GSAP drives the supplied product showcase. Shelf spring is 0.55s, no bounce. Marquee supports pause and stops on hover/focus. Reduced motion disables transforms and uses a static logo. Dialogs contain focus, make background content inert and restore focus. Product photographs use object-fit: contain.
 
@@ -32,9 +39,9 @@ Reference: https://non-linear.studio/work/cleer, a design-only case study. Firec
 
 ## Checkout and contact interactions
 
-Product selection uses previous/next arrows with wraparound and a live name/counter. `/checkout` provides a clearly marked demo payment flow with card/UPI fixtures, processing, animated success/rejection, retry and an unchanged saved cart. It collects no payment credentials and creates no order. Contact links open a native modal dialog over the current page, retaining enquiry type/product context, keyboard focus, Escape/backdrop closing and page scroll. Direct contact URLs open the same dialog over the catalogue.
+Product selection uses previous/next arrows with wraparound and a live name/counter. The cart and checkout routes lead to an order enquiry; the repository has no payment gateway or order API, so the site does not claim an order or payment succeeded. Contact is a dedicated route with enquiry context and validation.
 
 The header uses the supplied proximity/spring dock adapted to visible text labels, with the existing Motion runtime. Text-sized items magnify on desktop pointer/keyboard focus, preserve semantic links and the Products disclosure, and become a scrollable stacked dock in the mobile menu. Reduced motion disables magnification.
 
 
-The catalogue category list is now the user-supplied liquid-morph floating menu: a warm gradient pill opens into a navy panel with rolling text, category counts, professional filtering and reset. Search and sorting remain above the showcase. The menu closes on selection, Escape, focus departure or outside pointer press, and respects reduced motion.
+The catalogue uses clear search, sorting and category filters above standard product cards. The user-supplied liquid-morph component remains in the repository but is not active on the homepage or catalogue.
