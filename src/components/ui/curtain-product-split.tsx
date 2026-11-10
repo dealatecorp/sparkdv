@@ -38,25 +38,26 @@ function CurtainPhotoCard({
   const norm = wingIndex / (half - 1) - 0.5;
   const side = isLeft ? -1 : 1;
   const width = stage.isMobile ? Math.min(100, stage.width * .22) : Math.min(196, stage.width * .16);
-  const height = width * (stage.isMobile ? 1.35 : 1.25);
+  // Four desktop rows must fit even on short screens, including tilt and gaps.
+  const height = stage.isMobile ? width * 1.35 : Math.min(width * 1.25, (stage.height - 160) / half);
   const arch = Math.cos(norm * Math.PI) * stage.width * 0.025;
-  const targetX = stage.isMobile ? side * stage.width * (wingIndex % 2 ? .35 : .12) : side * (stage.width * .37 + arch);
+  const targetX = stage.isMobile ? side * stage.width * (wingIndex % 2 ? .37 : .125) : side * (stage.width * .37 + arch);
   const targetY = stage.isMobile
     ? (Math.floor(wingIndex / 2) - .5) * (height + 12)
-    : norm * Math.min(stage.height * .66, stage.height * .9 - height);
+    : (wingIndex - (half - 1) / 2) * (height + 32);
   const initialX = side * wingIndex * 4;
   const initialY = norm * 10;
   const reveal = useTransform(progress, (value) => (reduced ? 1 : value));
   const x = useTransform([reveal, pointerX], ([p, px]: number[]) => {
     const ease = 1 - Math.pow(1 - p, 3);
     const parallax = stage.isMobile ? 8 : 16;
-    return initialX + (targetX - initialX) * ease + px * (isLeft ? -parallax : parallax) * ease;
+    return stage.isMobile ? targetX : initialX + (targetX - initialX) * ease + px * (isLeft ? -parallax : parallax) * ease;
   });
   const y = useTransform([reveal, pointerY], ([p, py]: number[]) => {
     const ease = 1 - Math.pow(1 - p, 3);
-    return initialY + (targetY - initialY) * ease + py * (stage.isMobile ? 6 : 14) * ease;
+    return targetY + (stage.isMobile ? 0 : py * 14 * ease);
   });
-  const rotate = useTransform(reveal, [0, 0.45, 1], [side * wingIndex * 2, (isLeft ? -1 : 1) * (stage.isMobile ? 6 : 12), side * norm * (stage.isMobile ? 9 : 18)]);
+  const rotate = useTransform(reveal, [0, 0.45, 1], [side * wingIndex, (isLeft ? -1 : 1) * (stage.isMobile ? 1 : 2), side * norm * (stage.isMobile ? 3 : 6)]);
   const scale = useTransform(reveal, [0, 0.5, 1], [0.18, 0.98, 1]);
   const opacity = useTransform(reveal, [0, 0.16, 0.48], [0, 0.82, 1]);
 
