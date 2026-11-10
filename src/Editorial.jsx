@@ -128,7 +128,7 @@ export function EditorialPage({ path }) {
           </p>
           {[
             ["/about", "Our story"],
-            ["/science", "Science & research"],
+            ["/science", "Blogs"],
             ["/dentists", "For dentists"],
             ["/parents", "For parents"],
             ["/school-program", "In the community"],

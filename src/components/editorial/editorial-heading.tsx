@@ -1,6 +1,6 @@
 const pages: Record<string, {number: string; label: string; title: string; intro: string}> = {
   '/science': {
-    number: '01', label: 'Science & research', title: 'Small scale.\nMeaningful science.',
+    number: '01', label: 'Blogs', title: 'Blogs',
     intro: 'Explore the materials and research behind SPARK-DV’s approach to pediatric and preventive dentistry.',
   },
   '/dentists': {

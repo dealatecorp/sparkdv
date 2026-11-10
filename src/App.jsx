@@ -155,7 +155,7 @@ function App() {
     const page = sourceContent[loc.pathname];
     const p = products.find((p) => loc.pathname === "/products/" + p.slug);
     document.title =
-      (p?.name ||
+      ((loc.pathname === "/science" ? "Blogs" : null) || p?.name ||
         (page?.title !== "404" ? page?.title : null) ||
         {
           "/contact": "Contact",
@@ -295,7 +295,7 @@ function App() {
           >
             <div className="mobile-menu-content">
               <div className="mobile-menu-top"><span>Explore SPARK-DV</span><button type="button" aria-label="Close navigation" onClick={()=>setMenu(false)}><X size={23}/></button></div>
-              <div className="mobile-menu-links">{[['/','Home'],['/products','Products'],['/science','Science'],['/about','About'],['/contact','Contact']].map(([to,label])=><Link key={to} to={to} onClick={()=>setMenu(false)} aria-current={loc.pathname===to?'page':undefined}><TextRoll center>{label}</TextRoll><ArrowUpRight size={22}/></Link>)}</div>
+              <div className="mobile-menu-links">{[['/','Home'],['/products','Products'],['/science','Blogs'],['/about','About'],['/contact','Contact']].map(([to,label])=><Link key={to} to={to} onClick={()=>setMenu(false)} aria-current={loc.pathname===to?'page':undefined}><TextRoll center>{label}</TextRoll><ArrowUpRight size={22}/></Link>)}</div>
               <Link className="mobile-menu-cart" to="/cart" onClick={()=>setMenu(false)}><ShoppingBag size={19}/>Your cart <span>{qty} items</span></Link>
               <p>Dental science. Everyday care.</p>
             </div>
@@ -323,7 +323,7 @@ function App() {
               </div>
             </details></DockItem>
             {[
-              ['/science','Science',78],['/about','About',67],['/contact','Contact',82],
+              ['/science','Blogs',78],['/about','About',67],['/contact','Contact',82],
             ].map(([to,label,width])=><DockItem key={to} baseWidth={width}><Link to={to} aria-current={loc.pathname===to?'page':undefined}>{label}</Link></DockItem>)}
             </Dock>
             <div className="mobile-actions">
