@@ -1,0 +1,10 @@
+import {chromium} from '@playwright/test';
+const b=await chromium.launch({channel:'chromium'});const p=await b.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));
+for(const w of [390,320,1440]){
+ await p.setViewportSize({width:w,height:w===1440?1000:844});await p.goto('http://127.0.0.1:5173',{waitUntil:'networkidle'});await p.locator('[data-testid="landing-reveal"]').waitFor({state:'detached',timeout:12000});await p.waitForTimeout(700);await p.screenshot({path:`.impeccable/review/final-home-${w}.png`});
+ if(w===390){await p.getByRole('button',{name:'Open menu',exact:true}).click();await p.screenshot({path:'.impeccable/review/final-menu-mobile.png'});console.log({menu:await p.locator('.nav.open').boundingBox()});await p.keyboard.press('Escape');}
+ await p.goto('http://127.0.0.1:5173/science',{waitUntil:'networkidle'});await p.screenshot({path:`.impeccable/review/final-science-${w}.png`});await p.getByRole('button',{name:'Read Antibacterial action',exact:true}).click();await p.waitForTimeout(600);console.log({w,dialog:await p.locator('dialog').evaluate(e=>e.open),article:await p.locator('.science-dialog-copy').innerText()});await p.screenshot({path:`.impeccable/review/final-science-article-${w}.png`});await p.keyboard.press('Escape');console.log({closed:await p.locator('dialog').evaluate(e=>!e.open),focus:await p.evaluate(()=>document.activeElement?.getAttribute('aria-label'))});
+ await p.goto('http://127.0.0.1:5173/about',{waitUntil:'networkidle'});await p.getByRole('button',{name:'Family care',exact:true}).click();await p.waitForTimeout(700);await p.screenshot({path:`.impeccable/review/final-about-${w}.png`});
+ await p.locator('.founder-tunnel').scrollIntoViewIfNeeded();await p.evaluate(()=>{const el=document.querySelector('.founder-tunnel-stage');window.scrollBy(0,el.getBoundingClientRect().top-100+250);});await p.waitForTimeout(500);await p.screenshot({path:`.impeccable/review/final-founder-${w}.png`});console.log({w,founder:await p.locator('.founder-tunnel-image').count(),overflow:await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth)});
+}
+console.log({errors});await b.close();

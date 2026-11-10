@@ -596,3 +596,245 @@ button, a, input, select, summary { accent-color: var(--shop-accent); }
     will-change: transform;
   }
 }
+/* Shopping layouts and the mobile navigation share the site's navy and paper. */
+.mobile-menu-content { display: none; }
+.text-roll { position: relative; display: block; overflow: hidden; color: inherit; line-height: 1.15; }
+.text-roll-layer { display: block; }
+.text-roll-bottom { position: absolute; inset: 0; }
+.checkout-shell { padding-block: 36px 80px; }
+.checkout-return { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; text-decoration: none; }
+.checkout-title { display:flex; align-items:baseline; justify-content:space-between; gap:20px; margin-block:24px 12px; }
+.checkout-title h1, .checkout-empty h1 { margin:0; font-size:clamp(34px,4vw,52px); font-weight:500; letter-spacing:-.035em; }
+.checkout-title>span { color:var(--shop-muted); font-size:14px; }
+.checkout-notice { max-width:76ch; margin:0 0 28px; color:var(--shop-muted); font-size:14px; line-height:1.6; }
+.checkout-layout { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:28px; align-items:start; }
+.checkout-steps { display:grid; gap:18px; min-width:0; }
+.checkout-step, .checkout-summary { border:1px solid var(--shop-line); border-radius:8px; background:#fffdfa; padding:24px; }
+.checkout-step-title { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.checkout-step-title>span { display:grid; place-items:center; flex-shrink:0; width:28px; height:28px; border-radius:50%; background:var(--shop-stage); font-size:14px; font-weight:600; }
+.checkout-step-title h2 { margin:0; font-size:20px; font-weight:500; }
+.checkout-step-title>button, .checkout-step-title>a { margin-left:auto; border:0; background:transparent; color:var(--shop-ink); text-decoration:underline; font-size:13px; cursor:pointer; }
+.checkout-fields { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.checkout-fields label { display:grid; gap:7px; font-size:14px; }
+.checkout-fields input { min-width:0; width:100%; min-height:46px; padding:10px 12px; border:1px solid #a8b2ba; border-radius:4px; background:white; color:var(--shop-ink); font:inherit; box-sizing:border-box; }
+.checkout-wide { grid-column:1/-1; }
+.checkout-country { font-size:14px; margin-block:18px; }
+.checkout-address-review { display:grid; gap:6px; font-style:normal; font-size:14px; overflow-wrap:anywhere; }
+.checkout-payment { display:flex; gap:14px; align-items:start; }
+.checkout-payment>svg { flex-shrink:0; margin-top:4px; }
+.checkout-payment h3 { font-size:16px; margin:0 0 8px; }
+.checkout-payment p { font-size:14px; line-height:1.6; color:var(--shop-muted); margin:0; }
+.checkout-item { display:grid; grid-template-columns:90px minmax(0,1fr) auto; gap:16px; padding:20px 0; border-top:1px solid var(--shop-line); align-items:start; }
+.checkout-item-image { height:112px; background:var(--shop-stage); padding:8px; }
+.checkout-item-image img { width:100%; height:100%; object-fit:contain; }
+.checkout-item-copy h3 { margin:0 0 7px; font-size:16px; font-weight:500; }
+.checkout-item-copy>a { text-decoration:none; }
+.checkout-item-copy>p { margin:0 0 12px; font-size:13px; color:var(--shop-muted); }
+.checkout-item>strong { font-size:16px; }
+.checkout-quantity { display:flex; align-items:center; gap:0; }
+.checkout-quantity button { display:grid; place-items:center; width:38px; height:38px; border:1px solid var(--shop-line); background:white; color:var(--shop-ink); cursor:pointer; }
+.checkout-quantity>span { width:32px; text-align:center; font-size:14px; }
+.checkout-quantity .checkout-remove { margin-left:10px; border:0; background:transparent; }
+.checkout-summary { position:sticky; top:106px; }
+.checkout-summary h2 { margin:0 0 20px; font-size:22px; font-weight:500; }
+.checkout-summary dl { margin:0; }
+.checkout-summary dl>div { display:flex; justify-content:space-between; gap:18px; padding:8px 0; font-size:13px; }
+.checkout-summary dd { margin:0; text-align:right; }
+.checkout-summary dl>.checkout-total { padding-top:20px; margin-top:12px; border-top:1px solid var(--shop-line); font-size:17px; font-weight:600; }
+.checkout-summary>p { font-size:13px; line-height:1.6; color:var(--shop-muted); }
+.checkout-summary>.button { width:100%; min-height:48px; justify-content:center; }
+.checkout-summary>.button:disabled { opacity:.5; cursor:not-allowed; }
+.checkout-summary>small { display:block; margin-top:12px; font-size:12px; }
+.checkout-summary>a { font-size:13px; }
+.checkout-copy { width:100%; min-height:44px; margin-top:10px; border:1px solid var(--shop-line); background:transparent; color:var(--shop-ink); cursor:pointer; }
+.checkout-summary .checkout-status:empty { display:none; }
+.checkout-empty { display:grid; justify-items:center; gap:18px; text-align:center; padding:65px 20px; }
+.checkout-empty h2,.checkout-empty p { margin:0; }
+.science-journal { padding-block:48px 80px; }
+.journal-heading { padding-bottom:34px; border-bottom:1px solid var(--shop-line); margin-bottom:34px; }
+.journal-heading h1 { font-size:clamp(38px,5.5vw,72px); font-weight:400; letter-spacing:-.04em; margin:0 0 14px; }
+.journal-heading>p { color:var(--shop-muted); font-size:17px; margin:0; }
+.journal-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:36px 24px; }
+.journal-card { display:block; text-decoration:none; color:var(--shop-ink); min-width:0; }
+.journal-card-image { aspect-ratio:4/3; padding:22px; background:var(--shop-stage); overflow:hidden; }
+.journal-card-image img { width:100%; height:100%; object-fit:contain; transition:transform .3s ease; }
+.journal-card:hover img { transform:scale(1.035); }
+.journal-card-copy { padding-top:18px; }
+.journal-card-copy>span { font-size:12px; color:var(--shop-muted); }
+.journal-card-copy h2 { margin:9px 0 17px; font-size:clamp(21px,2vw,28px); line-height:1.2; font-weight:500; }
+.journal-card-copy>p { display:flex; align-items:center; gap:10px; font-size:14px; }
+.journal-article-heading { max-width:850px; margin:32px auto; }
+.journal-article-heading h1 { font-size:clamp(34px,4vw,60px); line-height:1.1; letter-spacing:-.035em; font-weight:400; margin:12px 0 18px; }
+.journal-article-heading p,.journal-article-heading>span { font-size:14px; color:var(--shop-muted); }
+.journal-article-image { display:block; width:100%; max-width:850px; max-height:520px; object-fit:contain; background:var(--shop-stage); padding:24px; margin:0 auto 36px; box-sizing:border-box; }
+.journal-body { max-width:720px; margin-inline:auto; }
+.journal-next { margin-top:60px; border-top:1px solid var(--shop-line); padding-top:25px; }
+.journal-next .journal-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+@media(max-width:1000px) { .checkout-layout { grid-template-columns:minmax(0,1fr) 290px; gap:16px; } .checkout-step,.checkout-summary { padding:20px; } }
+@media(max-width:900px) {
+ .site-header,.site-header.compact { height:74px; backdrop-filter:none; }
+ .header-inner { width:calc(100% - 32px); gap:12px; }
+ .header-actions { margin-left:auto; gap:10px; }
+ .header-cta { display:none; }
+ .brand,.brand img { width:54px; height:54px; }
+ .menu-button { display:grid; place-items:center; width:44px; height:44px; border:0; }
+ .nav { position:fixed; inset:74px 0 0; z-index:90; display:none; overflow-y:auto; background:var(--shop-paper); padding:24px; }
+ .nav.open { display:block; top:74px; }
+ .nav>.text-dock,.nav>.mobile-actions { display:none; }
+ .mobile-menu-content { display:flex; flex-direction:column; min-height:100%; }
+ .mobile-menu-top { display:flex; justify-content:space-between; align-items:center; padding-bottom:22px; font-size:14px; color:var(--shop-muted); }
+ .mobile-menu-top button { display:grid; place-items:center; width:44px; height:44px; background:transparent; color:var(--shop-ink); border:1px solid var(--shop-line); }
+ .mobile-menu-links { display:grid; }
+ .mobile-menu-links>a { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 0; border-bottom:1px solid var(--shop-line); text-decoration:none; font-size:clamp(32px,8vw,52px); font-weight:600; letter-spacing:-.03em; }
+ .mobile-menu-links>a[aria-current=page] { color:var(--shop-accent); }
+ .mobile-menu-cart { display:flex; align-items:center; gap:12px; padding:24px 0; text-decoration:none; font-size:16px; }
+ .mobile-menu-cart>span { margin-left:auto; color:var(--shop-muted); }
+ .mobile-menu-content>p { margin-top:auto; padding-top:20px; color:var(--shop-muted); font-size:14px; }
+ .checkout-layout { grid-template-columns:1fr; }
+ .checkout-summary { position:static; }
+ .journal-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:767px) {
+ :root { --shop-gutter:18px; }
+ html { scroll-padding-top:90px; }
+ .shop-sticker-hero { height:calc(100svh + 200px); }
+ .shop-sticker-stage { top:74px; height:calc(100svh - 74px); min-height:570px; max-height:740px; }
+ .shop-sticker-brand { top:5%; font-size:clamp(38px,11vw,54px); }
+ .shop-sticker-stage .curtain-photo-anchor { top:54%; }
+ .shop-sticker-headline.ssh-root { top:22%; left:20%; width:60%; height:59% !important; }
+ .shop-sticker-headline .ssh-inner { padding:0; }
+ .shop-sticker-headline .ssh-h { font-size:clamp(28px,16cqi,48px); }
+ .shop-sticker-headline .ssh-desc { font-size:12px; line-height:1.5; max-width:22ch; margin-top:18px; }
+ .shop-sticker-headline .ssh-ctas { flex-direction:column; align-items:center; width:100%; gap:9px; margin-top:18px; }
+ .shop-sticker-headline .ssh-btn { justify-content:center; min-height:44px; height:44px; width:calc(100% - 30px); max-width:180px; padding:0 10px; font-size:12px; }
+ .shop-sticker-controls { bottom:10px; gap:10px; font-size:10px; }
+ .shop-sticker-stage .curtain-photo-card img { padding:5px 5px 20px; }
+ .shop-sticker-stage .curtain-photo-card span { font-size:7px; padding:4px 2px; }
+ .shop-hero-shell { width:calc(100% - 24px); padding-top:12px; }
+ .brand-product-hero .snp-desc { font-size:13px; -webkit-line-clamp:3; }
+ .brand-product-hero .snp-product-navigation button { min-width:44px; min-height:44px; }
+ .shop-science-inner p,.shop-audience a strong { font-size:14px; }
+ .catalog-heading>div>p:last-child,.catalog-heading .button { font-size:14px; }
+ .search-field input,.sort-label select { font-size:16px; }
+ .commerce-product-grid .product-photo { height:clamp(180px,52vw,250px); }
+ .commerce-product-grid .product-desc { font-size:12px; line-height:1.5; }
+ .commerce-product-grid .product-buy { flex-wrap:wrap; gap:10px; }
+ .commerce-product-grid .product-buy strong { font-size:15px; }
+ .commerce-product-grid .product-buy button,.commerce-product-grid .product-buy>a { min-height:44px; font-size:12px; }
+ .catalog-result-note { display:none; }
+ .contact-form-card .enquiry-form input,.contact-form-card .enquiry-form select,.contact-form-card .enquiry-form textarea { font-size:16px; min-height:48px; }
+ .contact-form-card .enquiry-form label { font-size:14px; }
+ .contact-form-card .enquiry-tabs { flex-wrap:wrap; overflow:visible; margin-inline:0; padding:0; }
+ .contact-form-card .enquiry-tabs button { font-size:12px; min-height:44px; white-space:normal; }
+ .contact-form-card .enquiry-form>p,.contact-form-heading p { font-size:14px; }
+ .contact-form-card .enquiry-form>small { font-size:12px; }
+ .contact-form-card .enquiry-form .consent { font-size:13px; }
+ .source-article,.source-article p,.longform-disclosure .source-article { font-size:16px; line-height:1.75; overflow-wrap:anywhere; }
+ .source-article img { max-width:100%; height:auto; }
+ .source-table { overflow-x:auto; max-width:100%; }
+ .editorial-index { max-width:100%; overflow-x:auto; }
+ .editorial-index>a { font-size:13px; min-height:44px; display:flex; align-items:center; }
+ .detail-copy h1 { font-size:36px; }
+ .detail-copy p,.safety-note p { font-size:15px; }
+ .detail-subnav { max-width:100%; overflow-x:auto; white-space:nowrap; }
+ .cart-drawer { width:min(100%,440px); max-width:100%; }
+ .cart-item { min-width:0; }
+ .cart-line h3 { overflow-wrap:anywhere; }
+ .cart-bottom .button { min-height:48px; }
+ .order-items article { grid-template-columns:84px minmax(0,1fr); }
+ .order-items h2 { font-size:18px; }
+ .quantity button { min-width:40px; min-height:44px; }
+ .whatsapp { right:12px; bottom:12px; font-size:11px; padding:12px; }
+ body:has(.checkout-shell) .whatsapp { display:none; }
+ .checkout-shell { padding-block:26px 50px; }
+ .checkout-title { align-items:flex-start; flex-direction:column; gap:8px; }
+ .checkout-step,.checkout-summary { padding:18px; }
+ .checkout-step-title { gap:9px; }
+ .checkout-step-title h2 { font-size:18px; }
+ .checkout-fields { grid-template-columns:1fr; gap:14px; }
+ .checkout-fields input { font-size:16px; min-height:48px; }
+ .checkout-address>.button { width:100%; justify-content:center; }
+ .checkout-item { grid-template-columns:72px minmax(0,1fr); gap:12px; }
+ .checkout-item-image { height:100px; }
+ .checkout-item>strong { grid-column:2; }
+ .checkout-item-copy h3 { font-size:16px; }
+ .checkout-quantity button { width:40px; height:44px; }
+ .checkout-summary dl>div { font-size:14px; }
+ .checkout-step-title>a,.checkout-step-title>button { min-height:44px; display:flex; align-items:center; }
+ .science-journal { padding-block:30px 55px; }
+ .journal-heading>p { font-size:15px; line-height:1.6; }
+ .journal-grid,.journal-next .journal-grid { grid-template-columns:1fr; gap:30px; }
+ .journal-card-image { aspect-ratio:3/2; padding:18px; }
+ .journal-card-copy h2 { font-size:25px; }
+ .journal-card-copy>p { min-height:44px; margin-bottom:0; }
+ .journal-article-image { padding:12px; }
+}
+@media(prefers-reduced-motion:reduce) { .shop-sticker-hero { height:auto; } .shop-sticker-stage { position:relative; top:0; } }
+.about-accordion-hero { display:grid; grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); align-items:center; gap:48px; padding-block:64px; }
+.about-accordion-copy h1 { font-size:clamp(42px,4.5vw,66px); font-weight:400; line-height:1.04; letter-spacing:-.04em; margin:0 0 24px; }
+.about-accordion-copy p { max-width:38ch; font-size:16px; color:var(--shop-muted); line-height:1.7; margin-bottom:28px; }
+.about-accordion-copy>.text-link { display:table; margin-top:20px; font-size:14px; }
+.about-frame-gallery { display:flex; gap:10px; height:460px; min-width:0; }
+.about-reactive-frame { position:relative; flex:1 1 0; min-width:44px; overflow:hidden; border:0; border-radius:12px; padding:0; background:var(--shop-ink); cursor:pointer; color:white; transition:flex .65s cubic-bezier(.2,.7,.2,1); text-align:left; }
+.about-reactive-frame[data-active=true] { flex:6 1 0; }
+.about-reactive-frame img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.about-frame-shade { position:absolute; inset:0; background:linear-gradient(180deg,transparent 30%,#062f5555 65%,#062b4de6); }
+.about-frame-title { position:absolute; bottom:28px; left:50%; writing-mode:vertical-rl; transform:translateX(-50%) rotate(180deg); font-size:17px; font-weight:500; white-space:nowrap; }
+.about-reactive-frame[data-active=true] .about-frame-title { writing-mode:horizontal-tb; transform:none; bottom:58px; left:22px; font-size:25px; }
+.about-frame-description { position:absolute; bottom:23px; left:22px; right:18px; opacity:0; font-size:13px; line-height:1.5; transition:opacity .2s; }
+.about-reactive-frame[data-active=true] .about-frame-description { opacity:1; transition-delay:.35s; }
+@media(max-width:1000px){.about-accordion-hero { grid-template-columns:1fr; gap:32px; }.about-accordion-copy p { max-width:60ch; }.about-frame-gallery { height:420px; }}
+@media(max-width:767px){.about-accordion-hero { padding-block:32px 42px; gap:28px; }.about-accordion-copy h1 { font-size:43px; }.about-accordion-copy p { margin-bottom:22px; }.about-frame-gallery { flex-direction:column; height:516px; gap:8px; }.about-reactive-frame { min-height:48px; min-width:0; flex:0 0 48px; border-radius:8px; transition:flex-basis .5s ease; }.about-reactive-frame[data-active=true] { flex:1 1 280px; }.about-frame-title { writing-mode:horizontal-tb; transform:none; bottom:12px; left:18px; font-size:16px; }.about-reactive-frame[data-active=true] .about-frame-title { left:18px; bottom:48px; font-size:25px; }.about-frame-description { left:18px; bottom:18px; }.about-reactive-frame img { object-position:center 36%; }.about-reactive-frame:not([data-active=true]) .about-frame-shade { background:#062b4d99; }}
+@media(prefers-reduced-motion:reduce){.about-reactive-frame,.about-frame-description { transition:none; }}
+.founder-tunnel { clear:both; width:100%; margin:28px 0 24px; background:transparent; }
+.founder-tunnel-hint { padding:12px 15px 0; text-align:center; font-size:12px; color:var(--shop-muted); }
+.founder-tunnel-hint>span::after { display:none; }
+.founder-tunnel-stage { position:sticky; top:100px; height:min(70svh,560px); width:100%; overflow:hidden; }
+.founder-tunnel-image { height:95%; width:100%; max-width:440px; overflow:hidden; }
+.source-article .founder-tunnel img.founder-tunnel-photo { float:none; display:block; width:100%; height:100%; max-height:none; max-width:none; margin:0; padding:0; border:0; background:transparent; box-shadow:none; object-fit:contain; }
+@media(max-width:767px){.founder-tunnel-stage { top:90px; height:65svh; max-height:480px; }.founder-tunnel-image { width:96%; height:95%; }.founder-tunnel { margin-top:28px; }}
+.science-layout-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-auto-rows:360px; gap:22px; }
+.science-layout-card { position:relative; min-width:0; overflow:hidden; border:1px solid var(--shop-line); border-radius:12px; background:#f0f2ed; color:var(--shop-ink); text-align:left; cursor:pointer; padding:0; }
+.science-layout-wide { grid-column:span 2; }
+.science-layout-full { grid-column:span 3; }
+.science-layout-card>img { display:block; width:100%; height:72%; object-fit:contain; padding:16px; box-sizing:border-box; }
+.science-layout-caption { position:absolute; bottom:0; left:0; right:0; display:grid; gap:10px; padding:20px 24px; border-top:1px solid var(--shop-line); background:var(--shop-paper); transition:background .2s ease; }
+.science-layout-caption>span:first-child { font-size:12px; color:var(--shop-muted); }
+.science-layout-caption>strong { font-size:24px; line-height:1.15; font-weight:500; }
+.science-layout-caption>span:last-child { display:flex; justify-content:space-between; gap:10px; align-items:center; font-size:13px; padding-top:5px; }
+.science-layout-caption>span:last-child svg { transition:transform .2s ease; }
+.science-layout-card:hover .science-layout-caption { background:#f6f2ec; }
+.science-layout-card:hover .science-layout-caption>span:last-child svg { transform:translate(2px,-2px); }
+.science-article-dialog { width:min(860px,calc(100% - 32px)); max-height:88dvh; margin:auto; border:0; border-radius:12px; padding:0; color:var(--shop-ink); background:var(--shop-paper); overflow-y:auto; }
+.science-article-dialog::backdrop { background:#061c32b3; }
+.science-dialog-toolbar { position:sticky; top:0; z-index:2; display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 22px; background:var(--shop-paper); border-bottom:1px solid var(--shop-line); font-size:13px; }
+.science-dialog-toolbar>button { display:grid; place-items:center; width:44px; height:44px; border:1px solid var(--shop-line); background:transparent; color:var(--shop-ink); border-radius:50%; cursor:pointer; }
+.science-dialog-image { width:100%; height:320px; object-fit:contain; padding:24px; background:var(--shop-stage); box-sizing:border-box; }
+.science-dialog-copy { padding:30px; }
+.science-dialog-copy>h2 { font-size:clamp(30px,3vw,44px); line-height:1.1; font-weight:400; margin:0 0 14px; }
+.science-article-credit { font-size:13px; color:var(--shop-muted); padding-bottom:22px; border-bottom:1px solid var(--shop-line); }
+@media(max-width:767px){.science-layout-grid { grid-template-columns:1fr; grid-auto-rows:340px; gap:20px; }.science-layout-wide,.science-layout-full { grid-column:auto; }.science-layout-caption { padding:18px; }.science-layout-caption>strong { font-size:23px; }.science-dialog-copy { padding:22px 18px; }.science-dialog-image { height:230px; padding:14px; }.science-dialog-toolbar { padding:10px 14px; }.science-article-dialog { width:calc(100% - 20px); max-height:92dvh; }}
+@media(max-width:1180px){
+ .site-header,.site-header.compact { backdrop-filter:none; }
+ .site-header .nav,.site-header .nav.open { position:fixed; inset:74px 0 0; height:calc(100dvh - 74px); max-height:none; box-sizing:border-box; background:var(--shop-paper); padding:20px 24px 28px; overflow-y:auto; }
+ .site-header .nav { display:none; }
+ .site-header .nav.open { display:block; }
+ .site-header .nav>.text-dock,.site-header .nav>.mobile-actions { display:none; }
+ .mobile-menu-content { display:flex; flex-direction:column; min-height:100%; }
+ .mobile-menu-links>a { color:var(--shop-ink); }
+}
+.checkout-footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:20px; padding:28px var(--shop-gutter); border-top:1px solid var(--shop-line); color:var(--shop-muted); font-size:13px; }
+.checkout-footer>strong { color:var(--shop-ink); font-size:19px; }
+.checkout-footer>div { display:flex; flex-wrap:wrap; gap:20px; }
+@media(max-width:767px){.checkout-footer { flex-direction:column; align-items:flex-start; font-size:13px; }}
+.science-layout-card { display:grid; grid-template-rows:minmax(0,1fr) auto; }
+.science-layout-card>img { height:100%; min-height:0; }
+.science-layout-caption { position:static; }
+@media(min-width:901px) and (max-width:1180px){
+ .mobile-menu-top { display:flex; justify-content:space-between; align-items:center; padding-bottom:22px; }
+ .mobile-menu-top button { min-width:44px; min-height:44px; border:1px solid var(--shop-line); background:transparent; color:var(--shop-ink); }
+ .mobile-menu-links>a { display:flex; justify-content:space-between; align-items:center; padding:20px 0; font-size:40px; text-decoration:none; border-bottom:1px solid var(--shop-line); }
+ .mobile-menu-cart { display:flex; align-items:center; gap:12px; padding:24px 0; }
+ .mobile-menu-cart>span { margin-left:auto; }
+ .mobile-menu-content>p { margin-top:auto; }
+}

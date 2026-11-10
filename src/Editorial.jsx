@@ -1,4 +1,6 @@
 import React from "react";
+import LandingAccordionItem from './components/ui/interactive-image-accordion';
+import ScrollImageTunnel from './components/ui/scroll-image-tunnel';
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -34,6 +36,9 @@ export function SourceArticle({ path, embedded = false, skipIntro = false }) {
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
       components={{
+        p: ({node,children}) => node.children?.some(child=>child.tagName==='img'&&String(child.properties?.src).includes('/founder/'))
+          ? <ScrollImageTunnel className="founder-tunnel" images={[{src:'/assets/founder/founder-ajay-BGDk7WSG.webp',alt:'Dr. Ajay Reddy Mareddy'}]} hint="Meet our founder · Scroll to reveal" stepHeight="calc(min(70svh, 560px) + 160px)"/>
+          : <p>{children}</p>,
         a: ({ href, children }) =>
           href?.startsWith("/") && !href.startsWith("/assets/") ? (
             <Link to={href}>{children}</Link>
@@ -112,7 +117,7 @@ export function SourceArticle({ path, embedded = false, skipIntro = false }) {
 export function EditorialPage({ path }) {
   return (
     <>
-      <EditorialHeading path={path}/>
+      {path === '/about' ? <LandingAccordionItem/> : <EditorialHeading path={path}/>}
       <div className="editorial-layout editorial-content-anchor wrap" id="editorial-content">
         <aside className="editorial-index">
           <Link to="/">SPARK-DV</Link>

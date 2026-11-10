@@ -37,13 +37,13 @@ function CurtainPhotoCard({
   const wingIndex = Math.floor(index / 2);
   const norm = wingIndex / (half - 1) - 0.5;
   const side = isLeft ? -1 : 1;
-  const width = stage.isMobile ? Math.min(100, stage.width * .22) : Math.min(196, stage.width * .16);
+  const width = stage.isMobile ? Math.min(82, stage.width * .175) : Math.min(196, stage.width * .16);
   // Four desktop rows must fit even on short screens, including tilt and gaps.
-  const height = stage.isMobile ? width * 1.35 : Math.min(width * 1.25, (stage.height - 160) / half);
+  const height = stage.isMobile ? Math.min(width * 1.55, (stage.height - 130) / half - 14) : Math.min(width * 1.25, (stage.height - 160) / half);
   const arch = Math.cos(norm * Math.PI) * stage.width * 0.025;
-  const targetX = stage.isMobile ? side * stage.width * (wingIndex % 2 ? .37 : .125) : side * (stage.width * .37 + arch);
+  const targetX = stage.isMobile ? side * stage.width * .395 : side * (stage.width * .37 + arch);
   const targetY = stage.isMobile
-    ? (Math.floor(wingIndex / 2) - .5) * (height + 12)
+    ? (wingIndex - (half - 1) / 2) * (height + 18)
     : (wingIndex - (half - 1) / 2) * (height + 32);
   const initialX = side * wingIndex * 4;
   const initialY = norm * 10;

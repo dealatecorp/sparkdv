@@ -19,7 +19,7 @@ Self-hosted DM Sans: regular/medium display 44–84px, route headings 43–68px,
 ## Components
 
 - Sticky header, original logo, accessible Products disclosure, mobile menu and real cart.
-- User-supplied Sticker Swap Headline on the homepage, with SPARK-DV centered above the animated lettering. Original product-photo stickers pop into changing words; eight original product photos open as a scroll curtain. Desktop photos flank the lettering; mobile photos form two rows below the calls to action. The headline supports keyboard advancement and a pause control, and autoplay stops offscreen and under reduced motion. The glass prism is no longer rendered.
+- User-supplied Sticker Swap Headline on the homepage, with SPARK-DV centered above the animated lettering. Original product-photo stickers pop into changing words; eight original product photos open as a scroll curtain. Desktop photos flank the lettering; mobile photos flank the central headline and stacked shopping actions. The headline supports keyboard advancement and a pause control, and autoplay stops offscreen and under reduced motion. The glass prism is no longer rendered.
 - User-supplied Sneaker Product Hero appears immediately after the sticker and curtain scene and uses the mapped SPARK-DV product records and photos. Product navigation updates image, name and price together; quantity controls add the selected quantity to the existing cart. Package photos use a full-frame `contain` image stage to center wide and tall images. Demo shoe ratings and unsupported gallery angles are hidden.
 - All 17 products are available in the Products catalogue with search, category filters, sorting, product pages and cart actions. The separate “Shop the range” homepage rail was removed by request.
 - Product dialog with original image zoom, source description, prices, professional-use status, quantity, existing-cart integration, disclosures and full product-page link. No invented ratings, sizes, delivery promises or back-of-pack view.
@@ -45,3 +45,12 @@ The header uses the supplied proximity/spring dock adapted to visible text label
 
 
 The catalogue uses clear search, sorting and category filters above standard product cards. The user-supplied liquid-morph component remains in the repository but is not active on the homepage or catalogue.
+
+
+## 10 November 2026 responsive and commerce update
+
+- Mobile hero mirrors the desktop composition: large SPARK-DV name, centered sticker headline and two side curtains. Mobile menu uses the supplied TextRoll, adapted for touch, keyboard focus and reduced motion.
+- Checkout uses address, payment/delivery information, item review, quantity controls and an order summary. The final action prepares an email enquiry; no payment processor or order-submission backend is connected.
+- Science uses the supplied animated LayoutGrid with existing research diagrams and article text revealed in an accessible dialog. Article URLs use the article query parameter and support browser back/forward.
+- About uses the supplied interactive image accordion. Research, family and community scenes are generated illustrative imagery; the founder portrait remains the original. All assets are local optimized WebP images.
+- The original founder photo appears in a centered scroll-image tunnel. It begins at 88% scale and grows to full size on a transparent background, with a static reduced-motion alternative.

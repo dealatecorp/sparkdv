@@ -1,6 +1,9 @@
+import TextRoll from './components/ui/text-roll';
+import CheckoutPage from './CheckoutPage';
+import ScienceGallery from './ScienceGallery';
 import {CinematicFooter} from './components/ui/motion-footer';
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {Dock, DockItem} from './components/ui/dock';
 import {
   ArrowDown,
@@ -87,6 +90,7 @@ const scienceSteps = [
 ];
 
 function App() {
+  const navigate = useNavigate();
   const loc = useLocation();
   const [menu, setMenu] = useState(false),
     [cartOpen, setCartOpen] = useState(false),
@@ -159,7 +163,7 @@ function App() {
           "/terms": "Terms of Service",
           "/shipping": "Shipping & Returns",
           "/cart": "Your selection",
-          "/checkout": "Order enquiry",
+          "/checkout": "Checkout",
         }[loc.pathname] ||
         "Page not found") + " | SPARK-DV";
     const description =
@@ -248,6 +252,12 @@ function App() {
       previous?.focus();
     };
   }, [cartOpen, menu]);
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1181px)');
+    const close = () => { if (media.matches) setMenu(false); };
+    media.addEventListener('change', close);
+    return () => media.removeEventListener('change', close);
+  }, []);
   const qty = cart.reduce((s, i) => s + i.qty, 0);
   const add = (p, count = 1) => {
     if (p.coming) return;
@@ -283,6 +293,12 @@ function App() {
             className={menu ? "nav open" : "nav"}
             aria-label="Main navigation"
           >
+            <div className="mobile-menu-content">
+              <div className="mobile-menu-top"><span>Explore SPARK-DV</span><button type="button" aria-label="Close navigation" onClick={()=>setMenu(false)}><X size={23}/></button></div>
+              <div className="mobile-menu-links">{[['/','Home'],['/products','Products'],['/science','Science'],['/about','About'],['/contact','Contact']].map(([to,label])=><Link key={to} to={to} onClick={()=>setMenu(false)} aria-current={loc.pathname===to?'page':undefined}><TextRoll center>{label}</TextRoll><ArrowUpRight size={22}/></Link>)}</div>
+              <Link className="mobile-menu-cart" to="/cart" onClick={()=>setMenu(false)}><ShoppingBag size={19}/>Your cart <span>{qty} items</span></Link>
+              <p>Dental science. Everyday care.</p>
+            </div>
             <Dock>
             <DockItem baseWidth={90}><details className="products-menu">
               <summary>
@@ -342,7 +358,7 @@ function App() {
       <main id="main">
         <RoutesView add={add} cartQty={qty} cart={cart} update={update} remove={remove} />
       </main>
-      <CinematicFooter />
+      {loc.pathname==='/checkout' ? <footer className="checkout-footer"><strong>SPARK-DV</strong><span>Questions about your order? <Link to="/contact">Contact our team</Link></span><div><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/shipping">Shipping & returns</Link></div></footer> : <CinematicFooter />}
       <a
         className="whatsapp"
         href="https://wa.me/919246901870"
@@ -450,7 +466,7 @@ function App() {
                     className="button button-dark checkout"
                     onClick={() => {setCartOpen(false); navigate('/checkout')}}
                   >
-                    Continue to order enquiry <ArrowRight size={16} />
+                    Continue to checkout <ArrowRight size={16} />
                   </button>
                 </div>
               </>
@@ -478,14 +494,14 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
       return <ProductFamilyDetail familySlug={detail} add={add} />;
     return <ProductDetail slug={detail} add={add} />;
   }
-  if (path === "/science") return <EditorialPage path="/science" />;
+  if (path === "/science") return <ScienceGallery />;
   if (path === "/dentists") return <EditorialPage path="/dentists" />;
   if (path === "/parents") return <EditorialPage path="/parents" />;
   if (path === "/school-program")
     return <EditorialPage path="/school-program" />;
   if (path === "/about") return <EditorialPage path="/about" />;
   if (path === "/contact") return <Contact />;
-  if (path === "/checkout") return <CheckoutUnavailable cart={cart} />;
+  if (path === "/checkout") return <CheckoutPage cart={cart} update={update} remove={remove} />;
   if (["/privacy", "/terms", "/shipping"].includes(path))
     return <Policy path={path} />;
   if (path === "/cart") return <CartPage cart={cart} update={update} remove={remove} />;
@@ -1190,10 +1206,7 @@ function orderEnquiryHref(cart) {
 }
 function CartPage({cart,update,remove}) {
   const subtotal=cart.reduce((sum,item)=>sum+(item.price||0)*item.qty,0);
-  return <section className="order-page wrap"><p className="shop-hero-context">SPARK-DV / YOUR SELECTION</p><h1>Your cart.</h1>{cart.length?<><div className="order-items">{cart.map(item=><article key={item.slug}><Link to={`/products/${item.slug}`}><ProductImage product={item}/></Link><div><h2>{item.name}</h2><p>{money(item.price)}</p><div className="quantity"><button onClick={()=>update(item.slug,-1)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16}/></button><span aria-live="polite">{item.qty}</span><button onClick={()=>update(item.slug,1)} aria-label={`Increase ${item.name} quantity`}><Plus size={16}/></button><button onClick={()=>remove(item.slug)} aria-label={`Remove ${item.name}`}><X size={16}/></button></div></div></article>)}</div><div className="cart-summary"><h2>Subtotal <strong>{money(subtotal)}</strong></h2><p>This is an enquiry selection. The team will confirm current pricing, availability, shipping and order details.</p><a className="button button-dark" href={orderEnquiryHref(cart)}>Prepare order enquiry <ArrowUpRight size={17}/></a></div></>:<div className="cart-empty"><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Shop products <ArrowRight size={17}/></Link></div>}</section>;
-}
-function CheckoutUnavailable({cart}) {
-  return <section className="order-page wrap"><p className="shop-hero-context">SPARK-DV / ORDER ENQUIRY</p><h1>Online payment isn’t available yet.</h1><p className="checkout-unavailable-copy">Your cart is saved on this device. Send the selected products to our team to confirm current pricing, availability and delivery details.</p>{cart.length?<div className="checkout-selected">{cart.map(item=><p key={item.slug}>{item.name} <span>× {item.qty}</span></p>)}<a className="button button-dark" href={orderEnquiryHref(cart)}>Prepare order enquiry <ArrowUpRight size={17}/></a></div>:<p>Your cart is empty. <Link to="/products">Browse products</Link>.</p>}<Link className="checkout-back-link" to="/cart">Back to cart <ArrowRight size={15}/></Link></section>;
+  return <section className="order-page wrap"><p className="shop-hero-context">SPARK-DV / YOUR SELECTION</p><h1>Your cart.</h1>{cart.length?<><div className="order-items">{cart.map(item=><article key={item.slug}><Link to={`/products/${item.slug}`}><ProductImage product={item}/></Link><div><h2>{item.name}</h2><p>{money(item.price)}</p><div className="quantity"><button onClick={()=>update(item.slug,-1)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16}/></button><span aria-live="polite">{item.qty}</span><button onClick={()=>update(item.slug,1)} aria-label={`Increase ${item.name} quantity`}><Plus size={16}/></button><button onClick={()=>remove(item.slug)} aria-label={`Remove ${item.name}`}><X size={16}/></button></div></div></article>)}</div><div className="cart-summary"><h2>Subtotal <strong>{money(subtotal)}</strong></h2><p>This is an enquiry selection. The team will confirm current pricing, availability, shipping and order details.</p><Link className="button button-dark" to="/checkout">Continue to checkout <ArrowUpRight size={17}/></Link></div></>:<div className="cart-empty"><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Shop products <ArrowRight size={17}/></Link></div>}</section>;
 }
 function NotFound() {
   return (
