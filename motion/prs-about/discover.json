@@ -1,0 +1,974 @@
+[
+  {
+    "libs": {
+      "gsap": true,
+      "ScrollTrigger": true,
+      "Flip": true,
+      "SplitText": false,
+      "Draggable": false,
+      "Observer": true,
+      "MotionPath": false,
+      "lenis": true,
+      "locomotive": false,
+      "three": false,
+      "lottie": false,
+      "framer": false
+    },
+    "gsapTouched": [
+      "body > div.page-wrapper.bg-color-green > div.navbar_wrapper > div.navbar_component.w-nav",
+      "nav.navbar_menu.w-nav-menu > div.navbar_menu-links > a.navbar_link.w-inline-block > div.navbar_link-icon.w-embed",
+      "html.w-mod-js.w-mod-ix > body > div.page-wrapper.bg-color-green > div.custom-cursor",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > h1.h5.u-mb-2",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "main#main > section.section > div.container",
+      "main#main > section.section > div.container > div.about-val-expanded-1",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-7",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-8",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-9",
+      "main#main > section.section > div.container > div.about-val-expanded-2",
+      "div.container > div.row > div.col.col-lg-3 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-lg-3 > p",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.container > div.row > div.col.col-lg-3 > div.u-show-mobile-lands",
+      "div.container > div.row > div.col.col-lg-3 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-lg-3 > p",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.container > div.row > div.col.col-lg-3 > div.u-show-mobile-lands",
+      "div.container > div.row > div.col.col-sm-9 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-sm-9 > p",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-3 > h2.h5",
+      "div.row.row-justify-center > div.col.col-lg-3 > h2.h5 > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-4 > p",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-2 > a.btn.w-button",
+      "div.row.row-justify-center > div.col.col-lg-3 > div.jobs-h-wrap > h3.h5",
+      "div.col.col-lg-3 > div.jobs-h-wrap > h3.h5 > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-4 > p",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-2 > a.btn.w-button"
+    ],
+    "running": [],
+    "keyframes": [
+      "spin"
+    ],
+    "scrollTriggers": [
+      {
+        "trigger": "main#main",
+        "start": "top top",
+        "startPx": 0,
+        "endPx": 8680,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section.section > div.container > div.about-job-wrapper > div.row.row-justify-center",
+        "start": "top 90%",
+        "startPx": 7315,
+        "endPx": 8344,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section.section > div.container > div.about-job-wrapper > div.row.row-justify-center",
+        "start": "top 90%",
+        "startPx": 7500,
+        "endPx": 8568,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 2500,
+        "endPx": 4496,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 4096,
+        "endPx": 5987,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 5587,
+        "endPx": 7100,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 6700,
+        "endPx": 7979,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 7579,
+        "endPx": 8580,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "div.col.col-lg-5 > div.footer-h-wrap > h3.h5.u-mb-4 > span.scramble-text.is-footer",
+        "start": "top 80%",
+        "startPx": 7981,
+        "endPx": 8811,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section#about-hero > div.container > div.about-hero_wrapper > div.about-hero_trigger",
+        "start": "top 80%",
+        "end": "top 50%",
+        "startPx": 200,
+        "endPx": 500,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section#about-hero > div.container > div.about-hero_wrapper > div.about-hero_trigger",
+        "start": "top 80%",
+        "end": "top 50%",
+        "startPx": 1200,
+        "endPx": 1500,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section > div.container > div.values_wrapper",
+        "start": "top 90%",
+        "end": "top 15%",
+        "startPx": 4066,
+        "endPx": 4816,
+        "scrub": 1.5,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": {
+          "start": 0.436,
+          "dur": 0.5,
+          "kind": "timeline",
+          "children": [
+            {
+              "start": 0,
+              "dur": 0.5,
+              "kind": "tween",
+              "targets": [
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6"
+              ],
+              "vars": {
+                "top": "auto",
+                "bottom": "auto",
+                "left": "auto",
+                "right": "auto",
+                "immediateRender": true,
+                "runBackwards": 1,
+                "duration": 0.5,
+                "overwrite": false,
+                "delay": 0,
+                "ease": "fn"
+              }
+            },
+            {
+              "start": 0,
+              "dur": 0.5,
+              "kind": "tween",
+              "targets": [
+                "main#main > section.section > div.container > div.about-val-expanded-1",
+                "main#main > section.section > div.container > div.about-val-expanded-2"
+              ],
+              "vars": {
+                "maxWidth": "100%",
+                "duration": 0.5,
+                "overwrite": false,
+                "delay": 0,
+                "ease": "fn"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "gsapGlobal": [
+      {
+        "start": 0.35,
+        "dur": 0,
+        "kind": "tween",
+        "targets": [
+          "function _refreshAll(e,t){if(!st||e||S){Yb(),rt=ne.isRefreshing=!0,Ie.forEach(function(e){return Ta(e)&&++e.cacheID&&(e.rec=e())});var r=U(\"refreshInit\");Ze&&ne.sort(),t||Sb(),Ie.forEach(function(e){Ta(e)&&(e.smooth&&(e.target.style.scrollBehavior=\"auto\"),e(0))}),Tt.slice(0).forEach(function(e){return e.refresh()}),S=!1,Tt.forEach(function(e){if(e._subPinOffset&&e.pin){var t=e.vars.horizontal?\"offsetWidth\":\"offsetHeight\",r=e.pin[t];e.revert(!0,1),e.adjustPinSpacing(e.pin[t]-r),e.refresh()}}),et=1,Zb(!0),Tt.forEach(function(e){var t=Qa(e.scroller,e._dir),r=\"max\"===e.vars.end||e._endClamp&&e.end>t,n=e._startClamp&&e.start>=t;(r||n)&&e.setPositions(n?t-1:e.start,r?Math.max(n?t:e.start+1,t):e.end,!0)}),Zb(!1),et=0,r.forEach(function(e){return e&&e.render&&e.render(-1)}),Ie.forEach(function(e){Ta(e)&&(e.smooth&&requestAnimationFrame(function(){return e.target.style.scrollBehavior=\"smooth\"}),e.rec&&e(e.rec))}),Tb(w,1),c.pause(),kt++,Z(rt=2),Tt.forEach(function(e){return Ta(e.vars.onRefresh)&&e.vars.onRefresh(e)}),rt=ne.isRefreshing=!1,U(\"refresh\")}else wb(ne,\"scrollEnd\",Ob)}"
+        ],
+        "vars": {
+          "immediateRender": false,
+          "lazy": false,
+          "overwrite": false,
+          "delay": 0.2,
+          "onComplete": "fn",
+          "onReverseComplete": "fn",
+          "duration": 0,
+          "ease": "fn"
+        }
+      },
+      {
+        "start": 0.436,
+        "dur": 0.5,
+        "kind": "timeline",
+        "children": [
+          {
+            "start": 0,
+            "dur": 0.5,
+            "kind": "tween",
+            "targets": [
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6"
+            ],
+            "vars": {
+              "top": "auto",
+              "bottom": "auto",
+              "left": "auto",
+              "right": "auto",
+              "immediateRender": true,
+              "runBackwards": 1,
+              "duration": 0.5,
+              "overwrite": false,
+              "delay": 0,
+              "ease": "fn"
+            }
+          },
+          {
+            "start": 0,
+            "dur": 0.5,
+            "kind": "tween",
+            "targets": [
+              "main#main > section.section > div.container > div.about-val-expanded-1",
+              "main#main > section.section > div.container > div.about-val-expanded-2"
+            ],
+            "vars": {
+              "maxWidth": "100%",
+              "duration": 0.5,
+              "overwrite": false,
+              "delay": 0,
+              "ease": "fn"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "libs": {
+      "gsap": true,
+      "ScrollTrigger": true,
+      "Flip": true,
+      "SplitText": false,
+      "Draggable": false,
+      "Observer": true,
+      "MotionPath": false,
+      "lenis": true,
+      "locomotive": false,
+      "three": false,
+      "lottie": false,
+      "framer": false
+    },
+    "gsapTouched": [
+      "body > div.page-wrapper.u-bg-white > div.navbar_wrapper > div.navbar_component.w-nav",
+      "nav.navbar_menu.w-nav-menu > div.navbar_menu-links > a.navbar_link.w-inline-block > div.navbar_link-icon.w-embed",
+      "html.w-mod-js.w-mod-ix > body > div.page-wrapper.u-bg-white > div.custom-cursor",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > h1.h5.u-mb-2",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "main#main > section.section > div.container",
+      "main#main > section.section > div.container > div.about-val-expanded-1",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-7",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-8",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-9",
+      "main#main > section.section > div.container > div.about-val-expanded-2",
+      "div.container > div.row > div.col.col-lg-3 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-lg-3 > p",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.container > div.row > div.col.col-lg-3 > div.u-show-mobile-lands",
+      "div.container > div.row > div.col.col-lg-3 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-lg-3 > p",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.container > div.row > div.col.col-lg-3 > div.u-show-mobile-lands",
+      "div.container > div.row > div.col.col-sm-9 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-sm-9 > p",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-3 > h2.h5",
+      "div.row.row-justify-center > div.col.col-lg-3 > h2.h5 > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-4 > p",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-2 > a.btn.w-button",
+      "div.row.row-justify-center > div.col.col-lg-3 > div.jobs-h-wrap > h3.h5",
+      "div.col.col-lg-3 > div.jobs-h-wrap > h3.h5 > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-4 > p",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-2 > a.btn.w-button"
+    ],
+    "running": [],
+    "keyframes": [
+      "spin"
+    ],
+    "scrollTriggers": [
+      {
+        "trigger": "main#main",
+        "start": "top top",
+        "startPx": 0,
+        "endPx": 8680,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section.section > div.container > div.about-job-wrapper > div.row.row-justify-center",
+        "start": "top 90%",
+        "startPx": 7315,
+        "endPx": 8344,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section.section > div.container > div.about-job-wrapper > div.row.row-justify-center",
+        "start": "top 90%",
+        "startPx": 7500,
+        "endPx": 8568,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 2500,
+        "endPx": 4496,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 4096,
+        "endPx": 5987,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 5587,
+        "endPx": 7100,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 6700,
+        "endPx": 7979,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 7579,
+        "endPx": 8580,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "div.col.col-lg-5 > div.footer-h-wrap > h3.h5.u-mb-4 > span.scramble-text.is-footer",
+        "start": "top 80%",
+        "startPx": 7981,
+        "endPx": 8811,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section#about-hero > div.container > div.about-hero_wrapper > div.about-hero_trigger",
+        "start": "top 80%",
+        "end": "top 50%",
+        "startPx": 200,
+        "endPx": 500,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section#about-hero > div.container > div.about-hero_wrapper > div.about-hero_trigger",
+        "start": "top 80%",
+        "end": "top 50%",
+        "startPx": 1200,
+        "endPx": 1500,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section > div.container > div.values_wrapper",
+        "start": "top 90%",
+        "end": "top 15%",
+        "startPx": 4066,
+        "endPx": 4816,
+        "scrub": 1.5,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": {
+          "start": 0.436,
+          "dur": 0.5,
+          "kind": "timeline",
+          "children": [
+            {
+              "start": 0,
+              "dur": 0.5,
+              "kind": "tween",
+              "targets": [
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6"
+              ],
+              "vars": {
+                "top": "auto",
+                "bottom": "auto",
+                "left": "auto",
+                "right": "auto",
+                "immediateRender": true,
+                "runBackwards": 1,
+                "duration": 0.5,
+                "overwrite": false,
+                "delay": 0,
+                "ease": "fn"
+              }
+            },
+            {
+              "start": 0,
+              "dur": 0.5,
+              "kind": "tween",
+              "targets": [
+                "main#main > section.section > div.container > div.about-val-expanded-1",
+                "main#main > section.section > div.container > div.about-val-expanded-2"
+              ],
+              "vars": {
+                "maxWidth": "100%",
+                "duration": 0.5,
+                "overwrite": false,
+                "delay": 0,
+                "ease": "fn"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "gsapGlobal": [
+      {
+        "start": 0.35,
+        "dur": 0,
+        "kind": "tween",
+        "targets": [
+          "function _refreshAll(e,t){if(!st||e||S){Yb(),rt=ne.isRefreshing=!0,Ie.forEach(function(e){return Ta(e)&&++e.cacheID&&(e.rec=e())});var r=U(\"refreshInit\");Ze&&ne.sort(),t||Sb(),Ie.forEach(function(e){Ta(e)&&(e.smooth&&(e.target.style.scrollBehavior=\"auto\"),e(0))}),Tt.slice(0).forEach(function(e){return e.refresh()}),S=!1,Tt.forEach(function(e){if(e._subPinOffset&&e.pin){var t=e.vars.horizontal?\"offsetWidth\":\"offsetHeight\",r=e.pin[t];e.revert(!0,1),e.adjustPinSpacing(e.pin[t]-r),e.refresh()}}),et=1,Zb(!0),Tt.forEach(function(e){var t=Qa(e.scroller,e._dir),r=\"max\"===e.vars.end||e._endClamp&&e.end>t,n=e._startClamp&&e.start>=t;(r||n)&&e.setPositions(n?t-1:e.start,r?Math.max(n?t:e.start+1,t):e.end,!0)}),Zb(!1),et=0,r.forEach(function(e){return e&&e.render&&e.render(-1)}),Ie.forEach(function(e){Ta(e)&&(e.smooth&&requestAnimationFrame(function(){return e.target.style.scrollBehavior=\"smooth\"}),e.rec&&e(e.rec))}),Tb(w,1),c.pause(),kt++,Z(rt=2),Tt.forEach(function(e){return Ta(e.vars.onRefresh)&&e.vars.onRefresh(e)}),rt=ne.isRefreshing=!1,U(\"refresh\")}else wb(ne,\"scrollEnd\",Ob)}"
+        ],
+        "vars": {
+          "immediateRender": false,
+          "lazy": false,
+          "overwrite": false,
+          "delay": 0.2,
+          "onComplete": "fn",
+          "onReverseComplete": "fn",
+          "duration": 0,
+          "ease": "fn"
+        }
+      },
+      {
+        "start": 0.436,
+        "dur": 0.5,
+        "kind": "timeline",
+        "children": [
+          {
+            "start": 0,
+            "dur": 0.5,
+            "kind": "tween",
+            "targets": [
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6"
+            ],
+            "vars": {
+              "top": "auto",
+              "bottom": "auto",
+              "left": "auto",
+              "right": "auto",
+              "immediateRender": true,
+              "runBackwards": 1,
+              "duration": 0.5,
+              "overwrite": false,
+              "delay": 0,
+              "ease": "fn"
+            }
+          },
+          {
+            "start": 0,
+            "dur": 0.5,
+            "kind": "tween",
+            "targets": [
+              "main#main > section.section > div.container > div.about-val-expanded-1",
+              "main#main > section.section > div.container > div.about-val-expanded-2"
+            ],
+            "vars": {
+              "maxWidth": "100%",
+              "duration": 0.5,
+              "overwrite": false,
+              "delay": 0,
+              "ease": "fn"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "libs": {
+      "gsap": true,
+      "ScrollTrigger": true,
+      "Flip": true,
+      "SplitText": false,
+      "Draggable": false,
+      "Observer": true,
+      "MotionPath": false,
+      "lenis": true,
+      "locomotive": false,
+      "three": false,
+      "lottie": false,
+      "framer": false
+    },
+    "gsapTouched": [
+      "body > div.page-wrapper.u-bg-black > div.navbar_wrapper > div.navbar_component.w-nav",
+      "nav.navbar_menu.w-nav-menu > div.navbar_menu-links > a.navbar_link.w-inline-block > div.navbar_link-icon.w-embed",
+      "html.w-mod-js.w-mod-ix > body > div.page-wrapper.u-bg-black > div.custom-cursor",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.about-hero_text-wrap > div.about-hero_text-outer-wrap > div.about-hero_text-inner-wrap > div.h4",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > h1.h5.u-mb-2",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.container > div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "div.row.u-mb-4 > div.col.col-lg-4 > p.paragraph-1-25 > div.line",
+      "main#main > section.section > div.container",
+      "main#main > section.section > div.container > div.about-val-expanded-1",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-7",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-8",
+      "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-9",
+      "main#main > section.section > div.container > div.about-val-expanded-2",
+      "div.container > div.row > div.col.col-lg-3 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-lg-3 > p",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.container > div.row > div.col.col-lg-3 > div.u-show-mobile-lands",
+      "div.container > div.row > div.col.col-lg-3 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-lg-3 > p",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.row > div.col.col-lg-3 > p > div.line",
+      "div.container > div.row > div.col.col-lg-3 > div.u-show-mobile-lands",
+      "div.container > div.row > div.col.col-sm-9 > h3.h6.u-mb-1",
+      "div.container > div.row > div.col.col-sm-9 > p",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.row > div.col.col-sm-9 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-3 > h2.h5",
+      "div.row.row-justify-center > div.col.col-lg-3 > h2.h5 > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-4 > p",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-2 > a.btn.w-button",
+      "div.row.row-justify-center > div.col.col-lg-3 > div.jobs-h-wrap > h3.h5",
+      "div.col.col-lg-3 > div.jobs-h-wrap > h3.h5 > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-4 > p",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.row.row-justify-center > div.col.col-lg-4 > p > div.line",
+      "div.about-job-wrapper > div.row.row-justify-center > div.col.col-lg-2 > a.btn.w-button"
+    ],
+    "running": [],
+    "keyframes": [
+      "spin"
+    ],
+    "scrollTriggers": [
+      {
+        "trigger": "main#main",
+        "start": "top top",
+        "startPx": 0,
+        "endPx": 8680,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section.section > div.container > div.about-job-wrapper > div.row.row-justify-center",
+        "start": "top 90%",
+        "startPx": 7315,
+        "endPx": 8344,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section.section > div.container > div.about-job-wrapper > div.row.row-justify-center",
+        "start": "top 90%",
+        "startPx": 7500,
+        "endPx": 8568,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 2500,
+        "endPx": 4496,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 4096,
+        "endPx": 5987,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 5587,
+        "endPx": 7100,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 6700,
+        "endPx": 7979,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section",
+        "start": "top 50%",
+        "end": "bottom 10%",
+        "startPx": 7579,
+        "endPx": 8580,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "div.col.col-lg-5 > div.footer-h-wrap > h3.h5.u-mb-4 > span.scramble-text.is-footer",
+        "start": "top 80%",
+        "startPx": 7981,
+        "endPx": 8811,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section#about-hero > div.container > div.about-hero_wrapper > div.about-hero_trigger",
+        "start": "top 80%",
+        "end": "top 50%",
+        "startPx": 200,
+        "endPx": 500,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "section#about-hero > div.container > div.about-hero_wrapper > div.about-hero_trigger",
+        "start": "top 80%",
+        "end": "top 50%",
+        "startPx": 1200,
+        "endPx": 1500,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": null
+      },
+      {
+        "trigger": "main#main > section.section > div.container > div.values_wrapper",
+        "start": "top 90%",
+        "end": "top 15%",
+        "startPx": 4066,
+        "endPx": 4816,
+        "scrub": 1.5,
+        "pin": false,
+        "toggleActions": "play",
+        "animation": {
+          "start": 0.436,
+          "dur": 0.5,
+          "kind": "timeline",
+          "children": [
+            {
+              "start": 0,
+              "dur": 0.5,
+              "kind": "tween",
+              "targets": [
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+                "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6"
+              ],
+              "vars": {
+                "top": "auto",
+                "bottom": "auto",
+                "left": "auto",
+                "right": "auto",
+                "immediateRender": true,
+                "runBackwards": 1,
+                "duration": 0.5,
+                "overwrite": false,
+                "delay": 0,
+                "ease": "fn"
+              }
+            },
+            {
+              "start": 0,
+              "dur": 0.5,
+              "kind": "tween",
+              "targets": [
+                "main#main > section.section > div.container > div.about-val-expanded-1",
+                "main#main > section.section > div.container > div.about-val-expanded-2"
+              ],
+              "vars": {
+                "maxWidth": "100%",
+                "duration": 0.5,
+                "overwrite": false,
+                "delay": 0,
+                "ease": "fn"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "gsapGlobal": [
+      {
+        "start": 0.35,
+        "dur": 0,
+        "kind": "tween",
+        "targets": [
+          "function _refreshAll(e,t){if(!st||e||S){Yb(),rt=ne.isRefreshing=!0,Ie.forEach(function(e){return Ta(e)&&++e.cacheID&&(e.rec=e())});var r=U(\"refreshInit\");Ze&&ne.sort(),t||Sb(),Ie.forEach(function(e){Ta(e)&&(e.smooth&&(e.target.style.scrollBehavior=\"auto\"),e(0))}),Tt.slice(0).forEach(function(e){return e.refresh()}),S=!1,Tt.forEach(function(e){if(e._subPinOffset&&e.pin){var t=e.vars.horizontal?\"offsetWidth\":\"offsetHeight\",r=e.pin[t];e.revert(!0,1),e.adjustPinSpacing(e.pin[t]-r),e.refresh()}}),et=1,Zb(!0),Tt.forEach(function(e){var t=Qa(e.scroller,e._dir),r=\"max\"===e.vars.end||e._endClamp&&e.end>t,n=e._startClamp&&e.start>=t;(r||n)&&e.setPositions(n?t-1:e.start,r?Math.max(n?t:e.start+1,t):e.end,!0)}),Zb(!1),et=0,r.forEach(function(e){return e&&e.render&&e.render(-1)}),Ie.forEach(function(e){Ta(e)&&(e.smooth&&requestAnimationFrame(function(){return e.target.style.scrollBehavior=\"smooth\"}),e.rec&&e(e.rec))}),Tb(w,1),c.pause(),kt++,Z(rt=2),Tt.forEach(function(e){return Ta(e.vars.onRefresh)&&e.vars.onRefresh(e)}),rt=ne.isRefreshing=!1,U(\"refresh\")}else wb(ne,\"scrollEnd\",Ob)}"
+        ],
+        "vars": {
+          "immediateRender": false,
+          "lazy": false,
+          "overwrite": false,
+          "delay": 0.2,
+          "onComplete": "fn",
+          "onReverseComplete": "fn",
+          "duration": 0,
+          "ease": "fn"
+        }
+      },
+      {
+        "start": 0.436,
+        "dur": 0.5,
+        "kind": "timeline",
+        "children": [
+          {
+            "start": 0,
+            "dur": 0.5,
+            "kind": "tween",
+            "targets": [
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-1",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-2",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-3",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-4",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-5",
+              "div.container > div.values_wrapper > div.values_inner-wrapper > div.values_img-wrapper.is-6"
+            ],
+            "vars": {
+              "top": "auto",
+              "bottom": "auto",
+              "left": "auto",
+              "right": "auto",
+              "immediateRender": true,
+              "runBackwards": 1,
+              "duration": 0.5,
+              "overwrite": false,
+              "delay": 0,
+              "ease": "fn"
+            }
+          },
+          {
+            "start": 0,
+            "dur": 0.5,
+            "kind": "tween",
+            "targets": [
+              "main#main > section.section > div.container > div.about-val-expanded-1",
+              "main#main > section.section > div.container > div.about-val-expanded-2"
+            ],
+            "vars": {
+              "maxWidth": "100%",
+              "duration": 0.5,
+              "overwrite": false,
+              "delay": 0,
+              "ease": "fn"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

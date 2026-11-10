@@ -1,0 +1,47 @@
+{
+  "results": [
+    {
+      "width": 320,
+      "statementsForwardAndReverse": "pass",
+      "accordionMouseAndKeyboard": "pass",
+      "founderDetails": "pass",
+      "overflow": false,
+      "images": "loaded"
+    },
+    {
+      "width": 390,
+      "statementsForwardAndReverse": "pass",
+      "accordionMouseAndKeyboard": "pass",
+      "founderDetails": "pass",
+      "overflow": false,
+      "images": "loaded"
+    },
+    {
+      "width": 768,
+      "statementsForwardAndReverse": "pass",
+      "accordionMouseAndKeyboard": "pass",
+      "founderDetails": "pass",
+      "overflow": false,
+      "images": "loaded"
+    },
+    {
+      "width": 1440,
+      "statementsForwardAndReverse": "pass",
+      "accordionMouseAndKeyboard": "pass",
+      "founderDetails": "pass",
+      "overflow": false,
+      "images": "loaded"
+    },
+    {
+      "width": 1920,
+      "statementsForwardAndReverse": "pass",
+      "accordionMouseAndKeyboard": "pass",
+      "founderDetails": "pass",
+      "overflow": false,
+      "images": "loaded"
+    }
+  ],
+  "reducedMotion": "pass",
+  "navigation": "pass",
+  "consoleErrors": []
+}

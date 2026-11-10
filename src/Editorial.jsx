@@ -1,5 +1,5 @@
 import React from "react";
-import LandingAccordionItem from './components/ui/interactive-image-accordion';
+import AboutPage from './AboutPage';
 import ScrollImageTunnel from './components/ui/scroll-image-tunnel';
 import { Link } from "react-router-dom";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
@@ -115,9 +115,10 @@ export function SourceArticle({ path, embedded = false, skipIntro = false }) {
   );
 }
 export function EditorialPage({ path }) {
+  if (path === '/about') return <AboutPage />;
   return (
     <>
-      {path === '/about' ? <LandingAccordionItem/> : <EditorialHeading path={path}/>}
+      <EditorialHeading path={path}/>
       <div className="editorial-layout editorial-content-anchor wrap" id="editorial-content">
         <aside className="editorial-index">
           <Link to="/">SPARK-DV</Link>
