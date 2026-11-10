@@ -37,11 +37,13 @@ function CurtainPhotoCard({
   const wingIndex = Math.floor(index / 2);
   const norm = wingIndex / (half - 1) - 0.5;
   const side = isLeft ? -1 : 1;
-  const width = stage.isMobile ? 70 : 144;
-  const height = stage.isMobile ? 92 : 180;
+  const width = stage.isMobile ? Math.min(100, stage.width * .22) : Math.min(196, stage.width * .16);
+  const height = width * (stage.isMobile ? 1.35 : 1.25);
   const arch = Math.cos(norm * Math.PI) * stage.width * 0.025;
   const targetX = stage.isMobile ? side * stage.width * (wingIndex % 2 ? .35 : .12) : side * (stage.width * .37 + arch);
-  const targetY = stage.isMobile ? Math.floor(wingIndex / 2) * 100 - 50 : norm * stage.height * .58;
+  const targetY = stage.isMobile
+    ? (Math.floor(wingIndex / 2) - .5) * (height + 12)
+    : norm * Math.min(stage.height * .66, stage.height * .9 - height);
   const initialX = side * wingIndex * 4;
   const initialY = norm * 10;
   const reveal = useTransform(progress, (value) => (reduced ? 1 : value));
@@ -54,8 +56,8 @@ function CurtainPhotoCard({
     const ease = 1 - Math.pow(1 - p, 3);
     return initialY + (targetY - initialY) * ease + py * (stage.isMobile ? 6 : 14) * ease;
   });
-  const rotate = useTransform(reveal, [0, 0.45, 1], [side * wingIndex * 2, isLeft ? -14 : 14, side * norm * 18]);
-  const scale = useTransform(reveal, [0, 0.5, 1], [0.18, 0.96, 0.92]);
+  const rotate = useTransform(reveal, [0, 0.45, 1], [side * wingIndex * 2, (isLeft ? -1 : 1) * (stage.isMobile ? 6 : 12), side * norm * (stage.isMobile ? 9 : 18)]);
+  const scale = useTransform(reveal, [0, 0.5, 1], [0.18, 0.98, 1]);
   const opacity = useTransform(reveal, [0, 0.16, 0.48], [0, 0.82, 1]);
 
   return (
