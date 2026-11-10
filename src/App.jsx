@@ -300,30 +300,8 @@ function App() {
               <p>Dental science. Everyday care.</p>
             </div>
             <Dock>
-            <DockItem baseWidth={90}><details className="products-menu">
-              <summary>
-                Products
-              </summary>
-              <div className="mega-menu">
-                <Link to="/products">
-                  Explore the complete portfolio <ArrowUpRight size={18} />
-                </Link>
-                {categories.slice(1).map((c) => (
-                  <Link
-                    key={c}
-                    to={`/products?category=${encodeURIComponent(c)}`}
-                    onClick={(e) =>
-                      e.currentTarget.closest("details").removeAttribute("open")
-                    }
-                  >
-                    {c}
-                    <ArrowRight size={16} />
-                  </Link>
-                ))}
-              </div>
-            </details></DockItem>
             {[
-              ['/science','Blogs',78],['/about','About',67],['/contact','Contact',82],
+              ['/products','Products',90],['/science','Blogs',78],['/about','About',67],['/contact','Contact',82],
             ].map(([to,label,width])=><DockItem key={to} baseWidth={width}><Link to={to} aria-current={loc.pathname===to?'page':undefined}>{label}</Link></DockItem>)}
             </Dock>
             <div className="mobile-actions">

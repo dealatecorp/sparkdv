@@ -16,6 +16,6 @@ const articles=[
 ];
 export default function ScienceGallery(){
  const [params,setParams]=useSearchParams();
- const cards=articles.map((a,index)=>({id:a.id,title:a.title,category:a.category,thumbnail:a.image,className:index===0||index===3?'science-layout-wide':index===4?'science-layout-full':'',content:<div className="source-article journal-body"><ReactMarkdown components={{img:()=>null,a:({href,children})=><Link to={href}>{children}</Link>}}>{a.body}</ReactMarkdown></div>}));
+ const cards=articles.map(a=>({id:a.id,title:a.title,category:a.category,thumbnail:a.image,content:<div className="source-article journal-body"><ReactMarkdown components={{img:()=>null,a:({href,children})=><Link to={href}>{children}</Link>}}>{a.body}</ReactMarkdown></div>}));
  return <section className="science-journal wrap"><header className="journal-heading"><h1>Blogs</h1><p>Explore the ideas, ingredients and research behind SPARK-DV.</p></header><LayoutGrid cards={cards} selectedId={params.get('article')} onSelect={id=>setParams({article:id})} onClose={()=>setParams({})}/></section>;
 }
