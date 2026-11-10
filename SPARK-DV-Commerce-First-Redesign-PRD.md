@@ -77,9 +77,9 @@ Shopping is the homepage’s default path. It does not remove the parent, profes
 ### 6.2 Catalogue and shop navigation
 
 - Provide search by product name or an approved category/use term, with useful empty results and an easy clear-search action.
-- Filter by source-supported category, variant, professional-use status and verified availability; show result count and removable selected filters. Keep active state shareable in the URL where supported.
+- Use a left-side desktop filter rail for source-supported category, price range, shopping status and professional-use facets; show counts, result count and removable active filters. On mobile, expose the same live filters in a collapsible panel.
 - Sort by relevance, name and price only when complete, current price data is present.
-- Display product photographs with the whole package visible; identify product names, variants, price, status and next action without hover.
+- Display product photographs with the whole package visible; identify product names, variants, price, status and next action without hover. Use search and sorting above the result grid.
 - Provide direct product details and quick add only for a verified purchasable selection. Variant selection cannot silently select an unconfirmed or professional-only product.
 - Use a structured Products menu organized by the same categories as the catalogue.
 
@@ -102,6 +102,7 @@ Shopping is the homepage’s default path. It does not remove the parent, profes
 ### 6.5 Other site routes
 
 - The Products route is the full store, not an editorial index. It needs search, usable filtering, sorting, clear results and direct product actions.
+- Keep the primary navigation focused on shopping and core information; surface Dentist, Parent and School Program pathways within About while retaining their direct routes.
 - Product routes support shopping and reveal factual detail progressively.
 - Science, For Dentists, For Parents, School Program and About pages keep their routes and essential information. Replace repeated introductory paragraphs with concise summaries, action links, relevant product links and labelled expandable long-form material.
 - Policy, regulatory and safety information remains directly reachable and readable; it must not be visually minimized until it becomes undiscoverable.
@@ -126,7 +127,7 @@ Shopping is the homepage’s default path. It does not remove the parent, profes
 
 - Use the same content and actions on mobile. Replace hover with tap-accessible controls and swipeable, snap-aligned product rows with visible previous/next buttons.
 - Allow page scrolling while interacting with horizontal rails; prevent only unintended horizontal page overflow.
-- Put catalogue filters in a labelled, dismissible sheet or disclosure with Apply/Clear and clear current state.
+- Put catalogue filters in a labelled, collapsible mobile panel with immediate result updates and a clear-all action.
 - Keep cart, product CTA and variant controls at usable touch sizes; avoid hover-only quick add.
 
 ## 8. Non-functional requirements

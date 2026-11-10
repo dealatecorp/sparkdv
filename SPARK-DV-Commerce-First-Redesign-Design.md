@@ -69,7 +69,7 @@ Compared the implementation against the stored Cleer desktop product reference (
 
 ### Global header
 
-Lead with **Shop / Products**; keep Science, For Dentists, For Parents, School Program, About and Contact accessible. Use the original logo, cart count and one contextual CTA. The Products menu groups verified families by catalogue category and stays operable on hover, keyboard, touch and screen readers. Mobile shows cart and menu without shrinking tap targets.
+Lead with **Products**; keep Science, About, Contact and the cart in the compact primary navigation. About contains visible paths for For Dentists, For Parents and School Program; their existing direct routes remain available. Use the original logo, cart count and one contextual CTA. The Products menu groups verified families by catalogue category and stays operable on hover, keyboard, touch and screen readers. Mobile shows cart and menu without shrinking tap targets.
 
 ### Homepage order
 
@@ -83,7 +83,7 @@ Use a clear merchandising hierarchy instead of many equally weighted section pan
 
 ### Product page and catalogue
 
-- **Catalogue:** open with Shop title, search and category filters; show result count, active filters and a fluid responsive grid. Product imagery and names lead each card. Let price/status and the next action remain readable without hover.
+- **Catalogue:** open with Shop title, search, and sort controls above a three-column product grid. A left sidebar groups category, price range, shopping status, and professional-use filters; mobile collapses this into a labelled filter panel. Filters update live, expose removable active chips and a clear-all control, and show a result count. Product cards use original photography with `object-fit: contain` so full packages remain visible, plus category, name, price/status and add/enquiry action.
 - **Product detail:** package gallery beside the name, verified price, variant/quantity and purchase/enquiry action. Keep the buy controls visible on desktop as the visitor browses long specifications; on narrow screens use a clearly labelled compact action area only if it stays above browser controls and never covers warnings.
 - **Long detail:** short visible description, then semantic sections for how it works, use/safety/professional status, specifications/evidence and FAQ. Preserve full approved information.
 - **Cart:** use a simple drawer or clear cart page with selected package, selected variant, price, quantity controls, subtotal and real next step. Empty state links back to relevant products.

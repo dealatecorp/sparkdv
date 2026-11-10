@@ -15,6 +15,7 @@ import {
   Minus,
   Plus,
   Search,
+  SlidersHorizontal,
   ShoppingBag,
   ShieldCheck,
   Sparkles,
@@ -306,9 +307,7 @@ function App() {
               </div>
             </details></DockItem>
             {[
-              ['/science','Science',78],['/dentists','For Dentists',108],
-              ['/parents','For Parents',105],['/school-program','School Program',135],
-              ['/about','About',67],['/contact','Contact',82],
+              ['/science','Science',78],['/about','About',67],['/contact','Contact',82],
             ].map(([to,label,width])=><DockItem key={to} baseWidth={width}><Link to={to} aria-current={loc.pathname===to?'page':undefined}>{label}</Link></DockItem>)}
             </Dock>
             <div className="mobile-actions">
@@ -524,6 +523,7 @@ function ProductCard({ product: p, add, compact = false }) {
         </span>
       </Link>
       <div className="product-info">
+        <p className="catalog-product-category">{p.category}</p>
         <p className="eyebrow">{p.eyebrow}</p>
         <Link className="product-title" to={`/products/${p.slug}`}>
           {p.name}
@@ -555,27 +555,94 @@ function ProductCard({ product: p, add, compact = false }) {
 }
 function Catalog({ add }) {
   const params = new URLSearchParams(useLocation().search);
-  const [cat, setCat] = useState(categories.includes(params.get("category")) ? params.get("category") : "All products");
+  const [selectedCategories, setSelectedCategories] = useState(() => categories.includes(params.get("category")) && params.get("category") !== "All products" ? [params.get("category")] : []);
   const [query, setQuery] = useState("");
   const [prof, setProf] = useState(false);
+  const [statusFilters, setStatusFilters] = useState([]);
   const [sort, setSort] = useState("featured");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [openFilterGroups, setOpenFilterGroups] = useState({ category: true, price: true, shopping: true, use: true });
+  const pricedProducts = products.filter(p => p.price != null && !p.coming);
+  const minCatalogPrice = Math.min(...pricedProducts.map(p => p.price));
+  const maxCatalogPrice = Math.max(...pricedProducts.map(p => p.price));
+  const [priceMin, setPriceMin] = useState(minCatalogPrice);
+  const [priceMax, setPriceMax] = useState(maxCatalogPrice);
   const filtered = useMemo(() => {
-    const list = products.filter(p => (cat === "All products" || p.category === cat) && (!prof || p.professional) && `${p.name} ${p.desc} ${p.tags.join(" ")}`.toLowerCase().includes(query.toLowerCase()));
+    const list = products.filter(p => {
+      const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(p.category);
+      const matchesSearch = `${p.name} ${p.category} ${p.desc} ${(p.tags ?? []).join(" ")}`.toLowerCase().includes(query.trim().toLowerCase());
+      const matchesStatus = statusFilters.length === 0 || statusFilters.some(status => status === "priced" ? p.price != null && !p.coming : status === "enquiry" ? p.price == null && !p.coming : p.coming);
+      const priceFilterActive = priceMin > minCatalogPrice || priceMax < maxCatalogPrice;
+      const matchesPrice = !priceFilterActive || (p.price != null && p.price >= priceMin && p.price <= priceMax);
+      return matchesCategory && matchesSearch && (!prof || p.professional) && matchesStatus && matchesPrice;
+    });
     if (sort === "price-low") list.sort((a,b)=>(a.price??999999)-(b.price??999999));
     if (sort === "price-high") list.sort((a,b)=>(b.price??0)-(a.price??0));
     if (sort === "name") list.sort((a,b)=>a.name.localeCompare(b.name));
     return list;
-  }, [cat, query, prof, sort]);
-  const clearFilters=()=>{setCat("All products");setProf(false);setQuery("")};
+  }, [selectedCategories, query, prof, statusFilters, priceMin, priceMax, minCatalogPrice, maxCatalogPrice, sort]);
+  const priceFilterActive = priceMin > minCatalogPrice || priceMax < maxCatalogPrice;
+  const activeFilterCount = selectedCategories.length + statusFilters.length + Number(prof) + Number(priceFilterActive);
+  const toggleCategory = category => setSelectedCategories(current => current.includes(category) ? current.filter(item => item !== category) : [...current, category]);
+  const toggleStatus = status => setStatusFilters(current => current.includes(status) ? current.filter(item => item !== status) : [...current, status]);
+  const toggleFilterGroup = group => setOpenFilterGroups(current => ({ ...current, [group]: !current[group] }));
+  const clearFilters=()=>{setSelectedCategories([]);setProf(false);setStatusFilters([]);setPriceMin(minCatalogPrice);setPriceMax(maxCatalogPrice);setQuery("");setSort("featured")};
   return <>
-    <section className="catalog-heading wrap"><div><p className="shop-hero-context">SPARK-DV / PRODUCTS</p><h1>Shop the range.</h1><p>Browse products for pediatric and preventive dental care.</p></div><Link className="button button-dark" to="/contact">Request professional pricing <ArrowUpRight size={16}/></Link></section>
+    <section className="catalog-heading wrap"><div><h1>Shop products</h1><p>Find products for pediatric and preventive dental care.</p></div><Link className="button button-dark" to="/contact?type=Professional%20pricing">Professional pricing <ArrowUpRight size={16}/></Link></section>
     <section className="catalog-section wrap" aria-label="Product catalogue">
-      <div className="catalog-toolbar"><div className="search-field"><Search size={18}/><input aria-label="Search products" placeholder="Search products" value={query} onChange={e=>setQuery(e.target.value)}/>{query&&<button aria-label="Clear search" onClick={()=>setQuery("")}><X size={15}/></button>}</div>
-        <label className="sort-label">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="featured">Featured</option><option value="name">Name</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
+      <div className="catalog-layout">
+        <aside className="catalog-sidebar" data-open={mobileFiltersOpen} aria-label="Product filters">
+          <button className="catalog-mobile-filter-toggle" type="button" aria-expanded={mobileFiltersOpen} onClick={()=>setMobileFiltersOpen(open=>!open)}><SlidersHorizontal size={17}/><span>Filters</span>{activeFilterCount > 0 && <span className="filter-count">{activeFilterCount}</span>}<ChevronDown size={16}/></button>
+          <div className="catalog-filter-content">
+            <div className="catalog-filter-heading"><h2>Filters</h2><button className="clear-filter" onClick={clearFilters} disabled={activeFilterCount === 0 && !query}>Clear all</button></div>
+            <section className="catalog-filter-group">
+              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.category} onClick={()=>toggleFilterGroup("category")}>Category <ChevronDown size={15}/></button>
+              {openFilterGroups.category && <div className="catalog-filter-options">
+                {categories.slice(1).map(category => <label key={category}><input type="checkbox" checked={selectedCategories.includes(category)} onChange={()=>toggleCategory(category)}/><span>{category}</span><small>{products.filter(p=>p.category===category).length}</small></label>)}
+              </div>}
+            </section>
+            <section className="catalog-filter-group">
+              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.price} onClick={()=>toggleFilterGroup("price")}>Price <ChevronDown size={15}/></button>
+              {openFilterGroups.price && <div className="catalog-price-range">
+                <label><span>₹</span><input type="number" min={minCatalogPrice} max={priceMax} value={priceMin} aria-label="Minimum price in rupees" onChange={e=>setPriceMin(Math.min(Number(e.target.value)||minCatalogPrice,priceMax))}/></label>
+                <span aria-hidden="true">to</span>
+                <label><span>₹</span><input type="number" min={priceMin} max={maxCatalogPrice} value={priceMax} aria-label="Maximum price in rupees" onChange={e=>setPriceMax(Math.max(Number(e.target.value)||maxCatalogPrice,priceMin))}/></label>
+                <small>{priceFilterActive ? "Showing within selected range" : "All listed prices"}</small>
+              </div>}
+            </section>
+            <section className="catalog-filter-group">
+              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.shopping} onClick={()=>toggleFilterGroup("shopping")}>Shopping options <ChevronDown size={15}/></button>
+              {openFilterGroups.shopping && <div className="catalog-filter-options">
+                <label><input type="checkbox" checked={statusFilters.includes("priced")} onChange={()=>toggleStatus("priced")}/><span>Priced products</span></label>
+                <label><input type="checkbox" checked={statusFilters.includes("enquiry")} onChange={()=>toggleStatus("enquiry")}/><span>Price on request</span></label>
+                <label><input type="checkbox" checked={statusFilters.includes("coming")} onChange={()=>toggleStatus("coming")}/><span>Coming soon</span></label>
+              </div>}
+            </section>
+            <section className="catalog-filter-group">
+              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.use} onClick={()=>toggleFilterGroup("use")}>Use <ChevronDown size={15}/></button>
+              {openFilterGroups.use && <div className="catalog-filter-options">
+                <label><input type="checkbox" checked={prof} onChange={e=>setProf(e.target.checked)}/><span>Professional use</span></label>
+              </div>}
+            </section>
+            <Link className="catalog-professional-link" to="/contact?type=Professional%20pricing">Need professional pricing? <ArrowUpRight size={14}/></Link>
+          </div>
+        </aside>
+        <div className="catalog-results">
+          <div className="catalog-toolbar">
+            <div className="search-field"><Search size={18}/><input aria-label="Search products" placeholder="Search products and categories" value={query} onChange={e=>setQuery(e.target.value)}/>{query&&<button aria-label="Clear search" onClick={()=>setQuery("")}><X size={15}/></button>}</div>
+            <label className="sort-label">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="featured">Featured</option><option value="name">Name</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
+          </div>
+          <div className="catalog-meta-row" aria-live="polite" aria-atomic="true"><span><strong>{filtered.length}</strong> products</span><span className="catalog-result-note">Original SPARK-DV product photography</span></div>
+          {(selectedCategories.length > 0 || statusFilters.length > 0 || prof || priceFilterActive) && <div className="catalog-active-filters" aria-label="Active filters">
+            {selectedCategories.map(category=><button key={category} onClick={()=>toggleCategory(category)}>{category}<X size={13}/></button>)}
+            {statusFilters.map(status=><button key={status} onClick={()=>toggleStatus(status)}>{status === "priced" ? "Priced products" : status === "enquiry" ? "Price on request" : "Coming soon"}<X size={13}/></button>)}
+            {prof&&<button onClick={()=>setProf(false)}>Professional use<X size={13}/></button>}
+            {priceFilterActive&&<button onClick={()=>{setPriceMin(minCatalogPrice);setPriceMax(maxCatalogPrice)}}>₹{priceMin.toLocaleString("en-IN")} – ₹{priceMax.toLocaleString("en-IN")}<X size={13}/></button>}
+            <button className="clear-filter" onClick={clearFilters}>Clear all</button>
+          </div>}
+          {filtered.length ? <div className="product-grid commerce-product-grid">{filtered.map(p=><ProductCard key={p.slug} product={p} add={add}/>)}</div> : <div className="no-results"><Search size={28}/><h2>No products found</h2><p>Try a different name or remove a filter.</p><button className="button button-outline" onClick={clearFilters}>Clear all filters</button></div>}
+        </div>
       </div>
-      <div className="catalog-category-scroll" role="group" aria-label="Filter products by category">{categories.map(c=><button key={c} aria-pressed={cat===c} onClick={()=>setCat(c)}>{c}</button>)}</div>
-      <div className="catalog-meta-row"><span>{filtered.length} products</span><label className="check-filter"><input type="checkbox" checked={prof} onChange={e=>setProf(e.target.checked)}/> Professional products</label><button className="clear-filter" onClick={clearFilters}>Clear filters</button></div>
-      {filtered.length ? <div className="product-grid commerce-product-grid">{filtered.map(p=><ProductCard key={p.slug} product={p} add={add}/>)}</div> : <div className="no-results"><Search size={28}/><h2>No products found</h2><p>Try a different name or category.</p><button className="button button-outline" onClick={clearFilters}>Clear filters</button></div>}
     </section>
     <section className="need-help"><div className="wrap need-help-inner"><div><h2>Need help choosing?</h2><p>Ask our team about products, professional pricing or availability.</p></div><Link className="button button-dark" to="/contact">Talk to our team <ArrowUpRight size={16}/></Link></div></section>
   </>;
@@ -928,91 +995,35 @@ function Contact() {
   const [kind, setKind] = useState(
     new URLSearchParams(location.search).get("type") || "Distributor enquiry",
   );
+  const enquiryKinds = ["Professional pricing", "Distributor enquiry", "Clinical enquiry", "School program", "General contact"];
   return (
-    <>
-      <PageHero
-        eyebrow="CONTACT SPARK-DV"
-        title={
-          <>
-            Let’s start
-            <br />
-            <em>a conversation.</em>
-          </>
-        }
-        copy="Choose the reason you’re reaching out and we’ll direct your enquiry to the right team."
-      />
-      <section className="section wrap contact-page">
-        <div className="enquiry-tabs">
-          {[
-            "Distributor enquiry",
-            "Clinical enquiry",
-            "School program",
-            "General contact",
-          ].map((k) => (
-            <button
-              className={kind === k ? "selected" : ""}
-              onClick={() => setKind(k)}
-              key={k}
-            >
-              <span>
-                {kind === k ? <Check size={15} /> : <ArrowUpRight size={15} />}
-              </span>
-              {k}
-            </button>
-          ))}
-        </div>
-        <div className="contact-layout">
-          <div className="contact-copy">
-            <p className="eyebrow">{kind.toUpperCase()}</p>
-            <h2>
-              {kind === "Clinical enquiry"
-                ? "Ask our clinical team."
-                : kind === "School program"
-                  ? "Bring a program to your school."
-                  : kind === "General contact"
-                    ? "We’re here to help."
-                    : "Build a partnership."}
-            </h2>
-            <p>
-              Share a few details and the SPARK-DV team will follow up. This
-              form prepares an email for you to review and send.
-            </p>
+    <section className="contact-ui-section">
+      <div className="wrap contact-ui-grid">
+        <div className="contact-visual">
+          <div className="contact-bubbles" aria-hidden="true">{Array.from({length:12},(_,index)=><span key={index}/>)}</div>
+          <div className="contact-visual-copy">
+            <p className="contact-kicker">SPARK-DV · CHENNAI, INDIA</p>
+            <h1>{kind === "Clinical enquiry" ? <>Talk with<br/>our clinical team.</> : kind === "School program" ? <>Bring care<br/>to your school.</> : kind === "General contact" ? <>We’re here<br/>to help.</> : kind === "Professional pricing" ? <>Let’s talk<br/>professional pricing.</> : <>Let’s start<br/>a conversation.</>}</h1>
+            <p>Tell us what you need. We’ll route your message to the right SPARK-DV team.</p>
             <div className="contact-details">
-              <a href="mailto:sparkdv310@gmail.com">
-                sparkdv310@gmail.com <ArrowUpRight size={15} />
-              </a>
-              <a href="tel:+917981546939">
-                +91 7981546939 <ArrowUpRight size={15} />
-              </a>
-              <a href="tel:+919154741994">
-                +91 9154741994 <ArrowUpRight size={15} />
-              </a>
-              <a href="tel:+919848014443">
-                +91 9848014443 <ArrowUpRight size={15} />
-              </a>
-              <span>Chennai, Tamil Nadu, India</span>
+              <a href="mailto:sparkdv310@gmail.com">sparkdv310@gmail.com <ArrowUpRight size={15}/></a>
+              <a href="tel:+917981546939">+91 7981546939 <ArrowUpRight size={15}/></a>
+              <a href="tel:+919154741994">+91 9154741994 <ArrowUpRight size={15}/></a>
+              <a href="tel:+919848014443">+91 9848014443 <ArrowUpRight size={15}/></a>
             </div>
+            <a className="contact-whatsapp" href="https://wa.me/919246901870" target="_blank" rel="noreferrer">Prefer WhatsApp? Chat with our team <ArrowUpRight size={15}/></a>
           </div>
-          <EnquiryForm key={kind} defaultType={kind} /><details className="company-label-info"><summary>Company & product-label information</summary><p>Manufactured by: 3K NANO PVT. LTD., HNO-RZ-625/1C, KH-625, T/F/L/S, Indra Park, Palam Colony, New Delhi, Delhi 110045. Manufactured for: SPARK-DV. Marketed by: Sendan Pharmaceuticals Pvt. Ltd., Chennai, Tamil Nadu.</p><p>{disclaimer}</p></details>
         </div>
-      </section>
-      <section className="contact-strip">
-        <div className="wrap">
-          <div>
-            <p className="eyebrow">WHATSAPP</p>
-            <h2>Prefer a quick chat?</h2>
+        <div className="contact-form-card">
+          <div className="contact-form-heading"><span>CONTACT OUR TEAM</span><h2>How can we help?</h2><p>Choose an enquiry type and share a few details.</p></div>
+          <div className="enquiry-tabs" aria-label="Choose an enquiry type">
+            {enquiryKinds.map(k=><button type="button" className={kind===k?"selected":""} aria-pressed={kind===k} onClick={()=>setKind(k)} key={k}><span>{kind===k?<Check size={14}/>:null}</span>{k}</button>)}
           </div>
-          <a
-            className="button button-paper"
-            href="https://wa.me/919246901870"
-            target="_blank"
-            rel="noreferrer"
-          >
-            WhatsApp our team <ArrowUpRight size={16} />
-          </a>
+          <EnquiryForm key={kind} defaultType={kind}/>
+          <details className="company-label-info"><summary>Company & product-label information</summary><p>Manufactured by: 3K NANO PVT. LTD., HNO-RZ-625/1C, KH-625, T/F/L/S, Indra Park, Palam Colony, New Delhi, Delhi 110045. Manufactured for: SPARK-DV. Marketed by: Sendan Pharmaceuticals Pvt. Ltd., Chennai, Tamil Nadu.</p><p>{disclaimer}</p></details>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 
@@ -1062,6 +1073,7 @@ function EnquiryForm({ defaultType, defaultProduct = 'General enquiry' }) {
             "Distributor enquiry",
             "Clinical enquiry",
             "Sample request",
+            "Professional pricing",
             "Demo request",
             "School program",
             "General contact",

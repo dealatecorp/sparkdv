@@ -5,6 +5,7 @@ const errors = [];
 page.on('pageerror', e => errors.push(e.message));
 page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
 await page.goto('http://127.0.0.1:5173', {waitUntil:'networkidle'});
+await page.locator('[data-testid="landing-reveal"]').waitFor({state:'visible',timeout:9000});
 await page.locator('[data-testid="landing-reveal"]').waitFor({state:'detached',timeout:9000});
 await page.waitForTimeout(1700);
 const prism = await page.evaluate(() => ({
@@ -16,6 +17,10 @@ const prism = await page.evaluate(() => ({
   productHeroImmediatelyAfterPrism: document.querySelector('.shop-prism-hero')?.nextElementSibling?.id === 'featured-products'
 }));
 await page.screenshot({path:'.impeccable/review/prism-desktop.png'});
+await page.evaluate(()=>{const hero=document.querySelector('.shop-prism-hero');window.scrollTo(0,hero.offsetTop+(hero.offsetHeight-innerHeight)*0.72)});
+await page.waitForTimeout(700);
+const desktopCurtain=await page.evaluate(()=>({photos:[...document.querySelectorAll('.curtain-photo-card img')].map(img=>({src:img.getAttribute('src'),loaded:img.complete&&img.naturalWidth>0,rect:img.getBoundingClientRect().toJSON()})),scrollWidth:document.documentElement.scrollWidth}));
+await page.screenshot({path:'.impeccable/review/curtain-split-desktop.png'});
 await page.locator('#featured-products').scrollIntoViewIfNeeded();
 await page.getByRole('button',{name:'Previous product'}).click();
 await page.waitForTimeout(500);
@@ -27,15 +32,20 @@ const desktopImage = await page.evaluate(() => {
 });
 await page.setViewportSize({width:390,height:844});
 await page.goto('http://127.0.0.1:5173',{waitUntil:'networkidle'});
+await page.locator('[data-testid="landing-reveal"]').waitFor({state:'visible',timeout:9000});
 await page.locator('[data-testid="landing-reveal"]').waitFor({state:'detached',timeout:9000});
 await page.waitForTimeout(1600);
 await page.evaluate(()=>{history.scrollRestoration='manual';document.scrollingElement.scrollTop=0});
 await page.screenshot({path:'.impeccable/review/prism-mobile.png'});
 const mobilePrism=await page.evaluate(()=>({resolution:[document.querySelector('.shop-prism-hero canvas')?.width,document.querySelector('.shop-prism-hero canvas')?.height], viewport:[innerWidth,innerHeight], scrollWidth:document.documentElement.scrollWidth}));
+await page.evaluate(()=>{const hero=document.querySelector('.shop-prism-hero');window.scrollTo(0,hero.offsetTop+(hero.offsetHeight-innerHeight)*0.72)});
+await page.waitForTimeout(700);
+const mobileCurtain=await page.evaluate(()=>({photos:[...document.querySelectorAll('.curtain-photo-card img')].map(img=>({src:img.getAttribute('src'),loaded:img.complete&&img.naturalWidth>0,rect:img.getBoundingClientRect().toJSON()})),viewport:[innerWidth,innerHeight],scrollWidth:document.documentElement.scrollWidth}));
+await page.screenshot({path:'.impeccable/review/curtain-split-mobile.png'});
 await page.locator('#featured-products').scrollIntoViewIfNeeded();
 await page.getByRole('button',{name:'Previous product'}).click();
 await page.waitForTimeout(400);
 await page.screenshot({path:'.impeccable/review/product-after-prism-mobile.png'});
 const mobileProduct=await page.evaluate(()=>({viewport:[innerWidth,innerHeight],scrollWidth:document.documentElement.scrollWidth,image:document.querySelector('.brand-product-hero .snp-stage')?.getBoundingClientRect().toJSON(),hero:document.querySelector('.brand-product-hero')?.getBoundingClientRect().toJSON()}));
-console.log(JSON.stringify({prism,desktopImage,mobilePrism,mobileProduct,errors},null,2));
+console.log(JSON.stringify({prism,desktopCurtain,desktopImage,mobilePrism,mobileCurtain,mobileProduct,errors},null,2));
 await browser.close();

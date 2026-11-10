@@ -140,6 +140,14 @@ export function EditorialPage({ path }) {
           <SourceArticle path={path} skipIntro />
         </div>
       </div>
+      {path === "/about" && <section className="about-audience wrap" aria-labelledby="about-audience-title">
+        <div className="about-audience-heading"><p>SPARK-DV / WHO WE SERVE</p><h2 id="about-audience-title">Care for the whole community.</h2></div>
+        <div className="about-audience-links">
+          <Link to="/dentists"><span>For dental professionals</span><strong>Clinical resources and product guidance <ArrowUpRight size={16}/></strong></Link>
+          <Link to="/parents"><span>For parents and caregivers</span><strong>Everyday care and safety guidance <ArrowUpRight size={16}/></strong></Link>
+          <Link to="/school-program"><span>For schools</span><strong>Explore the school dental program <ArrowUpRight size={16}/></strong></Link>
+        </div>
+      </section>}
       
     </>
   );

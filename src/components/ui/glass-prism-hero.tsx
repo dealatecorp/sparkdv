@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useMotionValue, type MotionValue } from "motion/react";
 
 /* ------------------------------------------------------------------ */
 /*  Glass Prism Hero: a glass prism splits a beam of white light into  */
@@ -28,6 +29,8 @@ export interface GlassPrismHeroProps extends Omit<React.HTMLAttributes<HTMLEleme
   scrollRotate?: boolean;
   /** Labels for the scroll hint, or false to hide it. */
   scrollHint?: { rotate: string; back: string } | false;
+  /** Optional scroll-synced layer, rendered over the prism scene. */
+  overlay?: (progress: MotionValue<number>) => React.ReactNode;
 }
 
 export interface GlassPrismHeroHandle {
@@ -220,6 +223,7 @@ export const GlassPrismHero = React.forwardRef<GlassPrismHeroHandle, GlassPrismH
     fontWeight = 600,
     scrollRotate = true,
     scrollHint = { rotate: "Scroll to rotate", back: "Scroll up" },
+    overlay,
     className = "",
     style,
     ...rest
@@ -235,6 +239,7 @@ export const GlassPrismHero = React.forwardRef<GlassPrismHeroHandle, GlassPrismH
   const restartRef = React.useRef<() => void>(() => {});
   const [ready, setReady] = React.useState(false);
   const [noGL, setNoGL] = React.useState(false);
+  const scrollProgress = useMotionValue(0);
 
   React.useImperativeHandle(ref, () => ({ replay: () => restartRef.current() }), []);
 
@@ -347,6 +352,8 @@ export const GlassPrismHero = React.forwardRef<GlassPrismHeroHandle, GlassPrismH
       if (!scrollRotate) return;
       const r = outerRef.current!.getBoundingClientRect();
       SCR = Math.min(1, Math.max(0, -r.top / (window.innerHeight * 0.7)));
+      const travel = Math.max(1, outerRef.current!.offsetHeight - window.innerHeight);
+      scrollProgress.set(Math.min(1, Math.max(0, -r.top / travel)));
       setCopy();
     };
 
@@ -429,6 +436,8 @@ export const GlassPrismHero = React.forwardRef<GlassPrismHeroHandle, GlassPrismH
     >
       <div ref={stageRef} className="sticky top-0 h-[100svh] min-h-[560px] w-full overflow-hidden bg-background text-foreground" style={{ fontFamily }}>
         <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 h-full w-full" />
+
+        {overlay && <div className="shop-prism-curtain-container">{overlay(scrollProgress)}</div>}
 
         <h1
           className={noGL ? "absolute inset-x-0 top-[22vh] m-0 px-5 text-center text-[clamp(40px,8vw,112px)] font-semibold leading-none tracking-[-0.05em]" : "sr-only"}

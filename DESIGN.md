@@ -4,7 +4,7 @@ Updated 8 November 2026. The prior serif direction is archived in audit/DESIGN-b
 
 ## Commerce-first redesign — implemented
 
-On 9 November 2026, the user set a whole-site direction: prioritize ecommerce, reduce long introductory copy, and make browsing dynamic through scroll and pointer interaction. The implementation now begins with the scroll-responsive Glass Prism animation, followed directly by the featured product showcase. The full catalogue remains available through Products. Original mapped package photography, clinical and safety content, professional-use guidance and legal routes are retained. No 3D product models or generated/stock product substitutes are used.
+On 9 November 2026, the user set a whole-site direction: prioritize ecommerce, reduce long introductory copy, and make browsing dynamic through scroll and pointer interaction. The implementation now begins with the user-supplied Sticker Swap Headline with original product-photo stickers and a scroll-opening photo curtain, followed directly by the featured product showcase. The full catalogue remains available through Products. Original mapped package photography, clinical and safety content, professional-use guidance and legal routes are retained. No 3D product models or generated/stock product substitutes are used.
 
 Use [SPARK-DV-Commerce-First-Redesign-PRD.md](./SPARK-DV-Commerce-First-Redesign-PRD.md) for requirements and [SPARK-DV-Commerce-First-Redesign-Design.md](./SPARK-DV-Commerce-First-Redesign-Design.md) for references, responsive behavior and motion safeguards. The older tunnel and liquid-morph components below are legacy source files, not active homepage sections.
 
@@ -19,8 +19,8 @@ Self-hosted DM Sans: regular/medium display 44–84px, route headings 43–68px,
 ## Components
 
 - Sticky header, original logo, accessible Products disclosure, mobile menu and real cart.
-- User-supplied Glass Prism Hero on the homepage, with SPARK-DV wordmark, pointer-controlled light and scroll rotation/fade. WebGL resolution is capped at 2x desktop and 1.5x on narrow screens; the scene pauses when offscreen and has a semantic no-WebGL heading fallback.
-- User-supplied Sneaker Product Hero appears immediately after the prism scroll scene and uses the mapped SPARK-DV product records and photos. Product navigation updates image, name and price together; quantity controls add the selected quantity to the existing cart. Package photos use a full-frame `contain` image stage to center wide and tall images. Demo shoe ratings and unsupported gallery angles are hidden.
+- User-supplied Sticker Swap Headline on the homepage, with SPARK-DV centered above the animated lettering. Original product-photo stickers pop into changing words; eight original product photos open as a scroll curtain. Desktop photos flank the lettering; mobile photos form two rows below the calls to action. The headline supports keyboard advancement and a pause control, and autoplay stops offscreen and under reduced motion. The glass prism is no longer rendered.
+- User-supplied Sneaker Product Hero appears immediately after the sticker and curtain scene and uses the mapped SPARK-DV product records and photos. Product navigation updates image, name and price together; quantity controls add the selected quantity to the existing cart. Package photos use a full-frame `contain` image stage to center wide and tall images. Demo shoe ratings and unsupported gallery angles are hidden.
 - All 17 products are available in the Products catalogue with search, category filters, sorting, product pages and cart actions. The separate “Shop the range” homepage rail was removed by request.
 - Product dialog with original image zoom, source description, prices, professional-use status, quantity, existing-cart integration, disclosures and full product-page link. No invented ratings, sizes, delivery promises or back-of-pack view.
 - Source-specific product and editorial pages with original clinical diagrams, founder portrait, responsive tables, six recovered protocols and FAQs.
@@ -29,7 +29,7 @@ Self-hosted DM Sans: regular/medium display 44–84px, route headings 43–68px,
 
 ## Motion and access
 
-The homepage’s prism uses native page scrolling to rotate and dim the glass, while pointer movement adjusts its light. The product showcase immediately follows and floats, tilts gently on desktop, and stacks vertically on mobile. The product selector works with touch and keyboard. Product photos use `object-fit: contain`, and mobile WebGL rendering is capped at 1.5x device resolution. Reduced-motion preferences shorten the prism intro and disable the product float/tilt.
+The homepage uses native page scrolling to open the product-photo curtain around the sticker headline, with subtle pointer parallax. The product showcase immediately follows and floats, tilts gently on desktop, and stacks vertically on mobile. The product selector works with touch and keyboard. Product photos use `object-fit: contain`. Reduced-motion preferences show the curtain open, disable headline autoplay, and disable the product float/tilt.
 
 CSS handles small hover feedback. Motion handles existing shelf, accordion and footer effects; GSAP drives the supplied product showcase. Shelf spring is 0.55s, no bounce. Marquee supports pause and stops on hover/focus. Reduced motion disables transforms and uses a static logo. Dialogs contain focus, make background content inert and restore focus. Product photographs use object-fit: contain.
 

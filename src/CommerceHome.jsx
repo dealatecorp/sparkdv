@@ -6,7 +6,8 @@ import assets from './product-assets.json';
 import {HomeCommunity} from './components/home/home-editorial';
 import SneakerProductHero from './components/ui/sneaker-product-hero';
 const LandingReveal=lazy(()=>import('./components/ui/landing-reveal'));
-const GlassPrismHero=lazy(()=>import('./components/ui/glass-prism-hero'));
+const StickerCurtainHero=lazy(()=>import('./components/ui/sticker-curtain-hero'));
+
 
 export function CommerceHome({add}) {
   const variants=useMemo(()=>products.map(product=>{
@@ -15,9 +16,10 @@ export function CommerceHome({add}) {
     return {name:product.name,src:asset.local,swatch:tint,tint,product};
   }),[]);
   const defaultVariant=Math.max(0,products.findIndex(p=>p.slug==='nanion-lite-pro'));
+  const curtainPhotos=['nanion-lite-pro','nanion-elite','nanion-swish','pobtura','nanohybrid-biocem','marc','marc-zirc','nanosilver-pro'].map(slug=>({src:assets[slug].local,alt:assets[slug].name}));
   return <div className="commerce-home">
     <Suspense fallback={null}><LandingReveal/></Suspense>
-    <Suspense fallback={<section className="shop-prism-fallback" aria-label="SPARK-DV"><h1>SPARK-DV</h1></section>}><GlassPrismHero className="shop-prism-hero" headline="SPARK-DV" eyebrow="Pediatric & preventive dental care" description="Small details. Brighter futures." actions={<a className="prism-hero-action" href="#featured-products">Explore products <ArrowUpRight size={17}/></a>} accent="#ad4b09" fontFamily="DM Sans, sans-serif" fontWeight={500} scrollHint={{rotate:'Scroll to reveal the product',back:'Scroll up to the prism'}} style={{height:'calc(100svh + clamp(260px, 40vh, 560px))'}}/></Suspense>
+    <Suspense fallback={<section className="shop-sticker-fallback" aria-label="SPARK-DV"><h1>SPARK-DV</h1></section>}><StickerCurtainHero photos={curtainPhotos}/></Suspense>
     <section id="featured-products" className="shop-hero-shell" aria-label="Featured product">
       <SneakerProductHero className="brand-product-hero" variants={variants} defaultVariant={defaultVariant} sizes={[{label:'1'},{label:'2'},{label:'3'}]} price={0} currency="₹" rating={0} reviews={0} height="min(820px, calc(100svh - 80px))" showGallery={false} toast="Added to your cart" likeColor="#63218b" onAddToCart={({variant,size})=>{const selected=products.find(p=>p.slug===variant.product?.slug);if(selected&&selected.price!=null&&!selected.coming)add(selected,Number(size))}}/>
     </section>
