@@ -22,4 +22,6 @@ import './components/ui/spark-product-showcase.css';
 import './components/ui/checkout-contact.css';
 import './components/ui/dock.css';
 import './components/ui/liquid-morph-floating-menu.css';
+import './components/ui/scroll-product-hero.css';
+import './components/home/home-editorial.css';
 import './commerce.css';

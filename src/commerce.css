@@ -37,7 +37,7 @@ button, a, input, select, summary { accent-color: var(--shop-accent); }
 #root:has(.commerce-home) .whatsapp { display: none; }
 
 /* A single product is the first viewport's focal point; selector changes are explicit. */
-.commerce-home { overflow: clip; }
+.commerce-home { overflow: visible; }
 .shop-prism-fallback { height: calc(100svh + clamp(260px,40vh,560px)); display: grid; place-items: center; margin: 0; background: var(--shop-paper); color: var(--shop-ink); }
 .shop-prism-fallback h1 { margin: 0; font-size: clamp(48px,8vw,112px); font-weight: 500; letter-spacing: -.05em; }
 .shop-prism-hero { --color-background: var(--shop-paper); --color-foreground: var(--shop-ink); --color-muted: #f3eeeb; --color-muted-foreground: var(--shop-muted); --color-border: var(--shop-line); --color-ring: var(--shop-accent); background: var(--shop-paper); color: var(--shop-ink); }
@@ -833,4 +833,980 @@ button, a, input, select, summary { accent-color: var(--shop-accent); }
  .mobile-menu-cart { display:flex; align-items:center; gap:12px; padding:24px 0; }
  .mobile-menu-cart>span { margin-left:auto; }
  .mobile-menu-content>p { margin-top:auto; }
+}
+
+
+/* ==========================================================================
+   SPARK-DV DEMO PAYMENT GATEWAY & RECEIPT STYLES
+   ========================================================================== */
+.demo-secure-pill {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #e9f5ee;
+  color: #1b683b;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #c2e5d1;
+}
+
+.demo-gateway-box {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.gateway-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.gateway-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 6px;
+  background: #f7f6f2;
+  border: 1.5px solid var(--shop-line, #ded8d4);
+  border-radius: 8px;
+  color: var(--shop-ink, #073763);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gateway-tab:hover {
+  background: #f0ede6;
+  border-color: #b0a8a0;
+}
+
+.gateway-tab.is-active {
+  background: #fff;
+  border-color: #073763;
+  color: #073763;
+  box-shadow: 0 2px 8px rgba(7, 55, 99, 0.1);
+  font-weight: 600;
+}
+
+.gateway-panel {
+  padding: 20px;
+  background: #faf8f5;
+  border: 1px solid var(--shop-line, #ded8d4);
+  border-radius: 8px;
+}
+
+.mock-card-visual {
+  background: linear-gradient(135deg, #073763 0%, #1e1b4b 60%, #431407 100%);
+  color: #fff;
+  padding: 18px 20px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(7, 55, 99, 0.25);
+  margin-bottom: 18px;
+}
+
+.card-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-chip {
+  width: 32px;
+  height: 24px;
+  background: linear-gradient(135deg, #fcd34d, #f59e0b);
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2);
+}
+
+.card-brand-label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.card-number-display {
+  font-family: 'DM Sans', monospace;
+  font-size: 20px;
+  letter-spacing: 0.15em;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+
+.card-bottom-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.card-bottom-row small {
+  display: block;
+  font-size: 9px;
+  color: #94a3b8;
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+
+.card-bottom-row span {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.gateway-inputs-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gateway-inputs-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.gateway-inputs-grid input {
+  height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  color: #334155;
+}
+
+.card-sub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.gateway-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  margin: 12px 0 0;
+}
+
+.upi-account-badge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.upi-account-badge strong {
+  display: block;
+  font-size: 16px;
+  color: #073763;
+}
+
+.upi-account-badge span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.upi-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.demo-qr-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.demo-qr-box span {
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+}
+
+.bank-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.bank-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #073763;
+  cursor: pointer;
+}
+
+.bank-chip.is-selected {
+  border-color: #073763;
+  background: #f0f7ff;
+}
+
+.cod-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cod-info strong {
+  display: block;
+  font-size: 15px;
+  color: #073763;
+}
+
+.cod-info p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 4px 0 0;
+}
+
+.gateway-outcome-switch {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.outcome-title {
+  font-weight: 600;
+  color: #475569;
+}
+
+.outcome-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #334155;
+}
+
+.gateway-declined-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #991b1b;
+  font-size: 13px;
+}
+
+.sidebar-gateway-guarantee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 6px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+.demo-pay-button {
+  margin-top: 14px;
+}
+
+/* Success Receipt Layout */
+.demo-payment-success-card {
+  max-width: 680px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid var(--shop-line, #ded8d4);
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 12px 40px rgba(7, 55, 99, 0.08);
+}
+
+.success-badge-top {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.success-icon-pulse {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ecfdf5;
+  margin-bottom: 16px;
+}
+
+.demo-pill {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: #047857;
+  background: #d1fae5;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.success-badge-top h1 {
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  color: #073763;
+  margin: 0 0 10px;
+}
+
+.success-tagline {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}
+
+.success-receipt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.receipt-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.receipt-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.receipt-val {
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.receipt-status-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  color: #065f46;
+  background: #a7f3d0;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.receipt-shipping-summary {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.receipt-shipping-summary h3, .receipt-items-list h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #073763;
+  margin: 0 0 8px;
+}
+
+.receipt-shipping-summary p {
+  margin: 3px 0;
+  font-size: 13px;
+  color: #334155;
+}
+
+.delivery-eta {
+  margin-top: 8px !important;
+  color: #047857 !important;
+}
+
+.receipt-items-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+}
+
+.receipt-items-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px dashed #e2e8f0;
+}
+
+.receipt-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 700;
+  color: #073763;
+  padding-top: 10px;
+}
+
+.success-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.success-actions .button {
+  flex: 1;
+  min-width: 160px;
+  justify-content: center;
+}
+
+.demo-disclaimer {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 22px;
+}
+
+
+/* ==========================================================================
+   NIKE-STYLE MEMBER PROFILE PAGE (Matches Reference Image)
+   ========================================================================== */
+.nike-profile-page {
+  background: #ffffff;
+  color: #111111;
+  min-height: 80vh;
+  padding-bottom: 90px;
+}
+
+/* Centered Top Sub-Navigation Bar */
+.nike-subnav-bar {
+  border-bottom: 1px solid #e5e5e5;
+  background: #ffffff;
+  position: sticky;
+  top: 88px;
+  z-index: 20;
+}
+
+.nike-subnav-links {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  padding: 16px 20px;
+  overflow-x: auto;
+}
+
+.nike-subnav-item {
+  background: transparent;
+  border: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: #707072;
+  cursor: pointer;
+  padding: 6px 2px;
+  position: relative;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.nike-subnav-item:hover {
+  color: #111111;
+}
+
+.nike-subnav-item.is-active {
+  color: #111111;
+  font-weight: 600;
+}
+
+.nike-subnav-item.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #111111;
+}
+
+/* User Identity Header */
+.nike-profile-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+.nike-user-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 50px;
+}
+
+.nike-avatar-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: #e5e5e5;
+  flex-shrink: 0;
+}
+
+.nike-user-title h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+  color: #111111;
+}
+
+.nike-user-title p {
+  font-size: 14px;
+  color: #707072;
+  margin: 0;
+}
+
+/* Sections */
+.nike-section {
+  margin-bottom: 60px;
+}
+
+.nike-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.nike-section-heading h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: #111111;
+}
+
+.heading-right-cluster {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.view-all-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111111;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.nike-carousel-arrows {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.arrow-circle-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: 0;
+  color: #111111;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.arrow-circle-btn:hover:not(:disabled) {
+  background: #e5e5e5;
+}
+
+.arrow-circle-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Member Benefits Horizontal Scrollable Track */
+.nike-benefits-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-bottom: 12px;
+}
+
+.nike-benefits-track::-webkit-scrollbar {
+  display: none;
+}
+
+.nike-benefit-card {
+  flex: 0 0 280px;
+  scroll-snap-align: start;
+}
+
+.benefit-image-frame {
+  width: 100%;
+  height: 180px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.benefit-image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.nike-benefit-card:hover .benefit-image-frame img {
+  transform: scale(1.03);
+}
+
+.nike-benefit-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111111;
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Favorites Grid */
+.nike-favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.nike-favorite-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.favorite-image-wrap {
+  aspect-ratio: 1 / 1;
+  background: #f6f6f6;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.favorite-image-wrap img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.nike-favorite-card:hover .favorite-image-wrap img {
+  transform: scale(1.06);
+}
+
+.favorite-meta h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.favorite-meta h3 a {
+  color: #111111;
+  text-decoration: none;
+}
+
+.favorite-category {
+  font-size: 13px;
+  color: #707072;
+  margin: 0 0 8px;
+}
+
+.favorite-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+}
+
+/* Orders Stack */
+.nike-orders-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.nike-order-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 24px;
+  background: #fff;
+}
+
+.order-top-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 16px;
+}
+
+.order-sub-meta {
+  display: block;
+  font-size: 12px;
+  color: #707072;
+  margin-bottom: 2px;
+}
+
+.order-sub-meta strong {
+  color: #111111;
+}
+
+.order-status-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-delivered {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.status-in-transit {
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.status-processing {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.order-total-bold {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.order-items-listing {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.order-item-detail {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.order-item-thumb {
+  width: 50px;
+  height: 50px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  padding: 4px;
+  display: grid;
+  place-items: center;
+}
+
+.order-item-thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.order-item-copy {
+  flex: 1;
+}
+
+.order-item-copy h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 2px;
+  color: #111111;
+}
+
+.order-item-copy span {
+  font-size: 12px;
+  color: #707072;
+}
+
+.order-item-price strong {
+  font-size: 14px;
+  color: #111111;
+}
+
+.order-footer-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 12px;
+}
+
+.waybill-text {
+  color: #707072;
+}
+
+.order-btn-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-compact {
+  padding: 6px 14px;
+  font-size: 12px;
+  min-height: 34px;
+}
+
+/* Inbox & Settings */
+.inbox-messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.inbox-message {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.inbox-message.is-unread {
+  background: #fafafa;
+  border-color: #d4d4d4;
+}
+
+.msg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #0284c7;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.msg-content h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.msg-content p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #525252;
+}
+
+.msg-content small {
+  font-size: 11px;
+  color: #a3a3a3;
+}
+
+.settings-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.settings-box {
+  padding: 24px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+}
+
+.settings-box h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+
+.settings-box p {
+  font-size: 14px;
+  margin: 6px 0;
+  color: #525252;
+}
+
+@media (max-width: 900px) {
+  .nike-favorites-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .settings-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .nike-benefits-track {
+    gap: 12px;
+  }
+  .nike-benefit-card {
+    flex: 0 0 240px;
+  }
+  .order-top-banner, .order-footer-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }

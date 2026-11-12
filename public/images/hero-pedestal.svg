@@ -1,0 +1,48 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 380 90' width='380' height='90'>
+  <defs>
+    <!-- Soft diffuse ground shadow spreading onto floor -->
+    <radialGradient id='ped-shadow' cx='50%' cy='50%' r='50%'>
+      <stop offset='0%' stop-color='#000000' stop-opacity='0.5' />
+      <stop offset='55%' stop-color='#000000' stop-opacity='0.22' />
+      <stop offset='100%' stop-color='#000000' stop-opacity='0' />
+    </radialGradient>
+    <!-- Cylinder side edge: warm stone with subtle vertical shading -->
+    <linearGradient id='ped-side' x1='0%' y1='0%' x2='100%' y2='0%'>
+      <stop offset='0%' stop-color='#78746e' />
+      <stop offset='12%' stop-color='#9e9992' />
+      <stop offset='50%' stop-color='#c8c3bb' />
+      <stop offset='88%' stop-color='#9e9992' />
+      <stop offset='100%' stop-color='#78746e' />
+    </linearGradient>
+    <!-- Top elliptical surface: warm smooth champagne stone -->
+    <radialGradient id='ped-top' cx='50%' cy='35%' rx='50%' ry='45%'>
+      <stop offset='0%' stop-color='#eae6e0' />
+      <stop offset='60%' stop-color='#d4cfc8' />
+      <stop offset='90%' stop-color='#b5b0a8' />
+      <stop offset='100%' stop-color='#9c978f' />
+    </radialGradient>
+    <!-- Rim bevel highlight -->
+    <linearGradient id='ped-rim' x1='0%' y1='0%' x2='0%' y2='100%'>
+      <stop offset='0%' stop-color='#ffffff' stop-opacity='0.9' />
+      <stop offset='100%' stop-color='#ffffff' stop-opacity='0.15' />
+    </linearGradient>
+    <!-- Product contact shadow on top face -->
+    <radialGradient id='ped-contact' cx='50%' cy='50%' r='50%'>
+      <stop offset='0%' stop-color='#1a1918' stop-opacity='0.55' />
+      <stop offset='70%' stop-color='#262422' stop-opacity='0.3' />
+      <stop offset='100%' stop-color='#262422' stop-opacity='0' />
+    </radialGradient>
+  </defs>
+
+  <!-- Ambient floor shadow -->
+  <ellipse cx='190' cy='62' rx='175' ry='22' fill='url(#ped-shadow)' />
+
+  <!-- Pedestal cylinder side (height 10px) -->
+  <path d='M 35 34 C 35 47 105 57 190 57 C 275 57 345 47 345 34 L 345 44 C 345 57 275 67 190 67 C 105 67 35 57 35 44 Z' fill='url(#ped-side)' />
+
+  <!-- Pedestal top elliptical surface -->
+  <ellipse cx='190' cy='34' rx='155' ry='22' fill='url(#ped-top)' stroke='url(#ped-rim)' stroke-width='1.2' />
+
+  <!-- Contact shadow where product sits -->
+  <ellipse cx='190' cy='35' rx='46' ry='8' fill='url(#ped-contact)' />
+</svg>

@@ -2,13 +2,22 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
 @source "./components/ui";
-/* No global Preflight reset: preserve the established site while enabling supplied components. */
+
 @theme {
-  --font-sans: "DM Sans", sans-serif;
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --color-background: #fffcf8;
   --color-foreground: #073763;
+  --color-primary: #073763;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f3eeeb;
+  --color-secondary-foreground: #073763;
   --color-muted: #f3eeeb;
   --color-muted-foreground: #526174;
+  --color-accent: #f3eeeb;
+  --color-accent-foreground: #073763;
+  --color-destructive: #d90429;
+  --color-destructive-foreground: #ffffff;
   --color-border: #ded8d4;
-  --color-ring: #ad4b09;
+  --color-input: #d9d4cd;
+  --color-ring: #073763;
 }

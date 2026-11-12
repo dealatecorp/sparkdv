@@ -16,8 +16,9 @@ export function init(root) {
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       const sequence = root.querySelector('.about-manifesto');
       const lines = [...root.querySelectorAll('.about-statement-line')];
-      const dots = [...root.querySelectorAll('.about-sequence-progress i')];
+      const dots = [...root.querySelectorAll('.about-sequence-progress button, .about-sequence-progress i')];
       const stage = root.querySelector('.about-manifesto-stage');
+      const bgLayers = [...root.querySelectorAll('.about-hero-bg-layer')];
       let selected = -1;
       // Clear the CSS pixel offset before applying percentage translation.
       // Otherwise hidden lines retain a second 100% offset and never enter view.
@@ -27,9 +28,21 @@ export function init(root) {
         selected = next;
         // 20% longer than reference; same measured normalized easing curve.
         gsap.to(lines, { yPercent: i => i < next ? -100 : i === next ? 0 : 100, duration: .6, ease: 'power1.out', overwrite: true });
-        gsap.to(stage, { backgroundColor: ['#073763','#63218b','#24496b'][next], duration: .6, overwrite: true });
+        // Crossfade logo color background layers
+        bgLayers.forEach((layer, i) => {
+          gsap.to(layer, { opacity: i === next ? 1 : 0, duration: 0.8, ease: 'power1.out', overwrite: true });
+        });
         dots.forEach((dot,i)=>dot.classList.toggle('is-active', i===next));
       };
+      
+      // Interactive click on progress buttons
+      dots.forEach((dot, idx) => {
+        dot.addEventListener('click', (e) => {
+          e.preventDefault();
+          show(idx);
+        });
+      });
+
       ScrollTrigger.create({ trigger: sequence, start:'top top+=88', end:'bottom bottom', onUpdate: self => show(self.progress < .18 ? 0 : self.progress < .62 ? 1 : 2), onRefresh: self => show(self.progress < .18 ? 0 : self.progress < .62 ? 1 : 2) });
       show(0);
     });

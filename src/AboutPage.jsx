@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUpRight, Plus, Minus, Quote } from 'lucide-react';
 import '@fontsource/newsreader/latin-600.css';
 import '@fontsource/newsreader/latin-600-italic.css';
 import { init } from '../motion/prs-about.js';
+import { CinematicList } from './components/ui/cinematic-list';
 import './about.css';
 
 const pictures = [
@@ -31,6 +32,20 @@ export default function AboutPage() {
   return <div ref={root} className="spark-about">
     <section className="about-manifesto" data-motion="prs-about" aria-labelledby="about-page-title">
       <div className="about-manifesto-stage">
+        {/* Dynamic Logo Color Background Layers for smooth GPU crossfade */}
+        <div className="about-hero-bg-layer about-hero-bg-0" aria-hidden="true" />
+        <div className="about-hero-bg-layer about-hero-bg-1" aria-hidden="true" />
+        <div className="about-hero-bg-layer about-hero-bg-2" aria-hidden="true" />
+        {/* Logo Spectrum Ambient Glow Orbs: Navy, Orange, Violet, Crimson, Cyan, Gold */}
+        <div className="about-hero-glow-mesh" aria-hidden="true">
+          <span className="glow-orb glow-navy" />
+          <span className="glow-orb glow-orange" />
+          <span className="glow-orb glow-violet" />
+          <span className="glow-orb glow-crimson" />
+          <span className="glow-orb glow-cyan" />
+          <span className="glow-orb glow-gold" />
+        </div>
+
         <div className="about-manifesto-top"><h1 id="about-page-title">About SPARK-DV</h1><span>Made in India. R&D-driven.</span></div>
         <div className="about-manifesto-message"><div className="about-statement-window" aria-hidden="true">
           {['Dental science. Everyday care.', 'Prevention. Restoration. Care.', 'Small details. Brighter futures.'].map((line,i)=><div className="about-statement-line" data-motion-item key={line} data-index={i}>{line}</div>)}
@@ -38,7 +53,7 @@ export default function AboutPage() {
         <Link className="about-hero-shop" to="/products">Explore our products <ArrowUpRight size={18}/></Link>
         </div>
         <p className="sr-only">Dental science. Everyday care. Prevention. Restoration. Care. Small details. Brighter futures.</p>
-        <div className="about-manifesto-bottom"><span>Pediatric & preventive dentistry</span><a href="#about-story">Discover our story <ArrowDown size={18}/></a><div className="about-sequence-progress" aria-hidden="true"><i/><i/><i/></div></div>
+        <div className="about-manifesto-bottom"><span>Pediatric & preventive dentistry</span><a href="#about-story">Discover our story <ArrowDown size={18}/></a><div className="about-sequence-progress" aria-label="Slide sequence" role="tablist"><button type="button" aria-label="Slide 1" data-index="0" /><button type="button" aria-label="Slide 2" data-index="1" /><button type="button" aria-label="Slide 3" data-index="2" /></div></div>
       </div>
     </section>
 
@@ -62,12 +77,47 @@ export default function AboutPage() {
       <p className="about-collage-closing">Better care.<span>Every day.</span></p>
     </section>
 
-    <section className="about-values-panel" aria-labelledby="about-values-title">
-      <h2 id="about-values-title">What we believe<br/>shapes what we make.</h2>
-      <div className="about-values-layout"><div className="about-values-list">{values.map((v,i)=><div className="about-value" key={v.title} data-open={active===i}>
-        <h3><button type="button" id={`about-value-${i}`} aria-expanded={active===i} aria-controls={`about-value-panel-${i}`} onClick={()=>setActive(active===i?-1:i)}>{v.title}{active===i?<Minus size={22}/>:<Plus size={22}/>}</button></h3>
-        <div id={`about-value-panel-${i}`} role="region" aria-labelledby={`about-value-${i}`} hidden={active!==i}><p>{v.text}</p></div>
-      </div>)}</div><figure className={`about-values-picture${values[Math.max(active,0)].image.product?' is-product':''}`}><img key={active} src={values[Math.max(active,0)].image.src} alt={values[Math.max(active,0)].image.alt} loading="lazy"/></figure></div>
+    {/* Cinematic Values Section replacing plain accordion with interactive cinematic hover cards */}
+    <section className="about-values-panel !p-0 !bg-[#fffcf8]" aria-labelledby="about-values-title">
+      <CinematicList
+        heading="What we believe"
+        subheading="shapes what we make."
+        items={[
+          {
+            id: "01",
+            title: "Science-led",
+            location: "Dental Materials R&D",
+            src: "/images/val-science.jpg",
+            alt: "SPARK-DV dental biomaterials research laboratory",
+            desc: "Our R&D-driven approach brings clinical insight and dental materials research into product development.",
+          },
+          {
+            id: "02",
+            title: "Patient-centered",
+            location: "Comfort & Safety",
+            src: "/images/val-patient.jpg",
+            alt: "Dentist caring for young patient and parent",
+            desc: "We design solutions that prioritize patient comfort, safety, and outcomes in everyday clinical practice.",
+          },
+          {
+            id: "03",
+            title: "Innovation",
+            location: "Nanotechnology Frontiers",
+            src: "/images/val-innovation.jpg",
+            alt: "Nanotechnology and bio-matrix research innovation",
+            desc: "Exploring nanotechnology to address real challenges in pediatric and preventive dentistry.",
+          },
+          {
+            id: "04",
+            title: "Quality-first",
+            location: "Made in India",
+            src: "/images/val-quality.jpg",
+            alt: "Precision manufacturing and clinical excellence",
+            desc: "A commitment to manufacturing excellence. Made in India, with products developed for clinical relevance.",
+          },
+        ]}
+        className="bg-[#fffcf8]"
+      />
     </section>
 
     <section className="about-journey" aria-labelledby="about-journey-title"><h2 id="about-journey-title">Our journey</h2><ol>{[['Founded','A mission to innovate in pediatric and preventive dentistry.'],['R&D','NanoSilver Fluoride technology development with 3K NANO PVT. LTD.'],['Launch','Nanion toothpaste, mouthrinse, and professional products.'],['Growth','Expanding into P-Obtura, Nanohybrid Biocem, MARC Crowns, and TAC.'],['Today','Building distribution partnerships and clinical adoption.']].map(([title,text])=><li key={title}><h3>{title}</h3><p>{text}</p></li>)}</ol><p className="about-manufacturing">Manufactured by 3K NANO PVT. LTD. · Marketed by Sendan Pharmaceuticals.</p></section>

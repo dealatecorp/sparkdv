@@ -24,11 +24,12 @@
 .home-editorial .clinical-highlights article {display:grid;grid-template-columns:1fr 1.1fr;gap:8%;padding-block:26px;}
 .home-editorial .clinical-highlights h3 {margin:0;font-size:27px;}
 .home-editorial .clinical-highlights p {margin:0;max-width:52ch;}
-.home-editorial .home-community {display:grid;grid-template-columns:1.25fr 1fr;gap:8%;align-items:center;padding-block:110px;}
-.home-editorial .home-community figure {margin:0;}
-.home-editorial .home-community img {display:block;width:100%;height:auto;}
-.home-editorial .home-community figcaption {font-size:12px;color:var(--muted);margin-top:14px;}
-.home-editorial .home-community p {font-size:17px;line-height:1.75;color:var(--muted);margin:25px 0;}
+.home-editorial .home-community, .home-community {display:grid;grid-template-columns:1.25fr 1fr;gap:8%;align-items:center;padding-block:70px 100px;}
+.home-editorial .home-community figure, .home-community figure {margin:0;}
+.home-editorial .home-community img, .home-community img {display:block;width:100%;height:auto;border-radius:12px;}
+.home-editorial .home-community figcaption, .home-community figcaption {font-size:12px;color:var(--muted, #66777b);margin-top:14px;}
+.home-editorial .home-community p, .home-community p {font-size:17px;line-height:1.75;color:var(--muted, #4a5568);margin:25px 0;}
+.home-editorial .home-community h2, .home-community h2 {font-size:clamp(32px,3.8vw,52px);line-height:1.1;letter-spacing:-.03em;margin:0;color:var(--ink, #073763);}
 .home-editorial .audience-paths {gap:32px;padding-bottom:80px;}
 .home-editorial .audience-paths>a h3 svg {transition:transform .25s;}
 .home-editorial .audience-paths>a:hover h3 svg {transform:translate(3px,-3px);}

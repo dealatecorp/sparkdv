@@ -1,7 +1,10 @@
 import TextRoll from './components/ui/text-roll';
 import CheckoutPage from './CheckoutPage';
 import ScienceGallery from './ScienceGallery';
+import ContactWithGlobe from './components/ui/contact-with-globe';
 import {CinematicFooter} from './components/ui/motion-footer';
+import UserProfile from './components/ui/user-profile';
+import MercuryLogin from './components/ui/mercury-login';
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {Dock, DockItem} from './components/ui/dock';
@@ -23,6 +26,7 @@ import {
   ShieldCheck,
   Sparkles,
   Stethoscope,
+  User,
   X,
 } from "lucide-react";
 import { products, categories, img, money } from "./data.js";
@@ -102,7 +106,8 @@ function App() {
       }
     }),
     [toast, setToast] = useState(""),
-    [scrolled, setScrolled] = useState(false);
+    [scrolled, setScrolled] = useState(false),
+    [pastHero, setPastHero] = useState(false);
   useEffect(() => {
     localStorage.setItem("spark-cart", JSON.stringify(cart));
   }, [cart]);
@@ -118,10 +123,23 @@ function App() {
     setMenu(false);
   }, [loc.pathname]);
   useEffect(() => {
-    const f = () => setScrolled(window.scrollY > 80);
+    const f = () => {
+      if (loc.pathname === "/") {
+        const heroEl = document.querySelector(".scroll-product-hero-root");
+        const isPast = heroEl
+          ? window.scrollY > (heroEl.offsetHeight - window.innerHeight - 40)
+          : window.scrollY > 80;
+        setPastHero(isPast);
+        setScrolled(isPast);
+      } else {
+        setPastHero(true);
+        setScrolled(window.scrollY > 80);
+      }
+    };
+    f();
     window.addEventListener("scroll", f, { passive: true });
     return () => window.removeEventListener("scroll", f);
-  }, []);
+  }, [loc.pathname]);
   useEffect(() => {
     if (!("IntersectionObserver" in window)) return;
     document.documentElement.classList.add("motion-ready");
@@ -259,8 +277,84 @@ function App() {
     return () => media.removeEventListener('change', close);
   }, []);
   const qty = cart.reduce((s, i) => s + i.qty, 0);
-  const add = (p, count = 1) => {
+  const [flyingItems, setFlyingItems] = useState([]);
+  const [cartGlowing, setCartGlowing] = useState(false);
+  const glowTimeoutRef = React.useRef(null);
+  const cartDrawerTimeoutRef = React.useRef(null);
+
+  const add = (p, count = 1, eventOrEl = null) => {
     if (p.coming) return;
+
+    // 1. Calculate trajectory start coordinates
+    let startX = window.innerWidth / 2;
+    let startY = window.innerHeight / 2;
+
+    if (eventOrEl && typeof eventOrEl === "object") {
+      if ("clientX" in eventOrEl && typeof eventOrEl.clientX === "number" && eventOrEl.clientX > 0) {
+        startX = eventOrEl.clientX;
+        startY = eventOrEl.clientY;
+      } else if ("currentTarget" in eventOrEl && eventOrEl.currentTarget) {
+        const rect = eventOrEl.currentTarget.getBoundingClientRect();
+        startX = rect.left + rect.width / 2;
+        startY = rect.top + rect.height / 2;
+      } else if ("target" in eventOrEl && eventOrEl.target) {
+        const rect = eventOrEl.target.getBoundingClientRect();
+        startX = rect.left + rect.width / 2;
+        startY = rect.top + rect.height / 2;
+      } else if ("getBoundingClientRect" in eventOrEl) {
+        const rect = eventOrEl.getBoundingClientRect();
+        startX = rect.left + rect.width / 2;
+        startY = rect.top + rect.height / 2;
+      }
+    } else {
+      const el =
+        document.querySelector(`[data-product-slug="${p.slug}"]`) ||
+        document.querySelector(`a[href="/products/${p.slug}"]`) ||
+        document.activeElement;
+      if (el && el.getBoundingClientRect) {
+        const rect = el.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          startX = rect.left + rect.width / 2;
+          startY = rect.top + rect.height / 2;
+        }
+      }
+    }
+
+    // Determine target location: header cart trigger button
+    const cartEl =
+      document.querySelector("#header-cart-button") ||
+      document.querySelector(".header-actions button.cart-trigger") ||
+      document.querySelector("button.cart-trigger");
+
+    let targetX = window.innerWidth - 65;
+    let targetY = 36;
+    if (cartEl) {
+      const rect = cartEl.getBoundingClientRect();
+      targetX = rect.left + rect.width / 2;
+      targetY = rect.top + rect.height / 2;
+    }
+
+    const animId = Date.now() + Math.random();
+    const imgSrc =
+      p.image ||
+      (p.img ? img(p.img) : null) ||
+      productAssets[p.slug]?.local ||
+      "/images/nanion-tube-clean.webp";
+
+    const newItem = {
+      id: animId,
+      name: p.name,
+      imgSrc,
+      startX,
+      startY,
+      targetX,
+      targetY,
+      count,
+    };
+
+    setFlyingItems((prev) => [...prev, newItem]);
+
+    // 2. Add to cart state immediately so state remains consistent
     setCart((prev) => {
       const found = prev.find((i) => i.slug === p.slug);
       return found
@@ -268,9 +362,24 @@ function App() {
         : [...prev, { ...p, qty: count }];
     });
     setToast(`${p.name} added to cart`);
-    setCartOpen(true);
     setTimeout(() => setToast(""), 2600);
   };
+
+  const handleItemArrival = (id) => {
+    setFlyingItems((prev) => prev.filter((item) => item.id !== id));
+    setCartGlowing(true);
+
+    if (glowTimeoutRef.current) clearTimeout(glowTimeoutRef.current);
+    glowTimeoutRef.current = setTimeout(() => {
+      setCartGlowing(false);
+    }, 2400);
+
+    if (cartDrawerTimeoutRef.current) clearTimeout(cartDrawerTimeoutRef.current);
+    cartDrawerTimeoutRef.current = setTimeout(() => {
+      setCartOpen(true);
+    }, 1300);
+  };
+
   const update = (slug, delta) =>
     setCart((prev) =>
       prev
@@ -279,15 +388,16 @@ function App() {
     );
   const remove = (slug) =>
     setCart((prev) => prev.filter((i) => i.slug !== slug));
+  const isHeroOverlay = loc.pathname === "/" && !pastHero;
   return (
     <>
       <a className="skip" href="#main">
         Skip to content
       </a>
-      <header className={`site-header ${scrolled ? "compact" : ""}`}>
+      <header className={`site-header ${scrolled ? "compact" : ""} ${isHeroOverlay ? "hero-header-overlay" : ""}`}>
         <div className="header-inner">
           <Link to="/" className="brand" aria-label="SPARK-DV home">
-            <img src={img("logo.png")} alt="SPARK-DV — Innovating the Future" />
+            <img src={img("logo.svg")} alt="SPARK-DV — Innovating the Future" />
           </Link>
           <nav
             className={menu ? "nav open" : "nav"}
@@ -295,7 +405,7 @@ function App() {
           >
             <div className="mobile-menu-content">
               <div className="mobile-menu-top"><span>Explore SPARK-DV</span><button type="button" aria-label="Close navigation" onClick={()=>setMenu(false)}><X size={23}/></button></div>
-              <div className="mobile-menu-links">{[['/','Home'],['/products','Products'],['/science','Blogs'],['/about','About'],['/contact','Contact']].map(([to,label])=><Link key={to} to={to} onClick={()=>setMenu(false)} aria-current={loc.pathname===to?'page':undefined}><TextRoll center>{label}</TextRoll><ArrowUpRight size={22}/></Link>)}</div>
+              <div className="mobile-menu-links">{[['/','Home'],['/products','Products'],['/science','Blogs'],['/about','About'],['/contact','Contact'],['/profile','Account']].map(([to,label])=><Link key={to} to={to} onClick={()=>setMenu(false)} aria-current={loc.pathname===to?'page':undefined}><TextRoll center>{label}</TextRoll><ArrowUpRight size={22}/></Link>)}</div>
               <Link className="mobile-menu-cart" to="/cart" onClick={()=>setMenu(false)}><ShoppingBag size={19}/>Your cart <span>{qty} items</span></Link>
               <p>Dental science. Everyday care.</p>
             </div>
@@ -311,13 +421,23 @@ function App() {
             </div>
           </nav>
           <div className="header-actions">
+            <Link
+              to="/profile"
+              className="cart-trigger header-profile-link"
+              aria-label="Doctor and Member Profile"
+              title="My Account / Profile"
+            >
+              <User size={19} />
+            </Link>
             <button
-              className="cart-trigger"
+              id="header-cart-button"
+              className={`cart-trigger ${cartGlowing ? "cart-trigger-glowing" : ""}`}
               aria-label={`Open cart, ${qty} items`}
               onClick={() => setCartOpen(true)}
             >
               <ShoppingBag size={19} />
               <span>{qty}</span>
+              {cartGlowing && <span className="cart-glow-burst" aria-hidden="true" />}
             </button>
             <Link className="button button-dark header-cta" to="/products">
               Shop products <ArrowUpRight size={15} />
@@ -458,7 +578,133 @@ function App() {
           {toast}
         </div>
       )}
+      {/* Dynamic Fly-to-Cart Particle Animation */}
+      {flyingItems.map((item) => (
+        <FlyingCartItem key={item.id} item={item} onArrival={handleItemArrival} />
+      ))}
     </>
+  );
+}
+
+function FlyingCartItem({ item, onArrival }) {
+  const elRef = React.useRef(null);
+
+  useEffect(() => {
+    if (!elRef.current) return;
+    const { startX, startY, targetX, targetY } = item;
+
+    // Curved parabolic trajectory
+    const dx = targetX - startX;
+    const dy = targetY - startY;
+    const dist = Math.hypot(dx, dy);
+    const arcHeight = Math.max(90, Math.min(260, dist * 0.32));
+    const apexY = Math.min(startY, targetY) - arcHeight;
+    const midX = startX + dx * 0.45;
+
+    const keyframes = [
+      {
+        transform: `translate3d(${startX - 36}px, ${startY - 36}px, 0) scale(0.5) rotate(-6deg)`,
+        opacity: 0.3,
+        filter: "drop-shadow(0 4px 10px rgba(14, 165, 233, 0.3))",
+      },
+      {
+        transform: `translate3d(${startX + dx * 0.18 - 36}px, ${apexY - 36}px, 0) scale(1.22) rotate(10deg)`,
+        opacity: 1,
+        filter: "drop-shadow(0 16px 32px rgba(7, 55, 99, 0.4)) drop-shadow(0 0 20px rgba(14, 165, 233, 0.6))",
+        offset: 0.28,
+      },
+      {
+        transform: `translate3d(${midX - 36}px, ${apexY + (targetY - apexY) * 0.25 - 36}px, 0) scale(1.05) rotate(-4deg)`,
+        opacity: 1,
+        filter: "drop-shadow(0 14px 26px rgba(7, 55, 99, 0.35)) drop-shadow(0 0 16px rgba(14, 165, 233, 0.5))",
+        offset: 0.58,
+      },
+      {
+        transform: `translate3d(${targetX - 22}px, ${targetY - 22}px, 0) scale(0.42) rotate(8deg)`,
+        opacity: 0.95,
+        filter: "drop-shadow(0 0 18px rgba(14, 165, 233, 0.8))",
+        offset: 0.88,
+      },
+      {
+        transform: `translate3d(${targetX - 14}px, ${targetY - 14}px, 0) scale(0.12) rotate(0deg)`,
+        opacity: 0,
+        filter: "drop-shadow(0 0 28px rgba(14, 165, 233, 1))",
+      },
+    ];
+
+    const animation = elRef.current.animate(keyframes, {
+      duration: 640,
+      easing: "cubic-bezier(0.2, 0.85, 0.3, 1)",
+      fill: "forwards",
+    });
+
+    animation.onfinish = () => {
+      onArrival(item.id);
+    };
+
+    return () => {
+      try {
+        animation.cancel();
+      } catch {}
+    };
+  }, [item, onArrival]);
+
+  return (
+    <div
+      ref={elRef}
+      className="flying-cart-pill"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "72px",
+        height: "72px",
+        borderRadius: "22px",
+        background: "radial-gradient(circle at 35% 35%, #ffffff 45%, #f0f9ff 100%)",
+        border: "1.5px solid rgba(14, 165, 233, 0.6)",
+        boxShadow: "0 18px 40px -4px rgba(7, 55, 99, 0.35), 0 0 22px rgba(14, 165, 233, 0.5)",
+        zIndex: 99999,
+        pointerEvents: "none",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "8px",
+        willChange: "transform, opacity, filter",
+      }}
+    >
+      <img
+        src={item.imgSrc}
+        alt=""
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          filter: "drop-shadow(0 4px 8px rgba(7, 55, 99, 0.18))",
+        }}
+      />
+      <span
+        style={{
+          position: "absolute",
+          top: "-6px",
+          right: "-6px",
+          minWidth: "24px",
+          height: "24px",
+          padding: "0 6px",
+          borderRadius: "12px",
+          background: "linear-gradient(135deg, #0284c7, #073763)",
+          color: "#ffffff",
+          fontSize: "11px",
+          fontWeight: 700,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 2px 10px rgba(2, 132, 199, 0.7)",
+          border: "1.5px solid #ffffff",
+        }}
+      >
+        +{item.count || 1}
+      </span>
+    </div>
   );
 }
 function RoutesView({ add, cartQty, cart, update, remove }) {
@@ -480,6 +726,8 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
   if (path === "/about") return <EditorialPage path="/about" />;
   if (path === "/contact") return <Contact />;
   if (path === "/checkout") return <CheckoutPage cart={cart} update={update} remove={remove} />;
+  if (path === "/account" || path === "/profile") return <UserProfile />;
+  if (path === "/login") return <MercuryLogin />;
   if (["/privacy", "/terms", "/shipping"].includes(path))
     return <Policy path={path} />;
   if (path === "/cart") return <CartPage cart={cart} update={update} remove={remove} />;
@@ -507,7 +755,7 @@ function SectionHead({ number, label, title, copy, link, linkText }) {
 }
 function ProductCard({ product: p, add, compact = false }) {
   return (
-    <article className={`product-card reveal ${compact ? "compact-card" : ""}`}>
+    <article className={`product-card reveal ${compact ? "compact-card" : ""}`} data-product-slug={p.slug}>
       <Link to={`/products/${p.slug}`} className="product-photo">
         <ProductImage product={p} hero />
         {p.coming && <span className="status-label">Coming soon</span>}
@@ -534,7 +782,15 @@ function ProductCard({ product: p, add, compact = false }) {
           {p.coming ? (
             <span className="coming-label">Launching soon</span>
           ) : p.price ? (
-            <button aria-label={`Add ${p.name} to cart`} onClick={() => p.price ? add(p) : (window.location.href="/contact?type=Clinical%20enquiry")}>
+            <button
+              type="button"
+              aria-label={`Add ${p.name} to cart`}
+              onClick={(e) =>
+                p.price
+                  ? add(p, 1, e)
+                  : (window.location.href = "/contact?type=Clinical%20enquiry")
+              }
+            >
               <Plus size={15} /> Add
             </button>
           ) : (
@@ -851,7 +1107,15 @@ function ProductDetail({ slug, add }) {
                 <strong>{money(p.price)}</strong>
                 {p.compare && <del>{money(p.compare)}</del>}
               </div>
-              <button className="button button-dark" onClick={() => p.price ? add(p) : (window.location.href="/contact?type=Clinical%20enquiry")}>
+              <button
+                type="button"
+                className="button button-dark"
+                onClick={(e) =>
+                  p.price
+                    ? add(p, 1, e)
+                    : (window.location.href = "/contact?type=Clinical%20enquiry")
+                }
+              >
                 {p.price ? "Add to cart" : "Request pricing"} <ShoppingBag size={16} />
               </button>
             </div>
@@ -986,39 +1250,7 @@ function ProductDetail({ slug, add }) {
 }
 
 function Contact() {
-  const [kind, setKind] = useState(
-    new URLSearchParams(location.search).get("type") || "Distributor enquiry",
-  );
-  const enquiryKinds = ["Professional pricing", "Distributor enquiry", "Clinical enquiry", "School program", "General contact"];
-  return (
-    <section className="contact-ui-section">
-      <div className="wrap contact-ui-grid">
-        <div className="contact-visual">
-          <div className="contact-bubbles" aria-hidden="true">{Array.from({length:12},(_,index)=><span key={index}/>)}</div>
-          <div className="contact-visual-copy">
-            <p className="contact-kicker">SPARK-DV · CHENNAI, INDIA</p>
-            <h1>{kind === "Clinical enquiry" ? <>Talk with<br/>our clinical team.</> : kind === "School program" ? <>Bring care<br/>to your school.</> : kind === "General contact" ? <>We’re here<br/>to help.</> : kind === "Professional pricing" ? <>Let’s talk<br/>professional pricing.</> : <>Let’s start<br/>a conversation.</>}</h1>
-            <p>Tell us what you need. We’ll route your message to the right SPARK-DV team.</p>
-            <div className="contact-details">
-              <a href="mailto:sparkdv310@gmail.com">sparkdv310@gmail.com <ArrowUpRight size={15}/></a>
-              <a href="tel:+917981546939">+91 7981546939 <ArrowUpRight size={15}/></a>
-              <a href="tel:+919154741994">+91 9154741994 <ArrowUpRight size={15}/></a>
-              <a href="tel:+919848014443">+91 9848014443 <ArrowUpRight size={15}/></a>
-            </div>
-            <a className="contact-whatsapp" href="https://wa.me/919246901870" target="_blank" rel="noreferrer">Prefer WhatsApp? Chat with our team <ArrowUpRight size={15}/></a>
-          </div>
-        </div>
-        <div className="contact-form-card">
-          <div className="contact-form-heading"><span>CONTACT OUR TEAM</span><h2>How can we help?</h2><p>Choose an enquiry type and share a few details.</p></div>
-          <div className="enquiry-tabs" aria-label="Choose an enquiry type">
-            {enquiryKinds.map(k=><button type="button" className={kind===k?"selected":""} aria-pressed={kind===k} onClick={()=>setKind(k)} key={k}><span>{kind===k?<Check size={14}/>:null}</span>{k}</button>)}
-          </div>
-          <EnquiryForm key={kind} defaultType={kind}/>
-          <details className="company-label-info"><summary>Company & product-label information</summary><p>Manufactured by: 3K NANO PVT. LTD., HNO-RZ-625/1C, KH-625, T/F/L/S, Indra Park, Palam Colony, New Delhi, Delhi 110045. Manufactured for: SPARK-DV. Marketed by: Sendan Pharmaceuticals Pvt. Ltd., Chennai, Tamil Nadu.</p><p>{disclaimer}</p></details>
-        </div>
-      </div>
-    </section>
-  );
+  return <ContactWithGlobe />;
 }
 
 function EnquiryForm({ defaultType, defaultProduct = 'General enquiry' }) {

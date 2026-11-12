@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import {ArrowLeft,ArrowUpRight} from 'lucide-react';
 import content from './source-content.json';
 import {LayoutGrid} from './components/ui/layout-grid';
+import {HomeCommunity} from './components/home/home-editorial';
 
 const markdown=content['/science'].markdown;
 const extract=(start,end)=>markdown.split(start)[1]?.split(end)[0]?.trim()||'';
@@ -17,5 +18,16 @@ const articles=[
 export default function ScienceGallery(){
  const [params,setParams]=useSearchParams();
  const cards=articles.map(a=>({id:a.id,title:a.title,category:a.category,thumbnail:a.image,content:<div className="source-article journal-body"><ReactMarkdown components={{img:()=>null,a:({href,children})=><Link to={href}>{children}</Link>}}>{a.body}</ReactMarkdown></div>}));
- return <section className="science-journal wrap"><header className="journal-heading"><h1>Blogs</h1><p>Explore the ideas, ingredients and research behind SPARK-DV.</p></header><LayoutGrid cards={cards} selectedId={params.get('article')} onSelect={id=>setParams({article:id})} onClose={()=>setParams({})}/></section>;
+ return (
+  <section className="science-journal wrap">
+   <header className="journal-heading">
+    <h1>Blogs</h1>
+    <p>Explore the ideas, ingredients and research behind SPARK-DV.</p>
+   </header>
+   <LayoutGrid cards={cards} selectedId={params.get('article')} onSelect={id=>setParams({article:id})} onClose={()=>setParams({})}/>
+   <div className="science-community-block" style={{marginTop: '3.5rem', paddingTop: '2.5rem', borderTop: '1px solid rgba(7, 55, 99, 0.12)'}}>
+    <HomeCommunity />
+   </div>
+  </section>
+ );
 }

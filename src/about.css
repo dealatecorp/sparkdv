@@ -3,8 +3,33 @@
 .spark-about h2{font-size:clamp(34px,4.8vw,70px);font-weight:600;line-height:1.04;letter-spacing:-.04em;text-wrap:balance}
 .spark-about a:focus-visible,.spark-about button:focus-visible,.spark-about summary:focus-visible{outline:3px solid currentColor;outline-offset:6px}
 .spark-about ::selection{background:#e78308;color:#073763}
-.about-manifesto{height:250svh;background:#073763;color:#fffcf8}
-.about-manifesto-stage{position:sticky;top:80px;height:calc(100svh - 80px);min-height:430px;display:flex;flex-direction:column;justify-content:space-between;padding:40px clamp(20px,4vw,72px) 88px;background:#073763}
+.about-manifesto{height:250svh;background:#073763;color:#fffcf8;position:relative;overflow:clip}
+.about-manifesto-stage{position:sticky;top:80px;height:calc(100svh - 80px);min-height:430px;display:flex;flex-direction:column;justify-content:space-between;padding:40px clamp(20px,4vw,72px) 88px;background:#073763;overflow:hidden}
+
+/* Logo Color Background Layers for smooth GPU crossfade incorporating EVERY logo color */
+.about-hero-bg-layer{position:absolute;inset:0;pointer-events:none;transition:opacity .8s cubic-bezier(.16,1,.3,1);will-change:opacity;z-index:0}
+.about-hero-bg-0{opacity:1;background:radial-gradient(circle at 18% 28%,rgba(2,132,199,0.55) 0%,transparent 55%),radial-gradient(circle at 82% 72%,rgba(99,33,139,0.6) 0%,transparent 60%),radial-gradient(circle at 50% 50%,rgba(245,158,11,0.3) 0%,transparent 65%),linear-gradient(135deg,#073763 0%,#03437a 100%)}
+.about-hero-bg-1{opacity:0;background:radial-gradient(circle at 20% 30%,rgba(245,158,11,0.65) 0%,transparent 55%),radial-gradient(circle at 80% 25%,rgba(217,4,41,0.65) 0%,transparent 60%),radial-gradient(circle at 50% 80%,rgba(99,33,139,0.5) 0%,transparent 55%),linear-gradient(135deg,#e85d04 0%,#d90429 60%,#b90022 100%)}
+.about-hero-bg-2{opacity:0;background:radial-gradient(circle at 22% 78%,rgba(2,132,199,0.6) 0%,transparent 60%),radial-gradient(circle at 78% 28%,rgba(232,93,4,0.55) 0%,transparent 55%),radial-gradient(circle at 50% 18%,rgba(217,4,41,0.5) 0%,transparent 55%),linear-gradient(135deg,#63218b 0%,#471566 60%,#073763 100%)}
+
+/* Luminous Logo Spectrum Mesh: Navy #073763, Orange #e85d04, Violet #63218b, Crimson #d90429, Cyan #0284c7, Gold #f59e0b */
+.about-hero-glow-mesh{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.glow-orb{position:absolute;border-radius:50%;filter:blur(65px);opacity:.42;animation:floatOrb 14s infinite alternate ease-in-out}
+.glow-navy{width:360px;height:360px;background:#073763;top:8%;left:4%}
+.glow-orange{width:320px;height:320px;background:#e85d04;top:55%;right:8%;animation-delay:-3s}
+.glow-violet{width:380px;height:380px;background:#63218b;bottom:8%;left:18%;animation-delay:-6s}
+.glow-crimson{width:290px;height:290px;background:#d90429;top:22%;right:22%;animation-delay:-9s}
+.glow-cyan{width:300px;height:300px;background:#0284c7;bottom:25%;right:38%;animation-delay:-4s}
+.glow-gold{width:250px;height:250px;background:#f59e0b;top:12%;left:42%;animation-delay:-7s}
+
+@keyframes floatOrb{
+  0%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(35px,-25px) scale(1.08)}
+  100%{transform:translate(-25px,30px) scale(.94)}
+}
+
+.about-manifesto-stage > *:not(.about-hero-bg-layer):not(.about-hero-glow-mesh){position:relative;z-index:1}
+
 .about-manifesto-top,.about-manifesto-bottom{display:flex;align-items:center;justify-content:space-between;gap:24px}
 .about-manifesto-top h1{font-size:20px;font-weight:500;letter-spacing:-.02em}
 .about-manifesto-top>span,.about-manifesto-bottom{font-size:14px}
@@ -13,11 +38,13 @@
 .about-statement-line{position:absolute;inset:0;display:grid;place-items:center;transform:translateY(100%);text-wrap:balance}
 .about-statement-line:first-child{transform:none}
 .about-manifesto-message{text-align:center}
-.about-product-intro{font-size:18px;line-height:1.55;max-width:540px;margin:22px auto 0!important}
-.about-hero-shop{display:inline-flex;align-items:center;gap:14px;min-height:44px;margin-top:20px;border-bottom:1px solid #a9bccc;font-size:15px}
-.about-sequence-progress{display:flex;gap:7px}
-.about-sequence-progress i{width:22px;height:3px;background:#879bb0;transition:background .3s}
-.about-sequence-progress i.is-active{background:#fff}
+.about-product-intro{font-size:18px;line-height:1.55;max-width:540px;margin:22px auto 0!important;color:rgba(255,255,255,0.88)}
+.about-hero-shop{display:inline-flex;align-items:center;gap:14px;min-height:44px;margin-top:20px;border-bottom:1px solid rgba(255,255,255,0.45);font-size:15px;transition:border-color .2s}
+.about-hero-shop:hover{border-color:#fff}
+.about-sequence-progress{display:flex;align-items:center;gap:8px}
+.about-sequence-progress button,.about-sequence-progress i{display:block;padding:0;border:0;width:24px;height:4px;border-radius:2px;cursor:pointer;background:rgba(255,255,255,0.42);transition:all .3s cubic-bezier(.16,1,.3,1)}
+.about-sequence-progress button:hover,.about-sequence-progress i:hover{background:rgba(255,255,255,0.85);transform:scaleY(1.3)}
+.about-sequence-progress button.is-active,.about-sequence-progress i.is-active{width:46px;background:#ffffff;box-shadow:0 0 10px rgba(255,255,255,0.6)}
 .about-story-panel{padding:110px clamp(20px,4vw,72px) 60px;background:#eee9f3;scroll-margin-top:88px}
 .about-story-intro{display:grid;grid-template-columns:1fr 1fr;gap:10%;margin-bottom:76px}
 .about-story-intro>div{max-width:580px}
