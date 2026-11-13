@@ -1,19 +1,20 @@
-/* Scroll Product Hero — multi-product showcase with scroll-driven background, name and product swap matching reference design */
+/* Scroll Product Hero — horizontal auto-advancing product showcase (Right-to-Left) with natural page scrolling */
 
 .scroll-product-hero-root {
   position: relative;
   width: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
   background: #567364;
   outline: none;
 }
 
-.scroll-product-hero-sticky {
-  position: sticky;
-  top: 0;
-  left: 0;
+.scroll-product-hero-inner {
+  position: relative;
   width: 100%;
-  height: 100vh;
-  height: 100svh;
+  height: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -26,12 +27,26 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease-out;
-  will-change: opacity;
   z-index: 0;
+  transition: opacity 0.5s ease;
+  will-change: opacity;
 }
 
-/* Header spacer inside sticky container so top controls don't overlap header */
+.scroll-hero-bg-layer-incoming {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.76s ease-in-out;
+  will-change: opacity;
+}
+
+.scroll-hero-bg-layer-incoming.fade-in {
+  opacity: 1;
+}
+
+/* Header spacer inside container so top controls don't overlap header */
 .scroll-hero-header-spacer {
   height: clamp(74px, 9vh, 90px);
   width: 100%;
@@ -93,12 +108,85 @@
   position: absolute;
   left: 0;
   top: 50%;
-  transform: translateY(-50%);
   white-space: nowrap;
-  transition: opacity 0.35s ease,
-              transform 0.35s ease,
-              color 0.4s ease;
-  will-change: opacity, transform, color;
+  will-change: transform, opacity;
+}
+
+.scroll-hero-right-word.word-active {
+  transform: translateY(-50%) translateX(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.scroll-hero-right-word.word-idle {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Typography Horizontal Animations */
+@keyframes wordSlideInFromRight {
+  0% {
+    transform: translateY(-50%) translateX(70px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes wordSlideOutToLeft {
+  0% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50%) translateX(-70px);
+    opacity: 0;
+  }
+}
+
+@keyframes wordSlideInFromLeft {
+  0% {
+    transform: translateY(-50%) translateX(-70px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes wordSlideOutToRight {
+  0% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-50%) translateX(70px);
+    opacity: 0;
+  }
+}
+
+.scroll-hero-right-word.word-enter-from-right {
+  animation: wordSlideInFromRight 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  visibility: visible;
+}
+
+.scroll-hero-right-word.word-exit-to-left {
+  animation: wordSlideOutToLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  visibility: visible;
+}
+
+.scroll-hero-right-word.word-enter-from-left {
+  animation: wordSlideInFromLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  visibility: visible;
+}
+
+.scroll-hero-right-word.word-exit-to-right {
+  animation: wordSlideOutToRight 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  visibility: visible;
 }
 
 /* Central stage for product and spotlight */
@@ -107,7 +195,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(96vw, 880px);
+  width: min(96vw, 920px);
   height: clamp(520px, 78vh, 780px);
   display: flex;
   flex-direction: column;
@@ -165,14 +253,99 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
+  will-change: transform, opacity;
+}
+
+.scroll-hero-product-item.slide-active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+.scroll-hero-product-item.slide-idle {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Horizontal Gliding Keyframe Animations (Right-to-Left and Left-to-Right) */
+@keyframes heroSlideInFromRight {
+  0% {
+    transform: translate(calc(-50% + 46vw), -50%) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes heroSlideOutToLeft {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% - 46vw), -50%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes heroSlideInFromLeft {
+  0% {
+    transform: translate(calc(-50% - 46vw), -50%) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes heroSlideOutToRight {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(calc(-50% + 46vw), -50%) scale(0.9);
+    opacity: 0;
+  }
+}
+
+.scroll-hero-product-item.anim-enter-from-right {
+  animation: heroSlideInFromRight 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  visibility: visible;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.scroll-hero-product-item.anim-exit-to-left {
+  animation: heroSlideOutToLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  visibility: visible;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.scroll-hero-product-item.anim-enter-from-left {
+  animation: heroSlideInFromLeft 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  visibility: visible;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.scroll-hero-product-item.anim-exit-to-right {
+  animation: heroSlideOutToRight 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  visibility: visible;
+  z-index: 4;
+  pointer-events: none;
 }
 
 .scroll-hero-product-item a {
@@ -194,11 +367,11 @@
 }
 
 .scroll-hero-product-item a:hover .scroll-hero-product-img {
-  transform: scale(1.05) translateY(-6px);
+  transform: scale(1.04) translateY(-6px);
   filter: drop-shadow(0 38px 58px rgba(0, 0, 0, 0.52)) drop-shadow(0 14px 28px rgba(0, 0, 0, 0.34));
 }
 
-/* Specific product image proportions for balance - increased to fill stage */
+/* Specific product image proportions for balance */
 .hero-img-tube {
   max-height: clamp(480px, 68vh, 660px);
   max-width: clamp(340px, 42vw, 540px);
@@ -217,6 +390,49 @@
 .hero-img-wide {
   max-height: clamp(420px, 58vh, 560px);
   max-width: clamp(360px, 46vw, 560px);
+}
+
+/* Subtle Left & Right Arrow Navigation Controls */
+.scroll-hero-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+  outline: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.scroll-hero-nav-arrow:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.55);
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.28);
+}
+
+.scroll-hero-nav-arrow:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+.scroll-hero-nav-prev {
+  left: clamp(14px, 2.5vw, 36px);
+}
+
+.scroll-hero-nav-next {
+  right: clamp(14px, 2.5vw, 36px);
 }
 
 /* Slide Indicator Container placed cleanly at the bottom */
@@ -250,9 +466,10 @@
   padding: 0;
   background: rgba(255, 255, 255, 0.35);
   cursor: pointer;
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
               background 0.3s ease,
-              transform 0.2s ease;
+              transform 0.2s ease,
+              box-shadow 0.3s ease;
   outline: none;
 }
 
@@ -262,9 +479,33 @@
 }
 
 .scroll-hero-indicator-bar.active {
-  width: 38px;
+  width: 44px;
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-hero-indicator-bar.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
   background: #ffffff;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+  border-radius: 9999px;
+  transform-origin: left;
+  animation: heroTimerBar 3.2s linear forwards;
+}
+
+@keyframes heroTimerBar {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
 }
 
 .scroll-hero-indicator-bar:focus-visible {
@@ -474,6 +715,19 @@
     bottom: 12%;
     width: clamp(140px, 36vw, 220px);
     height: 14px;
+  }
+
+  .scroll-hero-nav-arrow {
+    width: 38px;
+    height: 38px;
+  }
+
+  .scroll-hero-nav-prev {
+    left: 8px;
+  }
+
+  .scroll-hero-nav-next {
+    right: 8px;
   }
 
   .scroll-hero-indicator-container {

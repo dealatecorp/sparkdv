@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 
 export interface ScrollProductHeroProps {
   onSlideChange?: (index: number) => void;
@@ -103,231 +103,251 @@ export default function ScrollProductHero({
 }: ScrollProductHeroProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState<number>(0);
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const [prevSlide, setPrevSlide] = useState<number | null>(null);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+
+  // Background cross-fade state
+  const [bgCurrent, setBgCurrent] = useState<string>(ALL_HERO_SLIDES[0].bgGradient);
+  const [bgNext, setBgNext] = useState<string>(ALL_HERO_SLIDES[0].bgGradient);
+  const [bgFadeActive, setBgFadeActive] = useState<boolean>(false);
 
   const totalSlides = ALL_HERO_SLIDES.length;
+  const currentSlideData = ALL_HERO_SLIDES[activeSlide];
 
-  // Track scroll through the hero track
-  const handleScroll = useCallback(() => {
-    if (!rootRef.current) return;
-    const rect = rootRef.current.getBoundingClientRect();
-    const scrollRange = rect.height - window.innerHeight;
-    if (scrollRange <= 0) return;
+  // Touch gesture support
+  const touchStartXRef = useRef<number>(0);
 
-    const current = -rect.top;
-    const progress = Math.max(0, Math.min(1, current / scrollRange));
-    setScrollProgress(progress);
+  // Navigate to slide with animation direction
+  const changeSlide = useCallback(
+    (targetIndex: number, forcedDirection?: "next" | "prev") => {
+      if (targetIndex === activeSlide || isTransitioning) return;
 
-    // Calculate active slide index
-    const rawIdx = progress * (totalSlides - 1);
-    const nextActive = Math.min(totalSlides - 1, Math.round(rawIdx));
+      const determinedDir =
+        forcedDirection || (targetIndex > activeSlide ? "next" : "prev");
 
-    setActiveSlide((prev) => {
-      if (prev !== nextActive) {
-        onSlideChange?.(nextActive);
-      }
-      return nextActive;
-    });
+      setDirection(determinedDir);
+      setPrevSlide(activeSlide);
+      setIsTransitioning(true);
 
-    // Notify header overlay state: true while inside hero viewport
-    const isOverlay = rect.bottom > 80 && rect.top <= 0;
-    onHeaderOverlayChange?.(isOverlay);
-  }, [totalSlides, onSlideChange, onHeaderOverlayChange]);
+      // Trigger background cross-fade
+      setBgNext(ALL_HERO_SLIDES[targetIndex].bgGradient);
+      setBgFadeActive(true);
 
+      setActiveSlide(targetIndex);
+      onSlideChange?.(targetIndex);
+
+      setTimeout(() => {
+        setIsTransitioning(false);
+        setBgCurrent(ALL_HERO_SLIDES[targetIndex].bgGradient);
+        setBgFadeActive(false);
+      }, 760);
+    },
+    [activeSlide, isTransitioning, onSlideChange]
+  );
+
+  const goToNext = useCallback(() => {
+    const nextIdx = (activeSlide + 1) % totalSlides;
+    changeSlide(nextIdx, "next");
+  }, [activeSlide, totalSlides, changeSlide]);
+
+  const goToPrev = useCallback(() => {
+    const prevIdx = (activeSlide - 1 + totalSlides) % totalSlides;
+    changeSlide(prevIdx, "prev");
+  }, [activeSlide, totalSlides, changeSlide]);
+
+  // Automatic horizontal advance from right to left every 3200ms
   useEffect(() => {
-    let rafId: number;
-    const onScrollRaf = () => {
-      rafId = requestAnimationFrame(handleScroll);
+    if (isPaused) return;
+
+    const timer = setInterval(() => {
+      goToNext();
+    }, 3200);
+
+    return () => clearInterval(timer);
+  }, [isPaused, goToNext]);
+
+  // Pause when browser tab is inactive to preserve battery & animations
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPaused(document.hidden);
     };
-
-    window.addEventListener("scroll", onScrollRaf, { passive: true });
-    window.addEventListener("resize", onScrollRaf, { passive: true });
-    handleScroll();
-
-    return () => {
-      window.removeEventListener("scroll", onScrollRaf);
-      window.removeEventListener("resize", onScrollRaf);
-      cancelAnimationFrame(rafId);
-    };
-  }, [handleScroll]);
-
-  // Smooth scroll to any slide
-  const scrollToSlide = (index: number) => {
-    if (!rootRef.current) return;
-    const rect = rootRef.current.getBoundingClientRect();
-    const scrollRange = rect.height - window.innerHeight;
-    const targetScroll =
-      window.scrollY + rect.top + (index / (totalSlides - 1)) * scrollRange;
-
-    window.scrollTo({
-      top: targetScroll,
-      behavior: "smooth",
-    });
-  };
-
-  // Scroll to explore action
-  const handleExplore = () => {
-    if (activeSlide < totalSlides - 1) {
-      scrollToSlide(activeSlide + 1);
-    } else if (rootRef.current) {
-      const rect = rootRef.current.getBoundingClientRect();
-      window.scrollTo({
-        top: window.scrollY + rect.bottom - 40,
-        behavior: "smooth",
-      });
-    }
-  };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+    if (e.key === "ArrowRight") {
       e.preventDefault();
-      if (activeSlide < totalSlides - 1) scrollToSlide(activeSlide + 1);
-    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+      goToNext();
+    } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-      if (activeSlide > 0) scrollToSlide(activeSlide - 1);
+      goToPrev();
     }
   };
 
-  // Fractional progress between slide pairs
-  const rawIdx = scrollProgress * (totalSlides - 1);
-  const baseIdx = Math.min(totalSlides - 2, Math.max(0, Math.floor(rawIdx)));
-  const nextIdx = Math.min(totalSlides - 1, baseIdx + 1);
-  const frac = Math.max(0, Math.min(1, rawIdx - baseIdx));
+  // Touch swipe handling
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    setIsPaused(true);
+  };
 
-  // Current pair of slides
-  const currentSlideData = ALL_HERO_SLIDES[activeSlide];
-  const slideA = ALL_HERO_SLIDES[baseIdx];
-  const slideB = ALL_HERO_SLIDES[nextIdx];
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchEndX - touchStartXRef.current;
+    if (diff < -45) {
+      // Swiped left -> advance right to left
+      goToNext();
+    } else if (diff > 45) {
+      // Swiped right -> advance left to right
+      goToPrev();
+    }
+    setIsPaused(false);
+  };
 
-  // Opacities for smooth background blend
-  const opacityA = 1 - frac;
-  const opacityB = frac;
+  // Scroll to explore action: Smooth scroll to the rest of the home page
+  const handleExplore = () => {
+    const nextEl =
+      rootRef.current?.nextElementSibling ||
+      document.getElementById("home-content") ||
+      document.querySelector(".commerce-home > *:nth-child(2)");
 
-  // Text transition logic
-  const sameLeftText = slideA.textLeft === slideB.textLeft;
-  const leftText = sameLeftText ? slideA.textLeft : (frac < 0.5 ? slideA.textLeft : slideB.textLeft);
+    if (nextEl) {
+      nextEl.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+    }
+  };
 
-  const textRightAOpacity = Math.max(0, Math.min(1, (0.48 - frac) * 3));
-  const textRightAY = -frac * 36;
+  // Header overlay notification
+  useEffect(() => {
+    const handleScrollOverlay = () => {
+      if (!rootRef.current) return;
+      const rect = rootRef.current.getBoundingClientRect();
+      const isOverlay = rect.bottom > 80 && rect.top <= 0;
+      onHeaderOverlayChange?.(isOverlay);
+    };
 
-  const textRightBOpacity = Math.max(0, Math.min(1, (frac - 0.52) * 3));
-  const textRightBY = (1 - frac) * 36;
-
-  // Current text color
-  const textColor = frac < 0.5 ? slideA.textColor : slideB.textColor;
-
-  // Track height based on number of slides
-  const trackHeight = `${Math.max(220, totalSlides * 85)}vh`;
+    window.addEventListener("scroll", handleScrollOverlay, { passive: true });
+    handleScrollOverlay();
+    return () => window.removeEventListener("scroll", handleScrollOverlay);
+  }, [onHeaderOverlayChange]);
 
   return (
     <section
       ref={rootRef}
       className={`scroll-product-hero-root ${className}`}
-      style={{ height: trackHeight }}
       onKeyDown={handleKeyDown}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       tabIndex={0}
-      aria-label="SPARK-DV All Featured Products Showcase"
+      aria-label="SPARK-DV All Featured Products Horizontal Showcase"
     >
-      <div className="scroll-product-hero-sticky">
-        {/* Background Layer A */}
+      <div className="scroll-product-hero-inner">
+        {/* Background Layer A (Active Base Gradient) */}
         <div
           className="scroll-hero-bg-layer"
-          style={{
-            background: slideA.bgGradient,
-            opacity: opacityA,
-          }}
+          style={{ background: bgCurrent }}
           aria-hidden="true"
         />
 
-        {/* Background Layer B */}
+        {/* Background Layer B (Cross-fade Incoming Gradient) */}
         <div
-          className="scroll-hero-bg-layer"
-          style={{
-            background: slideB.bgGradient,
-            opacity: opacityB,
-          }}
+          className={`scroll-hero-bg-layer-incoming ${
+            bgFadeActive ? "fade-in" : ""
+          }`}
+          style={{ background: bgNext }}
           aria-hidden="true"
         />
 
-        {/* Header Spacer for fixed top navigation */}
+        {/* Header Spacer for top navigation clearance */}
         <div className="scroll-hero-header-spacer" aria-hidden="true" />
 
-        {/* Giant Background Typography: Left & Right words framing the product */}
+        {/* Giant Background Typography: Fixed "NANION" on Left, Horizontally Transitioning Word on Right */}
         <div
           className="scroll-hero-typography"
           aria-hidden="true"
-          style={{ color: textColor }}
+          style={{ color: currentSlideData.textColor }}
         >
           <div className="scroll-hero-text-left">
-            <span>{leftText}</span>
+            <span>{currentSlideData.textLeft}</span>
           </div>
+
           <div className="scroll-hero-text-gap" />
+
           <div className="scroll-hero-text-right">
-            {/* Word A */}
-            <span
-              className="scroll-hero-right-word"
-              style={{
-                opacity: textRightAOpacity,
-                transform: `translateY(${textRightAY}px)`,
-                visibility: textRightAOpacity < 0.01 ? "hidden" : "visible",
-              }}
-            >
-              {slideA.textRight}
-            </span>
-            {/* Word B */}
-            <span
-              className="scroll-hero-right-word"
-              style={{
-                opacity: textRightBOpacity,
-                transform: `translateY(${textRightBY}px)`,
-                visibility: textRightBOpacity < 0.01 ? "hidden" : "visible",
-              }}
-            >
-              {slideB.textRight}
-            </span>
+            {ALL_HERO_SLIDES.map((slide, i) => {
+              const isActive = i === activeSlide;
+              const isPrev = i === prevSlide && isTransitioning;
+
+              let animClass = "word-idle";
+              if (isActive) {
+                animClass = isTransitioning
+                  ? direction === "next"
+                    ? "word-enter-from-right"
+                    : "word-enter-from-left"
+                  : "word-active";
+              } else if (isPrev) {
+                animClass =
+                  direction === "next"
+                    ? "word-exit-to-left"
+                    : "word-exit-to-right";
+              }
+
+              return (
+                <span
+                  key={slide.id}
+                  className={`scroll-hero-right-word ${animClass}`}
+                >
+                  {slide.textRight}
+                </span>
+              );
+            })}
           </div>
         </div>
 
-        {/* Center Stage: Hero Product Floating Showcase */}
+        {/* Center Stage: Hero Product Horizontal Gliding Showcase */}
         <div className="scroll-hero-stage">
-          {/* Luminous Studio Spotlight behind the product to make it pop and stand out */}
+          {/* Luminous Studio Spotlight behind the active product */}
           <div className="scroll-hero-spotlight" aria-hidden="true" />
 
           {/* Soft ambient floating ground shadow underneath the product */}
           <div className="scroll-hero-ambient-shadow" aria-hidden="true" />
 
           <div className="scroll-hero-product-viewport">
-            {/* Render current and next product during transition */}
             {ALL_HERO_SLIDES.map((slide, i) => {
-              const isItemA = i === baseIdx;
-              const isItemB = i === nextIdx;
-              if (!isItemA && !isItemB) return null;
+              const isActive = i === activeSlide;
+              const isPrev = i === prevSlide && isTransitioning;
 
-              const isFirst = isItemA;
-              const opacity = isFirst
-                ? Math.max(0, Math.min(1, (0.5 - frac) * 2.4))
-                : Math.max(0, Math.min(1, (frac - 0.5) * 2.4));
+              let animClass = "slide-idle";
+              if (isActive) {
+                animClass = isTransitioning
+                  ? direction === "next"
+                    ? "anim-enter-from-right"
+                    : "anim-enter-from-left"
+                  : "slide-active";
+              } else if (isPrev) {
+                animClass =
+                  direction === "next"
+                    ? "anim-exit-to-left"
+                    : "anim-exit-to-right";
+              }
 
-              const translateY = isFirst ? -frac * 36 : (1 - frac) * 36;
-              const scale = isFirst ? 1 - frac * 0.05 : 0.95 + frac * 0.05;
-              const isInteractive = activeSlide === i;
+              // Only render active or exiting slide for maximum DOM performance
+              if (!isActive && !isPrev) return null;
 
               return (
                 <div
                   key={slide.id}
-                  className={`scroll-hero-product-item ${slide.imgClass || ""}`}
-                  style={{
-                    opacity,
-                    transform: `translate(-50%, calc(-50% + ${translateY}px)) scale(${scale})`,
-                    pointerEvents: isInteractive ? "auto" : "none",
-                    visibility: opacity < 0.02 ? "hidden" : "visible",
-                  }}
+                  className={`scroll-hero-product-item ${slide.imgClass || ""} ${animClass}`}
                 >
                   <Link
                     to={`/products/${slide.slug}`}
                     aria-label={`View ${slide.name}`}
-                    tabIndex={isInteractive ? 0 : -1}
+                    tabIndex={isActive ? 0 : -1}
                   >
                     <img
                       src={slide.image}
@@ -342,7 +362,29 @@ export default function ScrollProductHero({
             })}
           </div>
 
-          {/* Slide Indicator Bar: All products representation */}
+          {/* Left Navigation Arrow */}
+          <button
+            type="button"
+            className="scroll-hero-nav-arrow scroll-hero-nav-prev"
+            onClick={goToPrev}
+            aria-label="Previous product"
+            title="Previous product"
+          >
+            <ChevronLeft size={22} />
+          </button>
+
+          {/* Right Navigation Arrow */}
+          <button
+            type="button"
+            className="scroll-hero-nav-arrow scroll-hero-nav-next"
+            onClick={goToNext}
+            aria-label="Next product"
+            title="Next product"
+          >
+            <ChevronRight size={22} />
+          </button>
+
+          {/* Slide Indicator Bar & Counter at the bottom */}
           <div className="scroll-hero-indicator-container">
             <div
               className="scroll-hero-indicators"
@@ -351,14 +393,21 @@ export default function ScrollProductHero({
             >
               {ALL_HERO_SLIDES.map((slide, idx) => (
                 <button
-                  key={slide.id}
+                  key={`${activeSlide}-${slide.id}`}
                   type="button"
                   role="tab"
                   aria-selected={activeSlide === idx}
                   aria-label={`Slide ${idx + 1} of ${totalSlides}: ${slide.name}`}
                   title={`${slide.name} (${slide.category})`}
-                  className={`scroll-hero-indicator-bar ${activeSlide === idx ? "active" : ""}`}
-                  onClick={() => scrollToSlide(idx)}
+                  className={`scroll-hero-indicator-bar ${
+                    activeSlide === idx ? "active" : ""
+                  }`}
+                  onClick={() =>
+                    changeSlide(
+                      idx,
+                      idx > activeSlide ? "next" : "prev"
+                    )
+                  }
                 />
               ))}
             </div>
@@ -376,7 +425,7 @@ export default function ScrollProductHero({
             type="button"
             className="scroll-hero-explore-btn"
             onClick={handleExplore}
-            aria-label="Scroll to explore more products"
+            aria-label="Scroll down to explore the rest of the home page"
           >
             <span>Scroll to explore</span>
             <span className="scroll-hero-explore-arrow" aria-hidden="true">

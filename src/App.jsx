@@ -1,6 +1,7 @@
 import TextRoll from './components/ui/text-roll';
 import CheckoutPage from './CheckoutPage';
 import ScienceGallery from './ScienceGallery';
+import SciencePage from './SciencePage';
 import ContactWithGlobe from './components/ui/contact-with-globe';
 import DistributorPage from './DistributorPage';
 import { CinematicFooter } from './components/ui/motion-footer';
@@ -175,9 +176,11 @@ function App() {
     const page = sourceContent[loc.pathname];
     const p = products.find((p) => loc.pathname === "/products/" + p.slug);
     document.title =
-      ((loc.pathname === "/science" ? "Blogs" : null) || p?.name ||
+      (p?.name ||
         (page?.title !== "404" ? page?.title : null) ||
         {
+          "/science": "Biomaterials Science & R&D",
+          "/blogs": "Clinical Blogs & Dental Literature",
           "/contact": "Contact",
           "/distributor": "Request Distributor Pricing",
           "/distributor-pricing": "Request Distributor Pricing",
@@ -414,9 +417,10 @@ function App() {
                 ['/', 'Home'],
                 ['/products', 'Products'],
                 ['/about', 'About'],
+                ['/science', 'Science'],
+                ['/blogs', 'Blogs'],
                 ['/dentists', 'For Dentists'],
                 ['/parents', 'For Parents'],
-                ['/science', 'Blogs'],
                 ['/contact', 'Contact'],
                 ['/distributor', 'Distributor Pricing'],
                 ['/profile', 'Account'],
@@ -438,9 +442,10 @@ function App() {
               {[
                 ['/products', 'Products', 84],
                 ['/about', 'About', 64],
+                ['/science', 'Science', 76],
+                ['/blogs', 'Blogs', 68],
                 ['/dentists', 'For Dentists', 104],
                 ['/parents', 'For Parents', 96],
-                ['/science', 'Blogs', 72],
                 ['/contact', 'Contact', 76],
               ].map(([to, label, width]) => (
                 <DockItem key={to} baseWidth={width}>
@@ -756,7 +761,8 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
       return <ProductFamilyDetail familySlug={detail} add={add} />;
     return <ProductDetail slug={detail} add={add} />;
   }
-  if (path === "/science" || path === "/blogs") return <ScienceGallery />;
+  if (path === "/science") return <SciencePage />;
+  if (path === "/blogs") return <ScienceGallery />;
   if (path === "/dentists") return <EditorialPage path="/dentists" />;
   if (path === "/parents") return <EditorialPage path="/parents" />;
   if (path === "/school-program")

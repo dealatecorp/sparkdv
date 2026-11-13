@@ -28,7 +28,7 @@ interface HomeHypeProps {
 
 export function HomeHypeSections({ add }: HomeHypeProps) {
   return (
-    <div className="home-hype-container w-full bg-[#fbf9f5] text-[#073763] overflow-hidden">
+    <div className="home-hype-container w-full bg-[#fbf9f5] text-[#073763] overflow-hidden" id="home-content">
       {/* 1. Authority & Impact Metrics Band */}
       <AuthorityMetricsBand />
 
