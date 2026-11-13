@@ -58,9 +58,9 @@
 .about-collage-section{padding:100px clamp(20px,4vw,72px) 85px;background:var(--about-paper)}
 .about-collage-section>h2{font-size:clamp(32px,3.3vw,48px)}
 .about-photo-board{height:clamp(480px,44vw,650px);position:relative;margin:140px 0 110px}
-.about-photo{position:absolute;border-radius:10px;background:#eee9f3}
+.about-photo{position:absolute;border-radius:10px;background:#fbf9f5}
 .about-photo img{width:100%;height:100%;object-fit:cover;border-radius:10px}
-.about-photo.is-product img{object-fit:contain;background:#eee9f3;padding:6px}
+.about-photo.is-product img{object-fit:contain;background:#fbf9f5;padding:6px}
 .about-photo figcaption{position:absolute;top:calc(100% + 8px);left:0;right:0;font-size:12px;line-height:1.2}
 .about-photo-0{width:15%;height:34.2%;left:5%;top:65.8%}
 .about-photo-1{width:12%;height:36.4%;left:10%;top:5%}
@@ -72,7 +72,7 @@
 .about-photo-7{width:12%;height:27.4%;left:71%;top:81%}
 .about-photo-8{width:12%;height:36.4%;left:86%;top:33%}
 .about-collage-closing{display:flex;justify-content:space-between;font-size:clamp(32px,5vw,72px);font-weight:600;letter-spacing:-.04em;line-height:1.1}
-.about-values-panel{padding:100px clamp(20px,4vw,72px);background:#f7d9c4}
+.about-values-panel{padding:100px clamp(20px,4vw,72px);background:#fbf9f5}
 .about-values-panel>h2{max-width:1000px}
 .about-values-layout{display:grid;grid-template-columns:1fr 1fr;gap:10%;margin-top:70px;align-items:start}
 .about-value{border-top:1px solid #b9a394}
@@ -103,7 +103,7 @@
 .about-founder-details summary::-webkit-details-marker{display:none}
 .about-founder-details[open] summary svg{transform:rotate(45deg)}
 .about-founder-details p{font-size:16px;line-height:1.65;margin-bottom:18px}
-.about-journey{padding:80px clamp(20px,4vw,72px);background:#eee9f3}
+.about-journey{padding:80px clamp(20px,4vw,72px);background:#fbf9f5}
 .about-journey h2{font-size:38px}
 .about-journey ol{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);padding:0;margin:45px 0;gap:25px}
 .about-journey li{border-top:1px solid #aba7b0;padding-top:22px}

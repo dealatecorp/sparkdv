@@ -29,19 +29,10 @@ interface HomeHypeProps {
 export function HomeHypeSections({ add }: HomeHypeProps) {
   return (
     <div className="home-hype-container w-full bg-[#fbf9f5] text-[#073763] overflow-hidden">
-      {/* 1. AUTHORITY & IMPACT METRICS BAND */}
+      {/* 1. Authority & Impact Metrics Band */}
       <AuthorityMetricsBand />
 
-      {/* 2. THE 21st.dev / INSPIRA UI BENTO GRID: WHY SPARK-DV LEADS THE INDUSTRY */}
-      <LeadershipBentoGrid />
-
-      {/* 3. DEDICATED DUAL PORTALS: FOR DENTISTS & FOR PARENTS */}
-      <DualPortalsSection />
-
-      {/* 4. CURATED 4 FLAGSHIP BREAKTHROUGHS WITH FLY-TO-CART ANIMATION */}
-      <FlagshipSpotlight add={add} />
-
-      {/* 5. CLINICAL TESTIMONIALS & UNIVERSITY MARQUEE */}
+      {/* 2. Clinical Testimonials & University Marquee */}
       <ClinicianTestimonialMarquee />
     </div>
   );

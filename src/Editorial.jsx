@@ -11,19 +11,23 @@ import { products } from "./data";
 import EditorialHeading from './components/editorial/editorial-heading';
 import protocols from "./protocols.json";
 
-export function ProductImage({ product, hero = false }) {
-  const a = assets[product.slug];
+export function ProductImage({ product, hero = false, className = "" }) {
+  const slug = product?.slug || "nanion-elite-pro";
+  const imgSrc = product?.img
+    ? (product.img.startsWith("/") ? product.img : `/images/${product.img}`)
+    : `/images/${slug}.svg`;
+
   return (
     <img
-      src={a.local}
-      srcSet={a.width>640?`${a.local.replace("product.webp", "product-640.webp")} 640w, ${a.local} ${a.width}w`:undefined}
-      sizes={
-        hero ? "(max-width: 760px) 90vw, 46vw" : "(max-width: 760px) 90vw, 30vw"
-      }
-      width={a.width}
-      height={a.height}
+      src={imgSrc}
+      className={className}
       loading={hero ? "eager" : "lazy"}
-      alt={`${product.name} — original SPARK-DV product image`}
+      alt={`${product?.name || "SPARK-DV Product"} — original SPARK-DV product image`}
+      onError={(e) => {
+        if (!e.currentTarget.src.endsWith(".svg")) {
+          e.currentTarget.src = `/images/${slug}.svg`;
+        }
+      }}
     />
   );
 }

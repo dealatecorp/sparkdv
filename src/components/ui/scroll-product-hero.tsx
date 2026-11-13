@@ -289,10 +289,13 @@ export default function ScrollProductHero({
           </div>
         </div>
 
-        {/* Center Stage: Product + Pedestal + Slide Indicators */}
+        {/* Center Stage: Hero Product Floating Showcase */}
         <div className="scroll-hero-stage">
           {/* Luminous Studio Spotlight behind the product to make it pop and stand out */}
           <div className="scroll-hero-spotlight" aria-hidden="true" />
+
+          {/* Soft ambient floating ground shadow underneath the product */}
+          <div className="scroll-hero-ambient-shadow" aria-hidden="true" />
 
           <div className="scroll-hero-product-viewport">
             {/* Render current and next product during transition */}
@@ -306,8 +309,8 @@ export default function ScrollProductHero({
                 ? Math.max(0, Math.min(1, (0.5 - frac) * 2.4))
                 : Math.max(0, Math.min(1, (frac - 0.5) * 2.4));
 
-              const translateY = isFirst ? -frac * 50 : (1 - frac) * 50;
-              const scale = isFirst ? 1 - frac * 0.06 : 0.94 + frac * 0.06;
+              const translateY = isFirst ? -frac * 36 : (1 - frac) * 36;
+              const scale = isFirst ? 1 - frac * 0.05 : 0.95 + frac * 0.05;
               const isInteractive = activeSlide === i;
 
               return (
@@ -316,7 +319,7 @@ export default function ScrollProductHero({
                   className={`scroll-hero-product-item ${slide.imgClass || ""}`}
                   style={{
                     opacity,
-                    transform: `translateX(-50%) translateY(${translateY}px) scale(${scale})`,
+                    transform: `translate(-50%, calc(-50% + ${translateY}px)) scale(${scale})`,
                     pointerEvents: isInteractive ? "auto" : "none",
                     visibility: opacity < 0.02 ? "hidden" : "visible",
                   }}
@@ -337,16 +340,6 @@ export default function ScrollProductHero({
                 </div>
               );
             })}
-          </div>
-
-          {/* 3D Grounded Pedestal Platform */}
-          <div className="scroll-hero-pedestal-wrap" aria-hidden="true">
-            <img
-              src="/images/hero-pedestal.svg"
-              alt=""
-              className="scroll-hero-pedestal"
-              draggable={false}
-            />
           </div>
 
           {/* Slide Indicator Bar: All products representation */}

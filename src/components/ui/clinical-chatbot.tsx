@@ -155,6 +155,16 @@ export const PREDEFINED_FAQS: FAQItem[] = [
     actionLink: "/products",
   },
   {
+    id: "faq-distributor",
+    category: "ordering",
+    shortLabel: "Distributor Pricing?",
+    question: "How can dental supply depots apply for wholesale distributor pricing?",
+    answer:
+      "We provide direct R&D factory pricing, protected territory exclusivity, and free clinician sample kits for authorized dental depots and distributors. You can submit your territory proposal on our dedicated Distributor Portal.",
+    actionText: "Go to Distributor Portal",
+    actionLink: "/distributor",
+  },
+  {
     id: "faq-whatsapp",
     category: "ordering",
     shortLabel: "Chat on WhatsApp?",
@@ -393,34 +403,34 @@ export function ClinicalChatbot() {
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={handleReset}
                 title="Restart conversation"
-                className="size-8 rounded-lg flex items-center justify-center transition-all cursor-pointer"
+                className="size-8 rounded-lg flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-105 active:scale-95"
                 style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.15)",
-                  color: "#ffffff",
-                  border: "none",
+                  backgroundColor: "#ffffff",
+                  color: "#073763",
+                  border: "1px solid rgba(255, 255, 255, 0.4)",
                 }}
                 aria-label="Reset chat history"
               >
-                <RotateCcw className="size-4 text-white" style={{ color: "#ffffff" }} />
+                <RotateCcw className="size-4" style={{ color: "#073763", strokeWidth: 2.2 }} />
               </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 title="Close chat"
-                className="size-8 rounded-lg flex items-center justify-center transition-all cursor-pointer"
+                className="size-8 rounded-lg flex items-center justify-center transition-all cursor-pointer shadow-xs hover:scale-105 active:scale-95"
                 style={{
-                  backgroundColor: "rgba(255, 255, 255, 0.15)",
-                  color: "#ffffff",
-                  border: "none",
+                  backgroundColor: "#ffffff",
+                  color: "#073763",
+                  border: "1px solid rgba(255, 255, 255, 0.4)",
                 }}
                 aria-label="Close chat window"
               >
-                <X className="size-4 text-white" style={{ color: "#ffffff" }} />
+                <X className="size-4" style={{ color: "#073763", strokeWidth: 2.2 }} />
               </button>
             </div>
           </div>

@@ -2,13 +2,14 @@ import TextRoll from './components/ui/text-roll';
 import CheckoutPage from './CheckoutPage';
 import ScienceGallery from './ScienceGallery';
 import ContactWithGlobe from './components/ui/contact-with-globe';
-import {CinematicFooter} from './components/ui/motion-footer';
+import DistributorPage from './DistributorPage';
+import { CinematicFooter } from './components/ui/motion-footer';
 import UserProfile from './components/ui/user-profile';
 import MercuryLogin from './components/ui/mercury-login';
 import ClinicalChatbot from './components/ui/clinical-chatbot';
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import {Dock, DockItem} from './components/ui/dock';
+import { Dock, DockItem } from './components/ui/dock';
 import {
   ArrowDown,
   ArrowLeft,
@@ -178,6 +179,9 @@ function App() {
         (page?.title !== "404" ? page?.title : null) ||
         {
           "/contact": "Contact",
+          "/distributor": "Request Distributor Pricing",
+          "/distributor-pricing": "Request Distributor Pricing",
+          "/distributors": "Request Distributor Pricing",
           "/privacy": "Privacy Policy",
           "/terms": "Terms of Service",
           "/shipping": "Shipping & Returns",
@@ -204,7 +208,7 @@ function App() {
     meta(
       "og:image",
       "https://sparkdv.com" +
-        (p ? productAssets[p.slug].local : "/images/logo.png"),
+      (p ? productAssets[p.slug].local : "/images/logo.png"),
       "property",
     );
     let canonical = document.querySelector('link[rel="canonical"]');
@@ -224,20 +228,20 @@ function App() {
     schema.textContent = JSON.stringify(
       p
         ? {
-            "@context": "https://schema.org",
-            "@type": "Product",
-            name: p.name,
-            description: p.desc,
-            image: "https://sparkdv.com" + productAssets[p.slug].local,
-            brand: { "@type": "Brand", name: "SPARK-DV" },
-          }
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: p.name,
+          description: p.desc,
+          image: "https://sparkdv.com" + productAssets[p.slug].local,
+          brand: { "@type": "Brand", name: "SPARK-DV" },
+        }
         : {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            name: "SPARK-DV",
-            url: "https://sparkdv.com",
-            email: "sparkdv310@gmail.com",
-          },
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "SPARK-DV",
+          url: "https://sparkdv.com",
+          email: "sparkdv310@gmail.com",
+        },
     );
   }, [loc.pathname]);
   useEffect(() => {
@@ -405,15 +409,16 @@ function App() {
             aria-label="Main navigation"
           >
             <div className="mobile-menu-content">
-              <div className="mobile-menu-top"><span>Explore SPARK-DV</span><button type="button" aria-label="Close navigation" onClick={()=>setMenu(false)}><X size={23}/></button></div>
+              <div className="mobile-menu-top"><span>Explore SPARK-DV</span><button type="button" aria-label="Close navigation" onClick={() => setMenu(false)}><X size={23} /></button></div>
               <div className="mobile-menu-links">{[
                 ['/', 'Home'],
                 ['/products', 'Products'],
+                ['/about', 'About'],
                 ['/dentists', 'For Dentists'],
                 ['/parents', 'For Parents'],
                 ['/science', 'Blogs'],
-                ['/about', 'About'],
                 ['/contact', 'Contact'],
+                ['/distributor', 'Distributor Pricing'],
                 ['/profile', 'Account'],
               ].map(([to, label]) => (
                 <Link
@@ -426,32 +431,43 @@ function App() {
                   <ArrowUpRight size={22} />
                 </Link>
               ))}</div>
-              <Link className="mobile-menu-cart" to="/cart" onClick={()=>setMenu(false)}><ShoppingBag size={19}/>Your cart <span>{qty} items</span></Link>
+              <Link className="mobile-menu-cart" to="/cart" onClick={() => setMenu(false)}><ShoppingBag size={19} />Your cart <span>{qty} items</span></Link>
               <p>Dental science. Everyday care.</p>
             </div>
             <Dock>
-            {[
-              ['/products', 'Products', 84],
-              ['/dentists', 'For Dentists', 104],
-              ['/parents', 'For Parents', 96],
-              ['/science', 'Blogs', 72],
-              ['/about', 'About', 64],
-              ['/contact', 'Contact', 76],
-            ].map(([to, label, width]) => (
-              <DockItem key={to} baseWidth={width}>
-                <Link to={to} aria-current={loc.pathname === to ? 'page' : undefined}>
-                  {label}
-                </Link>
-              </DockItem>
-            ))}
+              {[
+                ['/products', 'Products', 84],
+                ['/about', 'About', 64],
+                ['/dentists', 'For Dentists', 104],
+                ['/parents', 'For Parents', 96],
+                ['/science', 'Blogs', 72],
+                ['/contact', 'Contact', 76],
+              ].map(([to, label, width]) => (
+                <DockItem key={to} baseWidth={width}>
+                  <Link to={to} aria-current={loc.pathname === to ? 'page' : undefined}>
+                    {label}
+                  </Link>
+                </DockItem>
+              ))}
             </Dock>
             <div className="mobile-actions">
-              <Link className="button button-dark" to="/contact">
-                Request pricing <ArrowUpRight size={16} />
+              <Link className="button button-dark" to="/distributor" onClick={() => setMenu(false)}>
+                Request distributor pricing <ArrowUpRight size={16} />
+              </Link>
+              <Link className="button button-outline mt-2" to="/contact" onClick={() => setMenu(false)}>
+                Clinical contact <ArrowUpRight size={16} />
               </Link>
             </div>
           </nav>
           <div className="header-actions">
+            <Link
+              to="/distributor"
+              className="header-distributor-btn hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#073763] bg-[#f0f4f8] hover:bg-white border border-[#073763]/20 hover:border-[#073763]/40 transition-all shadow-2xs hover:shadow-xs whitespace-nowrap"
+              title="Request Distributor & Wholesale Pricing"
+            >
+              <span>Request distributor pricing</span>
+              <ArrowUpRight size={14} className="text-[#073763]" />
+            </Link>
             <Link
               to="/profile"
               className="cart-trigger header-profile-link"
@@ -487,7 +503,7 @@ function App() {
       <main id="main">
         <RoutesView add={add} cartQty={qty} cart={cart} update={update} remove={remove} />
       </main>
-      {loc.pathname==='/checkout' ? <footer className="checkout-footer"><strong>SPARK-DV</strong><span>Questions about your order? <Link to="/contact">Contact our team</Link></span><div><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/shipping">Shipping & returns</Link></div></footer> : <CinematicFooter />}
+      {loc.pathname === '/checkout' ? <footer className="checkout-footer"><strong>SPARK-DV</strong><span>Questions about your order? <Link to="/contact">Contact our team</Link></span><div><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/shipping">Shipping & returns</Link></div></footer> : <CinematicFooter />}
       <ClinicalChatbot />
       {cartOpen && (
         <div
@@ -584,7 +600,7 @@ function App() {
                   </small>
                   <button
                     className="button button-dark checkout"
-                    onClick={() => {setCartOpen(false); navigate('/checkout')}}
+                    onClick={() => { setCartOpen(false); navigate('/checkout') }}
                   >
                     Continue to checkout <ArrowRight size={16} />
                   </button>
@@ -667,7 +683,7 @@ function FlyingCartItem({ item, onArrival }) {
     return () => {
       try {
         animation.cancel();
-      } catch {}
+      } catch { }
     };
   }, [item, onArrival]);
 
@@ -747,6 +763,8 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
     return <EditorialPage path="/school-program" />;
   if (path === "/about") return <EditorialPage path="/about" />;
   if (path === "/contact") return <Contact />;
+  if (path === "/distributor" || path === "/distributor-pricing" || path === "/distributors")
+    return <DistributorPage />;
   if (path === "/checkout") return <CheckoutPage cart={cart} update={update} remove={remove} />;
   if (path === "/account" || path === "/profile") return <UserProfile />;
   if (path === "/login") return <MercuryLogin />;
@@ -848,9 +866,9 @@ function Catalog({ add }) {
       const matchesPrice = !priceFilterActive || (p.price != null && p.price >= priceMin && p.price <= priceMax);
       return matchesCategory && matchesSearch && (!prof || p.professional) && matchesStatus && matchesPrice;
     });
-    if (sort === "price-low") list.sort((a,b)=>(a.price??999999)-(b.price??999999));
-    if (sort === "price-high") list.sort((a,b)=>(b.price??0)-(a.price??0));
-    if (sort === "name") list.sort((a,b)=>a.name.localeCompare(b.name));
+    if (sort === "price-low") list.sort((a, b) => (a.price ?? 999999) - (b.price ?? 999999));
+    if (sort === "price-high") list.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+    if (sort === "name") list.sort((a, b) => a.name.localeCompare(b.name));
     return list;
   }, [selectedCategories, query, prof, statusFilters, priceMin, priceMax, minCatalogPrice, maxCatalogPrice, sort]);
   const priceFilterActive = priceMin > minCatalogPrice || priceMax < maxCatalogPrice;
@@ -858,65 +876,65 @@ function Catalog({ add }) {
   const toggleCategory = category => setSelectedCategories(current => current.includes(category) ? current.filter(item => item !== category) : [...current, category]);
   const toggleStatus = status => setStatusFilters(current => current.includes(status) ? current.filter(item => item !== status) : [...current, status]);
   const toggleFilterGroup = group => setOpenFilterGroups(current => ({ ...current, [group]: !current[group] }));
-  const clearFilters=()=>{setSelectedCategories([]);setProf(false);setStatusFilters([]);setPriceMin(minCatalogPrice);setPriceMax(maxCatalogPrice);setQuery("");setSort("featured")};
+  const clearFilters = () => { setSelectedCategories([]); setProf(false); setStatusFilters([]); setPriceMin(minCatalogPrice); setPriceMax(maxCatalogPrice); setQuery(""); setSort("featured") };
   return <>
-    <section className="catalog-heading wrap"><div><h1>Shop products</h1><p>Find products for pediatric and preventive dental care.</p></div><Link className="button button-dark" to="/contact?type=Professional%20pricing">Professional pricing <ArrowUpRight size={16}/></Link></section>
+    <section className="catalog-heading wrap"><div><h1>Shop products</h1><p>Find products for pediatric and preventive dental care.</p></div><Link className="button button-dark" to="/contact?type=Professional%20pricing">Professional pricing <ArrowUpRight size={16} /></Link></section>
     <section className="catalog-section wrap" aria-label="Product catalogue">
       <div className="catalog-layout">
         <aside className="catalog-sidebar" data-open={mobileFiltersOpen} aria-label="Product filters">
-          <button className="catalog-mobile-filter-toggle" type="button" aria-expanded={mobileFiltersOpen} onClick={()=>setMobileFiltersOpen(open=>!open)}><SlidersHorizontal size={17}/><span>Filters</span>{activeFilterCount > 0 && <span className="filter-count">{activeFilterCount}</span>}<ChevronDown size={16}/></button>
+          <button className="catalog-mobile-filter-toggle" type="button" aria-expanded={mobileFiltersOpen} onClick={() => setMobileFiltersOpen(open => !open)}><SlidersHorizontal size={17} /><span>Filters</span>{activeFilterCount > 0 && <span className="filter-count">{activeFilterCount}</span>}<ChevronDown size={16} /></button>
           <div className="catalog-filter-content">
             <div className="catalog-filter-heading"><h2>Filters</h2><button className="clear-filter" onClick={clearFilters} disabled={activeFilterCount === 0 && !query}>Clear all</button></div>
             <section className="catalog-filter-group">
-              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.category} onClick={()=>toggleFilterGroup("category")}>Category <ChevronDown size={15}/></button>
+              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.category} onClick={() => toggleFilterGroup("category")}>Category <ChevronDown size={15} /></button>
               {openFilterGroups.category && <div className="catalog-filter-options">
-                {categories.slice(1).map(category => <label key={category}><input type="checkbox" checked={selectedCategories.includes(category)} onChange={()=>toggleCategory(category)}/><span>{category}</span><small>{products.filter(p=>p.category===category).length}</small></label>)}
+                {categories.slice(1).map(category => <label key={category}><input type="checkbox" checked={selectedCategories.includes(category)} onChange={() => toggleCategory(category)} /><span>{category}</span><small>{products.filter(p => p.category === category).length}</small></label>)}
               </div>}
             </section>
             <section className="catalog-filter-group">
-              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.price} onClick={()=>toggleFilterGroup("price")}>Price <ChevronDown size={15}/></button>
+              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.price} onClick={() => toggleFilterGroup("price")}>Price <ChevronDown size={15} /></button>
               {openFilterGroups.price && <div className="catalog-price-range">
-                <label><span>₹</span><input type="number" min={minCatalogPrice} max={priceMax} value={priceMin} aria-label="Minimum price in rupees" onChange={e=>setPriceMin(Math.min(Number(e.target.value)||minCatalogPrice,priceMax))}/></label>
+                <label><span>₹</span><input type="number" min={minCatalogPrice} max={priceMax} value={priceMin} aria-label="Minimum price in rupees" onChange={e => setPriceMin(Math.min(Number(e.target.value) || minCatalogPrice, priceMax))} /></label>
                 <span aria-hidden="true">to</span>
-                <label><span>₹</span><input type="number" min={priceMin} max={maxCatalogPrice} value={priceMax} aria-label="Maximum price in rupees" onChange={e=>setPriceMax(Math.max(Number(e.target.value)||maxCatalogPrice,priceMin))}/></label>
+                <label><span>₹</span><input type="number" min={priceMin} max={maxCatalogPrice} value={priceMax} aria-label="Maximum price in rupees" onChange={e => setPriceMax(Math.max(Number(e.target.value) || maxCatalogPrice, priceMin))} /></label>
                 <small>{priceFilterActive ? "Showing within selected range" : "All listed prices"}</small>
               </div>}
             </section>
             <section className="catalog-filter-group">
-              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.shopping} onClick={()=>toggleFilterGroup("shopping")}>Shopping options <ChevronDown size={15}/></button>
+              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.shopping} onClick={() => toggleFilterGroup("shopping")}>Shopping options <ChevronDown size={15} /></button>
               {openFilterGroups.shopping && <div className="catalog-filter-options">
-                <label><input type="checkbox" checked={statusFilters.includes("priced")} onChange={()=>toggleStatus("priced")}/><span>Priced products</span></label>
-                <label><input type="checkbox" checked={statusFilters.includes("enquiry")} onChange={()=>toggleStatus("enquiry")}/><span>Price on request</span></label>
-                <label><input type="checkbox" checked={statusFilters.includes("coming")} onChange={()=>toggleStatus("coming")}/><span>Coming soon</span></label>
+                <label><input type="checkbox" checked={statusFilters.includes("priced")} onChange={() => toggleStatus("priced")} /><span>Priced products</span></label>
+                <label><input type="checkbox" checked={statusFilters.includes("enquiry")} onChange={() => toggleStatus("enquiry")} /><span>Price on request</span></label>
+                <label><input type="checkbox" checked={statusFilters.includes("coming")} onChange={() => toggleStatus("coming")} /><span>Coming soon</span></label>
               </div>}
             </section>
             <section className="catalog-filter-group">
-              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.use} onClick={()=>toggleFilterGroup("use")}>Use <ChevronDown size={15}/></button>
+              <button className="catalog-filter-toggle" type="button" aria-expanded={openFilterGroups.use} onClick={() => toggleFilterGroup("use")}>Use <ChevronDown size={15} /></button>
               {openFilterGroups.use && <div className="catalog-filter-options">
-                <label><input type="checkbox" checked={prof} onChange={e=>setProf(e.target.checked)}/><span>Professional use</span></label>
+                <label><input type="checkbox" checked={prof} onChange={e => setProf(e.target.checked)} /><span>Professional use</span></label>
               </div>}
             </section>
-            <Link className="catalog-professional-link" to="/contact?type=Professional%20pricing">Need professional pricing? <ArrowUpRight size={14}/></Link>
+            <Link className="catalog-professional-link" to="/contact?type=Professional%20pricing">Need professional pricing? <ArrowUpRight size={14} /></Link>
           </div>
         </aside>
         <div className="catalog-results">
           <div className="catalog-toolbar">
-            <div className="search-field"><Search size={18}/><input aria-label="Search products" placeholder="Search products and categories" value={query} onChange={e=>setQuery(e.target.value)}/>{query&&<button aria-label="Clear search" onClick={()=>setQuery("")}><X size={15}/></button>}</div>
-            <label className="sort-label">Sort by <select value={sort} onChange={e=>setSort(e.target.value)}><option value="featured">Featured</option><option value="name">Name</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
+            <div className="search-field"><Search size={18} /><input aria-label="Search products" placeholder="Search products and categories" value={query} onChange={e => setQuery(e.target.value)} />{query && <button aria-label="Clear search" onClick={() => setQuery("")}><X size={15} /></button>}</div>
+            <label className="sort-label">Sort by <select value={sort} onChange={e => setSort(e.target.value)}><option value="featured">Featured</option><option value="name">Name</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
           </div>
           <div className="catalog-meta-row" aria-live="polite" aria-atomic="true"><span><strong>{filtered.length}</strong> products</span><span className="catalog-result-note">Original SPARK-DV product photography</span></div>
           {(selectedCategories.length > 0 || statusFilters.length > 0 || prof || priceFilterActive) && <div className="catalog-active-filters" aria-label="Active filters">
-            {selectedCategories.map(category=><button key={category} onClick={()=>toggleCategory(category)}>{category}<X size={13}/></button>)}
-            {statusFilters.map(status=><button key={status} onClick={()=>toggleStatus(status)}>{status === "priced" ? "Priced products" : status === "enquiry" ? "Price on request" : "Coming soon"}<X size={13}/></button>)}
-            {prof&&<button onClick={()=>setProf(false)}>Professional use<X size={13}/></button>}
-            {priceFilterActive&&<button onClick={()=>{setPriceMin(minCatalogPrice);setPriceMax(maxCatalogPrice)}}>₹{priceMin.toLocaleString("en-IN")} – ₹{priceMax.toLocaleString("en-IN")}<X size={13}/></button>}
+            {selectedCategories.map(category => <button key={category} onClick={() => toggleCategory(category)}>{category}<X size={13} /></button>)}
+            {statusFilters.map(status => <button key={status} onClick={() => toggleStatus(status)}>{status === "priced" ? "Priced products" : status === "enquiry" ? "Price on request" : "Coming soon"}<X size={13} /></button>)}
+            {prof && <button onClick={() => setProf(false)}>Professional use<X size={13} /></button>}
+            {priceFilterActive && <button onClick={() => { setPriceMin(minCatalogPrice); setPriceMax(maxCatalogPrice) }}>₹{priceMin.toLocaleString("en-IN")} – ₹{priceMax.toLocaleString("en-IN")}<X size={13} /></button>}
             <button className="clear-filter" onClick={clearFilters}>Clear all</button>
           </div>}
-          {filtered.length ? <div className="product-grid commerce-product-grid">{filtered.map(p=><ProductCard key={p.slug} product={p} add={add}/>)}</div> : <div className="no-results"><Search size={28}/><h2>No products found</h2><p>Try a different name or remove a filter.</p><button className="button button-outline" onClick={clearFilters}>Clear all filters</button></div>}
+          {filtered.length ? <div className="product-grid commerce-product-grid">{filtered.map(p => <ProductCard key={p.slug} product={p} add={add} />)}</div> : <div className="no-results"><Search size={28} /><h2>No products found</h2><p>Try a different name or remove a filter.</p><button className="button button-outline" onClick={clearFilters}>Clear all filters</button></div>}
         </div>
       </div>
     </section>
-    <section className="need-help"><div className="wrap need-help-inner"><div><h2>Need help choosing?</h2><p>Ask our team about products, professional pricing or availability.</p></div><Link className="button button-dark" to="/contact">Talk to our team <ArrowUpRight size={16}/></Link></div></section>
+    <section className="need-help"><div className="wrap need-help-inner"><div><h2>Need help choosing?</h2><p>Ask our team about products, professional pricing or availability.</p></div><Link className="button button-dark" to="/contact">Talk to our team <ArrowUpRight size={16} /></Link></div></section>
   </>;
 }
 function PageHero({ eyebrow, title, copy, actions, side }) {
@@ -1009,17 +1027,17 @@ function ProductFamilyDetail({ familySlug, add }) {
         <div className="detail-facts">
           {(files
             ? [
-                ["Surface treatment", "Black Gold (TiN) & Black Oxide (TiO₂)"],
-                ["Tip", "Non-cutting tip"],
-                ["Pediatric lengths", "17–19 mm"],
-                ["Designs", "S-shape & triangular"],
-              ]
+              ["Surface treatment", "Black Gold (TiN) & Black Oxide (TiO₂)"],
+              ["Tip", "Non-cutting tip"],
+              ["Pediatric lengths", "17–19 mm"],
+              ["Designs", "S-shape & triangular"],
+            ]
             : [
-                ["Antibacterial", "NanoSilver Fluoride"],
-                ["Biofilm", "Disruption"],
-                ["Fluoride", "Sustained F⁻ release"],
-                ["Repair", "5% nano-hydroxyapatite"],
-              ]
+              ["Antibacterial", "NanoSilver Fluoride"],
+              ["Biofilm", "Disruption"],
+              ["Fluoride", "Sustained F⁻ release"],
+              ["Repair", "5% nano-hydroxyapatite"],
+            ]
           ).map(([k, v], i) => (
             <div key={k}>
               <span>0{i + 1}</span>
@@ -1280,8 +1298,8 @@ function EnquiryForm({ defaultType, defaultProduct = 'General enquiry' }) {
     [error, setError] = useState("");
   const [type, setType] = useState(
     defaultType ||
-      new URLSearchParams(location.search).get("type") ||
-      "Clinical enquiry",
+    new URLSearchParams(location.search).get("type") ||
+    "Clinical enquiry",
   );
   useEffect(() => {
     if (defaultType) setType(defaultType);
@@ -1390,16 +1408,16 @@ function EnquiryForm({ defaultType, defaultProduct = 'General enquiry' }) {
 
 function Policy({ path }) {
   const data = {
-      "/privacy": [
-        "Privacy Policy",
-        "Contact our team for current privacy information.",
-      ],
-      "/terms": [
-        "Terms of Service",
-        "Terms of Service for the SPARK-DV website.",
-      ],
-      "/shipping": ["Shipping & Returns", "Shipping and returns information."],
-    }[path],
+    "/privacy": [
+      "Privacy Policy",
+      "Contact our team for current privacy information.",
+    ],
+    "/terms": [
+      "Terms of Service",
+      "Terms of Service for the SPARK-DV website.",
+    ],
+    "/shipping": ["Shipping & Returns", "Shipping and returns information."],
+  }[path],
     isUnavailable = true;
   return (
     <>
@@ -1432,13 +1450,13 @@ function Policy({ path }) {
   );
 }
 function orderEnquiryHref(cart) {
-  const lines=cart.map(item=>`${item.name} × ${item.qty}`);
-  const body=["Hello SPARK-DV team,", "Please confirm current pricing and availability for:", ...lines, "", "Please share shipping and order details."];
-  return 'mailto:sparkdv310@gmail.com?subject='+encodeURIComponent('SPARK-DV product enquiry')+'&body='+encodeURIComponent(body.join('\n'));
+  const lines = cart.map(item => `${item.name} × ${item.qty}`);
+  const body = ["Hello SPARK-DV team,", "Please confirm current pricing and availability for:", ...lines, "", "Please share shipping and order details."];
+  return 'mailto:sparkdv310@gmail.com?subject=' + encodeURIComponent('SPARK-DV product enquiry') + '&body=' + encodeURIComponent(body.join('\n'));
 }
-function CartPage({cart,update,remove}) {
-  const subtotal=cart.reduce((sum,item)=>sum+(item.price||0)*item.qty,0);
-  return <section className="order-page wrap"><p className="shop-hero-context">SPARK-DV / YOUR SELECTION</p><h1>Your cart.</h1>{cart.length?<><div className="order-items">{cart.map(item=><article key={item.slug}><Link to={`/products/${item.slug}`}><ProductImage product={item}/></Link><div><h2>{item.name}</h2><p>{money(item.price)}</p><div className="quantity"><button onClick={()=>update(item.slug,-1)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16}/></button><span aria-live="polite">{item.qty}</span><button onClick={()=>update(item.slug,1)} aria-label={`Increase ${item.name} quantity`}><Plus size={16}/></button><button onClick={()=>remove(item.slug)} aria-label={`Remove ${item.name}`}><X size={16}/></button></div></div></article>)}</div><div className="cart-summary"><h2>Subtotal <strong>{money(subtotal)}</strong></h2><p>This is an enquiry selection. The team will confirm current pricing, availability, shipping and order details.</p><Link className="button button-dark" to="/checkout">Continue to checkout <ArrowUpRight size={17}/></Link></div></>:<div className="cart-empty"><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Shop products <ArrowRight size={17}/></Link></div>}</section>;
+function CartPage({ cart, update, remove }) {
+  const subtotal = cart.reduce((sum, item) => sum + (item.price || 0) * item.qty, 0);
+  return <section className="order-page wrap"><p className="shop-hero-context">SPARK-DV / YOUR SELECTION</p><h1>Your cart.</h1>{cart.length ? <><div className="order-items">{cart.map(item => <article key={item.slug}><Link to={`/products/${item.slug}`}><ProductImage product={item} /></Link><div><h2>{item.name}</h2><p>{money(item.price)}</p><div className="quantity"><button onClick={() => update(item.slug, -1)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16} /></button><span aria-live="polite">{item.qty}</span><button onClick={() => update(item.slug, 1)} aria-label={`Increase ${item.name} quantity`}><Plus size={16} /></button><button onClick={() => remove(item.slug)} aria-label={`Remove ${item.name}`}><X size={16} /></button></div></div></article>)}</div><div className="cart-summary"><h2>Subtotal <strong>{money(subtotal)}</strong></h2><p>This is an enquiry selection. The team will confirm current pricing, availability, shipping and order details.</p><Link className="button button-dark" to="/checkout">Continue to checkout <ArrowUpRight size={17} /></Link></div></> : <div className="cart-empty"><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Shop products <ArrowRight size={17} /></Link></div>}</section>;
 }
 function NotFound() {
   return (
