@@ -45,7 +45,7 @@
 .about-sequence-progress button,.about-sequence-progress i{display:block;padding:0;border:0;width:24px;height:4px;border-radius:2px;cursor:pointer;background:rgba(255,255,255,0.42);transition:all .3s cubic-bezier(.16,1,.3,1)}
 .about-sequence-progress button:hover,.about-sequence-progress i:hover{background:rgba(255,255,255,0.85);transform:scaleY(1.3)}
 .about-sequence-progress button.is-active,.about-sequence-progress i.is-active{width:46px;background:#ffffff;box-shadow:0 0 10px rgba(255,255,255,0.6)}
-.about-story-panel{padding:110px clamp(20px,4vw,72px) 60px;background:#eee9f3;scroll-margin-top:88px}
+.about-story-panel{padding:60px clamp(20px,4vw,72px);background:#fbf9f5;scroll-margin-top:88px}
 .about-story-intro{display:grid;grid-template-columns:1fr 1fr;gap:10%;margin-bottom:76px}
 .about-story-intro>div{max-width:580px}
 .about-story-intro p{font-size:20px;line-height:1.55;margin-bottom:24px}

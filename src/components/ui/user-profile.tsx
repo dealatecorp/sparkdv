@@ -77,52 +77,52 @@ export default function UserProfile() {
       trackingNumber: 'DEL-IND-881290431',
       paymentMethod: 'Card (Mastercard ending in 4242)',
       items: [
-        { name: 'Nano Silver Pro Solution', qty: 1, price: 4600, image: '/images/nanosilver-pro-clean.webp' },
-        { name: 'MARC Zirc Crowns', qty: 1, price: 4200, image: '/images/marc-zirc-clean.webp' },
-        { name: 'Nanion Swish Mouthwash', qty: 1, price: 599, image: '/images/swish-bottle-clean.webp' }
+        { name: 'Nanion Elite Pro', qty: 2, price: 699, image: '/images/nanion-elite-pro.svg' },
+        { name: 'Nanion Elite Toothpaste', qty: 2, price: 599, image: '/images/nanion-elite.svg' },
+        { name: 'Nanion Swish Mouthwash', qty: 1, price: 599, image: '/images/nanion-swish.svg' }
       ]
     },
     {
       id: 'ORD-96540',
       date: 'October 2, 2026',
-      total: 8250,
+      total: 3594,
       status: 'Delivered',
       trackingNumber: 'DEL-IND-771923019',
       paymentMethod: 'Pay on Delivery (Verified Clinic)',
       items: [
-        { name: 'P-Obtura Bio-Activ', qty: 2, price: 4125, image: '/images/pobtura-clean.webp' }
+        { name: 'Nanion Pro Plus Gummies', qty: 6, price: 599, image: '/images/nanion-pro-plus-gummies.svg' }
       ]
     }
   ];
 
   const favorites = [
     {
-      name: 'Nanion Lite Pro',
-      category: 'Prevention · 5% nHA + NSF',
+      name: 'Nanion Elite Pro',
+      category: 'Prevention · 3% NSF + 5% nHA',
       price: 699,
-      image: '/images/nanion-tube-clean.webp',
-      slug: 'nanion-lite-pro'
+      image: '/images/nanion-elite-pro.svg',
+      slug: 'nanion-elite-pro'
     },
     {
       name: 'Nanion Swish Mouthwash',
       category: 'Prevention · Daily Rinse',
       price: 599,
-      image: '/images/swish-bottle-clean.webp',
+      image: '/images/nanion-swish.svg',
       slug: 'nanion-swish'
     },
     {
-      name: 'Nano Silver Pro Solution',
-      category: 'Prevention · Clinical Solution',
-      price: 4600,
-      image: '/images/nanosilver-pro-clean.webp',
-      slug: 'nanosilver-pro'
+      name: 'Nanion Elite Toothpaste',
+      category: 'Prevention · 3% NSF',
+      price: 599,
+      image: '/images/nanion-elite.svg',
+      slug: 'nanion-elite'
     },
     {
-      name: 'P-Obtura Bio-Activ',
-      category: 'Pediatric endodontics · Sealer',
-      price: 4125,
-      image: '/images/pobtura-clean.webp',
-      slug: 'pobtura'
+      name: 'Nanion Pro Plus Gummies',
+      category: 'Prevention · Oral-Gut Gummy',
+      price: 599,
+      image: '/images/nanion-pro-plus-gummies.svg',
+      slug: 'nanion-pro-plus-gummies'
     }
   ];
 

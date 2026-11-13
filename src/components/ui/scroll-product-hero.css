@@ -181,23 +181,23 @@
 
 /* Specific product image proportions for balance - increased to fill stage */
 .hero-img-tube {
-  max-height: clamp(340px, 56vh, 520px);
-  max-width: clamp(170px, 20vw, 250px);
+  max-height: clamp(380px, 60vh, 560px);
+  max-width: clamp(280px, 34vw, 460px);
 }
 
 .hero-img-bottle {
-  max-height: clamp(320px, 52vh, 480px);
-  max-width: clamp(180px, 22vw, 265px);
+  max-height: clamp(380px, 60vh, 560px);
+  max-width: clamp(280px, 34vw, 460px);
 }
 
 .hero-img-square {
-  max-height: clamp(280px, 46vh, 440px);
-  max-width: clamp(250px, 30vw, 380px);
+  max-height: clamp(320px, 50vh, 480px);
+  max-width: clamp(280px, 34vw, 440px);
 }
 
 .hero-img-wide {
-  max-height: clamp(240px, 40vh, 380px);
-  max-width: clamp(300px, 36vw, 440px);
+  max-height: clamp(280px, 44vh, 420px);
+  max-width: clamp(320px, 38vw, 480px);
 }
 
 /* 3D Pedestal */

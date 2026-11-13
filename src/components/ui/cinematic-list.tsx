@@ -48,14 +48,14 @@ export function CinematicListItem({
       <div className="relative z-10 flex w-full items-center justify-between px-5 sm:px-10 md:px-14">
         {/* Left Side: ID & Title & Description */}
         <div className="flex items-center gap-6 md:gap-12">
-          <span className="cinematic-item-id font-mono text-base md:text-xl font-bold transition-colors duration-500 shrink-0">
+          <span className="cinematic-item-id font-mono text-base md:text-xl font-bold transition-colors duration-500 shrink-0 text-[#334155] group-hover:!text-white/90">
             {id}
           </span>
 
           <div className="flex flex-col justify-center py-2">
             <h2
               className={cn(
-                "cinematic-item-title text-2xl sm:text-3xl md:text-5xl font-bold uppercase tracking-tight",
+                "cinematic-item-title text-2xl sm:text-3xl md:text-5xl font-bold uppercase tracking-tight text-[#073763] group-hover:!text-white",
                 "transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
                 // On hover, title turns bright white and shifts subtly upward
                 "group-hover:-translate-y-1"

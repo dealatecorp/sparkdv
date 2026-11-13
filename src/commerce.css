@@ -33,8 +33,7 @@ button, a, input, select, summary { accent-color: var(--shop-accent); }
 .header-cta { min-height: 46px; padding-inline: 20px; background: var(--shop-ink); }
 .header-cta:hover { background: #164b70; }
 .menu-button { border: 1px solid var(--shop-line); background: var(--shop-paper); }
-.whatsapp { z-index: 20; border: 1px solid var(--shop-line); box-shadow: 0 8px 25px #102d5217; }
-#root:has(.commerce-home) .whatsapp { display: none; }
+.whatsapp { z-index: 95; border: 1px solid var(--shop-line); box-shadow: 0 8px 25px #102d5217; }
 
 /* A single product is the first viewport's focal point; selector changes are explicit. */
 .commerce-home { overflow: visible; }

@@ -5,6 +5,7 @@ import ContactWithGlobe from './components/ui/contact-with-globe';
 import {CinematicFooter} from './components/ui/motion-footer';
 import UserProfile from './components/ui/user-profile';
 import MercuryLogin from './components/ui/mercury-login';
+import ClinicalChatbot from './components/ui/clinical-chatbot';
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {Dock, DockItem} from './components/ui/dock';
@@ -405,14 +406,44 @@ function App() {
           >
             <div className="mobile-menu-content">
               <div className="mobile-menu-top"><span>Explore SPARK-DV</span><button type="button" aria-label="Close navigation" onClick={()=>setMenu(false)}><X size={23}/></button></div>
-              <div className="mobile-menu-links">{[['/','Home'],['/products','Products'],['/science','Blogs'],['/about','About'],['/contact','Contact'],['/profile','Account']].map(([to,label])=><Link key={to} to={to} onClick={()=>setMenu(false)} aria-current={loc.pathname===to?'page':undefined}><TextRoll center>{label}</TextRoll><ArrowUpRight size={22}/></Link>)}</div>
+              <div className="mobile-menu-links">{[
+                ['/', 'Home'],
+                ['/products', 'Products'],
+                ['/dentists', 'For Dentists'],
+                ['/parents', 'For Parents'],
+                ['/science', 'Blogs'],
+                ['/about', 'About'],
+                ['/contact', 'Contact'],
+                ['/profile', 'Account'],
+              ].map(([to, label]) => (
+                <Link
+                  key={to}
+                  to={to}
+                  onClick={() => setMenu(false)}
+                  aria-current={loc.pathname === to ? 'page' : undefined}
+                >
+                  <TextRoll center>{label}</TextRoll>
+                  <ArrowUpRight size={22} />
+                </Link>
+              ))}</div>
               <Link className="mobile-menu-cart" to="/cart" onClick={()=>setMenu(false)}><ShoppingBag size={19}/>Your cart <span>{qty} items</span></Link>
               <p>Dental science. Everyday care.</p>
             </div>
             <Dock>
             {[
-              ['/products','Products',90],['/science','Blogs',78],['/about','About',67],['/contact','Contact',82],
-            ].map(([to,label,width])=><DockItem key={to} baseWidth={width}><Link to={to} aria-current={loc.pathname===to?'page':undefined}>{label}</Link></DockItem>)}
+              ['/products', 'Products', 84],
+              ['/dentists', 'For Dentists', 104],
+              ['/parents', 'For Parents', 96],
+              ['/science', 'Blogs', 72],
+              ['/about', 'About', 64],
+              ['/contact', 'Contact', 76],
+            ].map(([to, label, width]) => (
+              <DockItem key={to} baseWidth={width}>
+                <Link to={to} aria-current={loc.pathname === to ? 'page' : undefined}>
+                  {label}
+                </Link>
+              </DockItem>
+            ))}
             </Dock>
             <div className="mobile-actions">
               <Link className="button button-dark" to="/contact">
@@ -457,16 +488,7 @@ function App() {
         <RoutesView add={add} cartQty={qty} cart={cart} update={update} remove={remove} />
       </main>
       {loc.pathname==='/checkout' ? <footer className="checkout-footer"><strong>SPARK-DV</strong><span>Questions about your order? <Link to="/contact">Contact our team</Link></span><div><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/shipping">Shipping & returns</Link></div></footer> : <CinematicFooter />}
-      <a
-        className="whatsapp"
-        href="https://wa.me/919246901870"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Chat with SPARK-DV on WhatsApp"
-      >
-        <span className="wa-dot" />
-        Chat with SPARK-DV
-      </a>
+      <ClinicalChatbot />
       {cartOpen && (
         <div
           className="drawer-backdrop"
@@ -714,11 +736,11 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
   if (path === "/") return <NewHome add={add} />;
   if (path === "/products") return <Catalog key={location.search} add={add} />;
   if (detail) {
-    if (detail === "nanion-pro" || detail === "spark-files")
+    if (detail === "nanion-pro")
       return <ProductFamilyDetail familySlug={detail} add={add} />;
     return <ProductDetail slug={detail} add={add} />;
   }
-  if (path === "/science") return <ScienceGallery />;
+  if (path === "/science" || path === "/blogs") return <ScienceGallery />;
   if (path === "/dentists") return <EditorialPage path="/dentists" />;
   if (path === "/parents") return <EditorialPage path="/parents" />;
   if (path === "/school-program")

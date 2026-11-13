@@ -1,12 +1,19 @@
 @layer theme, base, components, utilities;
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
+@source "./components";
 @source "./components/ui";
+@source "./components/home";
 
 @theme {
   --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --breakpoint-xs: 20rem;
   --color-background: #fffcf8;
   --color-foreground: #073763;
+  --color-card: #ffffff;
+  --color-card-foreground: #073763;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #073763;
   --color-primary: #073763;
   --color-primary-foreground: #ffffff;
   --color-secondary: #f3eeeb;

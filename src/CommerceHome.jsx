@@ -1,28 +1,17 @@
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import ScrollProductHero from './components/ui/scroll-product-hero';
-import { ProductShelf } from './components/ui/skincare-product-shelf';
-import { products } from './data.js';
+import { HomeHypeSections } from './components/home/HomeHypeSections';
 
 export function CommerceHome({ add }) {
   return (
     <div className="commerce-home">
-      {/* Scroll-driven centerpiece hero section matching reference image */}
+      {/* Scroll-driven centerpiece hero section */}
       <ScrollProductHero />
 
-      {/* 3D Product Shelf floating wall just below hero */}
-      <section className="home-product-shelf-mount" id="product-shelf" aria-label="Product Shelf">
-        <ProductShelf
-          showFloatingNav={false}
-          onAddToCart={(shelfProduct, qty, event) => {
-            if (add) {
-              const matched = products.find(p => p.slug === shelfProduct.slug || p.id === shelfProduct.id) || shelfProduct;
-              add(matched, qty, event);
-            }
-          }}
-        />
-      </section>
+      {/* High-status company leadership, 21st.dev / Inspira UI bento grid, dual portals, and flagships */}
+      <HomeHypeSections add={add} />
 
       {/* Editorial and scientific research band */}
       <section className="shop-science-band" id="home-content">
@@ -33,7 +22,7 @@ export function CommerceHome({ add }) {
             <em>without the guesswork.</em>
           </h2>
           <p>
-            Read product information, use guidance and clinical resources from SPARK-DV.
+            Read clinical trial summaries, IFU use guidance, and peer-reviewed dental literature from SPARK-DV.
           </p>
           <Link className="button button-light" to="/science">
             Explore the blogs <ArrowUpRight size={16} />
