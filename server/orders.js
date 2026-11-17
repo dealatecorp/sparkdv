@@ -1,6 +1,7 @@
 import { AuthError, createStoreAccess, isOrderStaff, readBody, requireStorefrontRequest, sessionUser } from './auth.js';
 import { products } from '../src/data.js';
 import { nextOrderCheckpoint, orderCheckpoints, orderReference } from '../src/lib/order-status.js';
+import { pushPublicKey, sendOrderPush, updateOrderPush } from './order-push.js';
 
 const catalog = new Map(products.map(product => [product.slug, product]));
 const uuid = /^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/;
@@ -38,6 +39,11 @@ async function initializeOrders(db) {
     )`,
     'CREATE INDEX IF NOT EXISTS orders_by_customer ON orders(user_id, created_at DESC, id DESC)',
     'CREATE INDEX IF NOT EXISTS orders_by_date ON orders(created_at DESC, id DESC)',
+    `CREATE TABLE IF NOT EXISTS order_push_subscriptions (
+      endpoint TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES auth_users(id),
+      p256dh TEXT NOT NULL, auth_key TEXT NOT NULL, updated_at INTEGER NOT NULL
+    )`,
+    'CREATE INDEX IF NOT EXISTS order_push_by_customer ON order_push_subscriptions(user_id, updated_at DESC)',
   ], 'write');
 }
 
@@ -136,7 +142,10 @@ async function createOrder(db, env, user, body) {
   if (savedItems.length !== items.length || items.some(item => !savedItems.some(saved => saved.slug === item.slug && saved.qty === item.qty))) {
     throw new AuthError(409, 'This checkout has already been saved. Open the order from My orders.');
   }
-  await sendCheckpointEmail(db, env, id, 'placed');
+  await Promise.all([
+    sendCheckpointEmail(db, env, id, 'placed'),
+    insert.rowsAffected && sendOrderPush(db, env, id, 'placed'),
+  ]);
   return { code: insert.rowsAffected ? 201 : 200, order: await getDetail(db, id, user.id, false) };
 }
 
@@ -174,7 +183,7 @@ async function addCheckpoint(db, env, user, body) {
     args: [status, new Date().toISOString(), ...shipping, id, expected, id],
   });
   if (!result.rowsAffected) throw new AuthError(409, 'Someone already updated this order. Refresh it and try again.');
-  await sendCheckpointEmail(db, env, id, status);
+  await Promise.all([sendCheckpointEmail(db, env, id, status), sendOrderPush(db, env, id, status)]);
   return getDetail(db, id, user.id, true);
 }
 
@@ -196,10 +205,11 @@ export function createOrdersHandler(env, deployed = false, getStore = createStor
       const staffView = params.get('staff') === '1';
       if (staffView && !isOrderStaff(env, user.id)) throw new AuthError(403, 'This area is for order staff.');
       if (req.method === 'GET') {
+        const pushKey = staffView ? null : pushPublicKey(env);
         const id = params.get('id');
         if (id) {
           if (!uuid.test(id)) throw new AuthError(404, 'Order not found.');
-          return send(200, { order: await getDetail(db, id, user.id, staffView) });
+          return send(200, { order: await getDetail(db, id, user.id, staffView), pushKey });
         }
         const page = Number(params.get('page') || 1);
         if (!Number.isSafeInteger(page) || page < 1 || page > 10000) throw new AuthError(400, 'Invalid order page.');
@@ -207,10 +217,13 @@ export function createOrdersHandler(env, deployed = false, getStore = createStor
           sql: `${selectOrders} WHERE (? OR o.user_id = ?) ORDER BY o.created_at DESC, o.id DESC LIMIT ? OFFSET ?`,
           args: [Number(staffView), user.id, pageSize + 1, (page - 1) * pageSize],
         });
-        return send(200, { orders: rows.slice(0, pageSize).map(row => orderData(row, staffView)), hasMore: rows.length > pageSize });
+        return send(200, { orders: rows.slice(0, pageSize).map(row => orderData(row, staffView)), hasMore: rows.length > pageSize, pushKey });
       }
       const body = await readBody(req);
       if (!body || typeof body !== 'object') throw new AuthError(400, 'Invalid order request.');
+      if (body.action === 'enable-alerts' || body.action === 'disable-alerts') {
+        return send(200, await updateOrderPush(db, env, user.id, body));
+      }
       if (body.action === 'place') {
         const { code, order } = await createOrder(db, env, user, body);
         return send(code, { order });

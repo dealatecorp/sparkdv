@@ -1,0 +1,11 @@
+{
+  "name": "SPARK-DV",
+  "short_name": "SPARK-DV",
+  "id": "/",
+  "start_url": "/orders",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fbf9f5",
+  "theme_color": "#f7f8f6",
+  "icons": [{ "src": "/images/logo.png", "sizes": "708x708", "type": "image/png" }]
+}

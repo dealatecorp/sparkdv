@@ -154,6 +154,20 @@
 .order-email-retries h3 { margin: 0; font-size: 16px; }
 .orders-shell button:disabled, .checkout-whatsapp:disabled { opacity: .55; cursor: default; }
 .profile-account-reference code { display: block; overflow-wrap: anywhere; font-size: 12px; }
+.order-alert-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid var(--order-border);
+  border-radius: 14px;
+  background: #fff;
+}
+.order-alert-controls p { margin: 3px 0 0; color: var(--order-muted); }
+.order-alert-controls .button { min-height: 44px; gap: 8px; }
 
 @media (max-width: 720px) {
   .order-detail-layout { grid-template-columns: 1fr; }

@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Check, MessageCircle, Package, Ref
 import { money } from '../data';
 import { nextOrderCheckpoint, orderCheckpoints, orderReference } from '../lib/order-status';
 import { orderRequest, whatsappOrderDraft, type Order, type OrderStatus, type OrderSummary } from '../lib/orders';
+import OrderAlerts from './order-alerts';
 import './orders-page.css';
 
 const dateFormat = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
@@ -159,7 +160,7 @@ function OrderTracking({ order, staff, onOrder }: { order: Order; staff: boolean
   );
 }
 
-export default function OrdersPage({ id, staff = false }: { id?: string; staff?: boolean }) {
+export default function OrdersPage({ id, staff = false, userId }: { id?: string; staff?: boolean; userId: string }) {
   const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
   const [order, setOrder] = useState<Order | null>(null);
@@ -167,6 +168,7 @@ export default function OrdersPage({ id, staff = false }: { id?: string; staff?:
   const [hasMore, setHasMore] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [pushKey, setPushKey] = useState<string | null>(null);
   const base = staff ? '/manage/orders' : '/orders';
 
   useEffect(() => {
@@ -174,12 +176,13 @@ export default function OrdersPage({ id, staff = false }: { id?: string; staff?:
     function reload() {
       const params = { ...(staff && { staff: '1' }), ...(id ? { id } : { page: String(page) }) };
       setError('');
-      orderRequest<{ order?: Order; orders?: OrderSummary[]; hasMore?: boolean }>(params, undefined, controller.signal)
+      orderRequest<{ order?: Order; orders?: OrderSummary[]; hasMore?: boolean; pushKey: string | null }>(params, undefined, controller.signal)
         .then(result => {
           if (controller.signal.aborted) return;
           setOrder(result.order ?? null);
           setOrders(result.orders ?? []);
           setHasMore(Boolean(result.hasMore));
+          setPushKey(result.pushKey);
         })
         .catch(failure => { if (!controller.signal.aborted) setError(failure.message); })
         .finally(() => { if (!controller.signal.aborted) setLoading(false); });
@@ -250,6 +253,7 @@ export default function OrdersPage({ id, staff = false }: { id?: string; staff?:
           </div>
         )
       )}
+      {!staff && pushKey && <OrderAlerts userId={userId} pushKey={pushKey} />}
     </section>
   );
 }

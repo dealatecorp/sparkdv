@@ -1,16 +1,22 @@
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
+import { EventEmitter } from 'node:events';
 import { mkdtemp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createServer } from 'node:http';
+import https from 'node:https';
+import { generateVAPIDKeys } from 'web-push';
 import { createAuthHandler, createStoreAccess } from '../server/auth.js';
 import { createOrdersHandler } from '../server/orders.js';
 
+const vapid = generateVAPIDKeys();
 const env = {
   AUTH_DATA_DIR: await mkdtemp(join(tmpdir(), 'sparkdv-orders-')),
   RESEND_API_KEY: 'local-test',
   ORDER_EMAIL_FROM: 'SPARK-DV Orders <orders@example.com>',
+  ORDER_PUSH_PUBLIC_KEY: vapid.publicKey,
+  ORDER_PUSH_PRIVATE_KEY: vapid.privateKey,
 };
 const store = createStoreAccess(env, false);
 const auth = createAuthHandler(env, false, store);
@@ -21,7 +27,21 @@ const origin = `http://127.0.0.1:${app.address().port}`;
 const realFetch = globalThis.fetch;
 const emails = new Map();
 const attempts = new Map();
+const notifications = [];
 let failNextEmail = false;
+
+const httpsRequest = https.request;
+https.request = (options, onResponse) => {
+  if (options.hostname !== 'fcm.googleapis.com' || options.path !== '/fcm/send/order-qa') return httpsRequest(options, onResponse);
+  const request = new EventEmitter();
+  request.write = payload => notifications.push({ options, payload });
+  request.end = () => {
+    const response = Object.assign(new EventEmitter(), { statusCode: 201, headers: {} });
+    onResponse(response);
+    response.emit('end');
+  };
+  return request;
+};
 
 globalThis.fetch = async (url, options) => {
   if (url !== 'https://api.resend.com/emails') return realFetch(url, options);
@@ -59,6 +79,14 @@ try {
   env.ORDER_STAFF_USER_IDS = staff.data.user.id;
   assert.equal((await request('/api/auth', { cookie: staff.cookie })).data.user.order_staff, true);
   assert.equal((await request('/api/auth', { cookie: buyer.cookie })).data.user.order_staff, false);
+  const subscription = {
+    endpoint: 'https://fcm.googleapis.com/fcm/send/order-qa',
+    keys: { p256dh: generateVAPIDKeys().publicKey, auth: randomBytes(16).toString('base64url') },
+  };
+  const alerts = { action: 'enable-alerts', subscription };
+  assert.equal((await request('/api/orders', { cookie: buyer.cookie, body: alerts })).status, 200);
+  const wrongProvider = { ...alerts, subscription: { ...subscription, endpoint: 'https://example.com/push' } };
+  assert.equal((await request('/api/orders', { cookie: buyer.cookie, body: wrongProvider })).status, 400);
   const id = randomUUID();
   const place = { action: 'place', id, items: [{ slug: 'nanion-lite', qty: 2, price: 1 }] };
   assert.equal((await request('/api/orders', { body: place })).status, 401);
@@ -73,6 +101,7 @@ try {
   assert.equal(created.data.order.events[0].email_status, undefined);
   assert.equal((await request('/api/orders', { cookie: buyer.cookie, body: place })).status, 200);
   assert.equal((await request('/api/orders', { cookie: buyer.cookie })).data.orders.length, 1);
+  assert.equal((await request('/api/orders', { cookie: buyer.cookie })).data.pushKey, vapid.publicKey);
   assert.equal((await request(`/api/orders?id=${id}`, { cookie: other.cookie })).status, 404);
   assert.deepEqual((await request('/api/orders', { cookie: other.cookie })).data.orders, []);
   assert.equal((await request('/api/orders?staff=1', { cookie: buyer.cookie })).status, 403);
@@ -101,8 +130,16 @@ try {
   assert.equal(tracked.events[2].tracking_number, 'TEST12345');
   assert.equal(emails.size, 5);
   assert.ok([...emails.values()].every(email => email.to[0] === 'buyer@example.com' && email.text.includes(`/orders/${id}`)));
-  console.log('Passed order ownership, pricing, idempotency, staff access, concurrent updates, courier tracking, and checkpoint email delivery and retry.');
+  assert.equal(notifications.length, 5);
+  assert.ok(notifications.every(({ payload, options }) => payload.length > 0 && /^vapid\b/.test(options.headers.Authorization)));
+  assert.equal((await request('/api/orders', {
+    cookie: buyer.cookie, body: { action: 'disable-alerts', endpoint: subscription.endpoint },
+  })).status, 200);
+  assert.equal((await request('/api/orders', { cookie: buyer.cookie, body: { ...place, id: randomUUID() } })).status, 201);
+  assert.equal(notifications.length, 5);
+  console.log('Passed order ownership, pricing, idempotency, staff access, concurrent updates, courier tracking, checkpoint emails, and encrypted browser alerts.');
 } finally {
+  https.request = httpsRequest;
   globalThis.fetch = realFetch;
   await new Promise(resolve => app.close(resolve));
 }

@@ -56,6 +56,8 @@ Set `ORDER_STAFF_USER_IDS` to a comma-separated list of authorised account refer
 
 For checkpoint email, connect the Resend free plan in Vercel, verify the sender domain, and set `ORDER_EMAIL_FROM` to a verified sender such as `SPARK-DV Orders <updates@orders.sparkdv.com>`. Vercel supplies `RESEND_API_KEY` through the integration. Checkpoints appear on the tracking page immediately, and staff can retry a failed email during the provider's idempotency window. Run `node scripts/orders-qa.mjs` to test storage, access, concurrent updates, and notification retries without sending email. [Resend Marketplace integration](https://vercel.com/marketplace/resend)
 
+For optional browser alerts, create one VAPID key pair with `web-push generate-vapid-keys` and set `ORDER_PUSH_PUBLIC_KEY` and `ORDER_PUSH_PRIVATE_KEY` in Vercel. Customers turn on alerts per device from **My orders**. The order timeline remains available without browser permissions. [Web Push](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
+
 Before public launch, connect an approved submission/order service if automated fulfilment is required, and supply approved privacy, terms and shipping-policy copy. All three policy destinations returned 404 on the original site; their content has not been fabricated. The source download centre states that brochures are coming soon. Research-request links route to a real enquiry path where the source did not expose downloadable studies.
 
 ## Review and validation

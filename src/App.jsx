@@ -206,6 +206,8 @@ function App() {
           "/shipping": "Shipping & Returns",
           "/cart": "Your selection",
           "/checkout": "Checkout",
+          "/profile": "Profile",
+          "/account": "Profile",
           "/orders": "My orders",
           "/manage/orders": "Manage orders",
         }[loc.pathname] ||
@@ -800,7 +802,7 @@ function RoutesView({ add, cartQty, cart, update, remove, completeOrder }) {
     if (status === 'unavailable') return <p className="wrap py-20" role="alert">The account service is unavailable. Refresh this page to try again.</p>;
     if (!user) return <Navigate to="/login" replace state={{ from: path }} />;
     if (staff && !user.order_staff) return <NotFound />;
-    return <OrdersPage key={`${user.id}:${path}`} id={ordersRoute[2]} staff={staff} />;
+    return <OrdersPage key={`${user.id}:${path}`} id={ordersRoute[2]} staff={staff} userId={user.id} />;
   }
   if (path === "/account" || path === "/profile") {
     if (status === 'loading') return <p className="mx-auto max-w-5xl px-5 py-20" role="status">Checking your session…</p>;
