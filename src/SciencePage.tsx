@@ -1,3 +1,4 @@
+import { BrandWordmark, brandText } from '@/components/ui/brand-wordmark';
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -24,7 +25,6 @@ import { ARTICLES } from "./ScienceGallery";
 export default function SciencePage() {
   const [activeTab, setActiveTab] = useState<number>(0);
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
-  const [downloadModal, setDownloadModal] = useState<string | null>(null);
 
   const pillars = [
     {
@@ -182,24 +182,18 @@ export default function SciencePage() {
       id: "monograph-caries-arrest",
       title: "Clinical Practice Monograph: NSF Caries Arrest Protocols",
       category: "Clinical Protocol IFU",
-      pages: "24 Pages",
-      size: "3.4 MB PDF",
       desc: "Step-by-step chairside protocols, case selection guidelines, and follow-up evaluation schedules for non-invasive caries management in pediatric clinics.",
     },
     {
       id: "whitepaper-nha-synergy",
       title: "Biomaterials Whitepaper: Enamel Remineralization with 5% nHA",
       category: "Biomaterials Science",
-      pages: "18 Pages",
-      size: "2.8 MB PDF",
       desc: "Micro-CT and SEM crystallography analyses showing deep dentinal tubule occlusion and fluorapatite lattice conversion under cariogenic acid challenge.",
     },
     {
       id: "monograph-pediatric-endo",
       title: "Pediatric Endodontics: Bioactive Bioceramic Obturation Dossier",
       category: "Endodontic R&D",
-      pages: "16 Pages",
-      size: "2.1 MB PDF",
       desc: "Histological evidence of synchronous primary root resorption and periapical stem cell stimulation using hydrophilic tricalcium silicate cements.",
     },
   ];
@@ -240,7 +234,7 @@ export default function SciencePage() {
           </h1>
 
           <p className="mt-6 text-base sm:text-lg md:text-xl text-[#526174] max-w-3xl leading-relaxed">
-            Where traditional dentistry waits for cavitations and relies on invasive drilling, SPARK-DV engineers bioactive nano-matrices that arrest decay at the molecular level, remineralize enamel prisms, and regenerate vital pulpal tissues.
+            Where traditional dentistry waits for cavitations and relies on invasive drilling, <BrandWordmark /> engineers bioactive nano-matrices that arrest decay at the molecular level, remineralize enamel prisms, and regenerate vital pulpal tissues.
           </p>
 
           {/* Quick R&D Credentials */}
@@ -370,13 +364,13 @@ export default function SciencePage() {
                     {cur.badge}
                   </span>
                   <h3 className="text-2xl sm:text-3xl font-bold text-[#073763] font-serif leading-tight">
-                    {cur.content.headline}
+                    {brandText(cur.content.headline)}
                   </h3>
                   <p className="mt-4 text-sm sm:text-base text-[#526174] leading-relaxed">
-                    {cur.content.text1}
+                    {brandText(cur.content.text1)}
                   </p>
                   <p className="mt-3 text-sm sm:text-base text-[#526174] leading-relaxed">
-                    {cur.content.text2}
+                    {brandText(cur.content.text2)}
                   </p>
 
                   <div className="mt-6 pt-6 border-t border-[#073763]/10">
@@ -408,7 +402,7 @@ export default function SciencePage() {
                       className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white border border-[#073763]/20 text-[#073763] font-semibold text-xs hover:bg-slate-50 transition-colors shadow-2xs"
                     >
                       <Download className="size-3.5 text-[#0284c7]" />
-                      <span>Download Whitepaper</span>
+                      <span>Find a whitepaper</span>
                     </a>
                   </div>
                 </div>
@@ -484,7 +478,7 @@ export default function SciencePage() {
             Head-to-Head Clinical Matrix
           </h2>
           <p className="text-sm text-[#526174] mt-2">
-            Comparing SPARK-DV NanoSilver Fluoride formulations against conventional chairside and home-care standards.
+            Comparing <BrandWordmark /> NanoSilver Fluoride formulations against conventional chairside and home-care standards.
           </p>
         </div>
 
@@ -494,7 +488,7 @@ export default function SciencePage() {
               <tr className="bg-[#073763] text-white text-xs uppercase tracking-wider font-bold">
                 <th className="py-4 px-5 border-r border-white/10">Clinical Parameter</th>
                 <th className="py-4 px-5 bg-[#0a4880] text-cyan-200 border-r border-white/10">
-                  SPARK-DV Nanion Matrix
+                  <BrandWordmark /> Nanion Matrix
                 </th>
                 <th className="py-4 px-5 border-r border-white/10">Standard 5% NaF Varnish</th>
                 <th className="py-4 px-5 border-r border-white/10">Traditional 38% SDF</th>
@@ -573,7 +567,7 @@ export default function SciencePage() {
                   </h3>
 
                   <p className="text-xs text-[#526174] mt-2 line-clamp-3 leading-relaxed">
-                    {art.summary}
+                    {brandText(art.summary)}
                   </p>
                 </div>
               </div>
@@ -603,10 +597,10 @@ export default function SciencePage() {
               Practitioner Library
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#073763] mt-2 font-serif">
-              Download Clinical Dossiers &amp; Whitepapers
+              Clinical Dossiers &amp; Whitepapers
             </h2>
             <p className="text-sm text-[#526174] mt-2">
-              Instant access to laboratory validation data, cytotoxicity challenge reports, and chairside IFU protocols.
+              Request laboratory reports, clinical monographs, and chairside protocols from the research team.
             </p>
           </div>
 
@@ -621,9 +615,6 @@ export default function SciencePage() {
                     <span className="font-bold uppercase tracking-wider text-[#0284c7]">
                       {wp.category}
                     </span>
-                    <span className="font-medium bg-slate-100 px-2 py-0.5 rounded">
-                      {wp.pages}
-                    </span>
                   </div>
 
                   <h3 className="text-base font-bold text-[#073763] font-serif leading-snug">
@@ -635,17 +626,14 @@ export default function SciencePage() {
                   </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-[#073763]/10 flex items-center justify-between">
-                  <span className="text-[11px] text-[#64748b] font-medium">{wp.size}</span>
-                  <button
-                    type="button"
-                    onClick={() => setDownloadModal(wp.title)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#073763] hover:bg-[#052b4f] text-white font-bold text-xs shadow-2xs transition-colors"
-                    style={{ backgroundColor: "#073763", color: "#ffffff" }}
+                <div className="mt-6 pt-4 border-t border-[#073763]/10">
+                  <Link
+                    to={`/contact?type=Whitepaper%20request&resource=${encodeURIComponent(wp.title)}`}
+                    className="inline-flex min-h-11 items-center gap-1.5 px-3 py-2 rounded-lg bg-primary hover:bg-[#052b4f] text-primary-foreground font-bold text-sm"
+                    aria-label={`Request ${wp.title}`}
                   >
-                    <Download className="size-3 text-cyan-300" />
-                    <span>Download</span>
-                  </button>
+                    Request a copy <ArrowRight size={15} aria-hidden="true" />
+                  </Link>
                 </div>
               </div>
             ))}
@@ -675,7 +663,7 @@ export default function SciencePage() {
                 onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
                 className="w-full text-left p-5 flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-[#073763]"
               >
-                <span>{faq.q}</span>
+                <span>{brandText(faq.q)}</span>
                 <ChevronDown
                   className={cn(
                     "size-5 text-[#0284c7] shrink-0 transition-transform duration-200",
@@ -685,7 +673,7 @@ export default function SciencePage() {
               </button>
               {activeFaq === idx && (
                 <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-[#526174] leading-relaxed border-t border-[#073763]/10">
-                  {faq.a}
+                  {brandText(faq.a)}
                 </div>
               )}
             </div>
@@ -723,30 +711,6 @@ export default function SciencePage() {
         </div>
       </section>
 
-      {/* Download Success Toast Modal */}
-      {downloadModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-[#073763]/15 text-center">
-            <div className="size-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4">
-              <Download className="size-7" />
-            </div>
-            <h3 className="text-lg font-bold text-[#073763] font-serif">
-              Clinical Whitepaper Ready
-            </h3>
-            <p className="text-xs text-[#526174] mt-2 mb-6">
-              Your copy of <strong>&ldquo;{downloadModal}&rdquo;</strong> has been prepared for download.
-            </p>
-            <button
-              type="button"
-              onClick={() => setDownloadModal(null)}
-              className="w-full py-3 rounded-xl bg-[#073763] text-white font-bold text-xs shadow-md"
-              style={{ backgroundColor: "#073763", color: "#ffffff" }}
-            >
-              Close Window
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

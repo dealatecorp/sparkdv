@@ -17,6 +17,14 @@ npm run build
 
 The development site is at http://localhost:5173. Production hosts must rewrite application paths to `/index.html` for React Router. The site has not been deployed by this work.
 
+## Account authentication
+
+`npm run dev` serves the storefront and the account API. It creates an SQLite database and a signing key in the ignored `.data/` directory on first use. Sign up with an email and mobile number at `/login?mode=register`. Customers can sign in with either identifier and their password. The API stores a signed JWT in an HTTP-only cookie. Signed-in customers can change their password from their account.
+
+On Vercel, connect a Turso database through the Marketplace or configure `AUTH_DATABASE_URL` and `AUTH_DATABASE_TOKEN` for an existing libSQL database. Set `AUTH_JWT_SECRET` to a randomly generated signing secret of at least 32 bytes. The account API creates its tables on first access. [Vercel environment variables](https://vercel.com/docs/environment-variables), [Turso Marketplace integration](https://vercel.com/marketplace/tursocloud/database)
+
+Run `node scripts/auth-qa.mjs` against the running local storefront to verify signup, sign-in, session revocation, and password changes. Set `AUTH_QA_URL` for an alternate local port and `AUTH_DATA_DIR` on the Vite process to isolate test accounts from local storefront data.
+
 ## Components and styling
 
 - `src/components/ui/skincare-product-shelf.tsx`: adapted from the supplied Aakash Mehra component; used on **both `/` and `/products`**. All 17 variants are supported. Category filters, search and sorting remain available on the catalogue.
@@ -42,7 +50,7 @@ Scientific claims, prices and testimonials are reproduced from SPARK-DV source m
 
 ## Forms and commerce
 
-There is no backend, payment gateway or order API in this repository. The enquiry form validates fields, then prepares an email for the visitor to review and send. The cart retains selections locally and prepares an order enquiry. Neither flow claims that data was submitted, a payment was taken, or an order was placed.
+The enquiry form prepares an email for the visitor to review and send. Checkout opens a WhatsApp draft addressed to the site's published contact number. It includes the selected products, quantities, prices, subtotal, and clickable product photo links. The visitor sends the draft in WhatsApp, where the team can confirm availability, shipping, and payment. [WhatsApp click to chat](https://faq.whatsapp.com/5913398998672934)
 
 Before public launch, connect an approved submission/order service if automated fulfilment is required, and supply approved privacy, terms and shipping-policy copy. All three policy destinations returned 404 on the original site; their content has not been fabricated. The source download centre states that brochures are coming soon. Research-request links route to a real enquiry path where the source did not expose downloadable studies.
 

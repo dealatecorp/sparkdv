@@ -1,3 +1,4 @@
+import { BrandWordmark, brandText } from '@/components/ui/brand-wordmark';
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,14 +21,13 @@ import {
   Check,
   Copy,
   ExternalLink,
-  Download,
   HelpCircle,
   Package,
   Layers,
-  Send,
   Boxes,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { enquiryEmail } from "@/lib/enquiry";
 
 const smoothEase = [0.25, 0.1, 0.25, 1] as const;
 
@@ -55,7 +55,7 @@ const INITIAL_FORM: DistributorFormState = {
   city: "",
   stateOrRegion: "",
   businessType: "Dental Depot / Supply House",
-  monthlyVolume: "500 – 2,000 units/mo",
+  monthlyVolume: "500 – 2,500 units/mo",
   products: [
     "Nanion Elite Pro (3% NSF + 5% nHA)",
     "Nanion Elite (3% NSF)",
@@ -146,13 +146,13 @@ const DISTRIBUTOR_FAQS = [
 
 export default function DistributorPage() {
   const [form, setForm] = useState<DistributorFormState>(INITIAL_FORM);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [refId, setRefId] = useState("");
+  const [draft, setDraft] = useState("");
   const [copiedPhone, setCopiedPhone] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
   const handleProductToggle = (product: string) => {
+    setDraft("");
     setForm((prev) => {
       const exists = prev.products.includes(product);
       if (exists) {
@@ -163,24 +163,27 @@ export default function DistributorPage() {
     });
   };
 
-  const handleCopyPhone = () => {
-    navigator.clipboard.writeText("+919246901870");
-    setCopiedPhone(true);
-    setTimeout(() => setCopiedPhone(false), 2000);
+  const handleCopyPhone = async () => {
+    setCopyError(false);
+    try {
+      await navigator.clipboard.writeText("+919246901870");
+      setCopiedPhone(true);
+      setTimeout(() => setCopiedPhone(false), 2000);
+    } catch {
+      setCopiedPhone(false);
+      setCopyError(true);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    const generatedId = `SPARK-DIST-${Math.floor(100000 + Math.random() * 900000)}`;
-    setRefId(generatedId);
-
-    // Simulate quick server verification
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSubmitted(true);
-    }, 900);
+    setDraft(enquiryEmail("Distributor pricing request", [
+      ["Company", form.companyName], ["Business entity type", form.businessType],
+      ["Contact name", form.contactName], ["Role", form.designation], ["Email", form.email],
+      ["Phone / WhatsApp", form.phone], ["City", form.city], ["Territory", form.stateOrRegion],
+      ["Monthly volume", form.monthlyVolume], ["Products", form.products.join(", ")],
+      ["Existing brands", form.existingLines], ["Territory proposal", form.notes],
+    ]));
   };
 
   return (
@@ -240,8 +243,7 @@ export default function DistributorPage() {
               href="https://wa.me/919246901870?text=Hi%20SPARK-DV%20Team%2C%20I%20would%20like%20to%20request%20distributor%20pricing%20and%20territory%20availability%20for%20our%20firm."
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition-all"
-              style={{ backgroundColor: "#059669", color: "#ffffff" }}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-md transition-all"
             >
               <MessageCircle className="size-4" />
               <span>WhatsApp Commercial Desk</span>
@@ -347,21 +349,19 @@ export default function DistributorPage() {
               <div className="mt-8 pt-4">
                 <a
                   href="#pricing-form"
-                  onClick={() => setForm((prev) => ({ ...prev, monthlyVolume: tier.volume }))}
+                  onClick={() => {
+                    setForm((prev) => ({ ...prev, monthlyVolume: tier.volume }));
+                    setDraft("");
+                  }}
                   className={cn(
                     "w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-xs",
                     tier.highlight
-                      ? "bg-white hover:bg-slate-100"
-                      : "bg-[#073763]/5 hover:bg-[#073763] hover:text-white border border-[#073763]/20"
+                      ? "bg-white text-primary hover:bg-slate-100"
+                      : "bg-primary/5 text-primary hover:bg-primary hover:text-primary-foreground border border-primary/20"
                   )}
-                  style={{
-                    backgroundColor: tier.highlight ? "#ffffff" : "#f1f5f9",
-                    color: "#073763",
-                    border: tier.highlight ? "1px solid #ffffff" : "1px solid rgba(7, 55, 99, 0.2)",
-                  }}
                 >
-                  <span style={{ color: "#073763", fontWeight: 700 }}>Select {tier.badge}</span>
-                  <ArrowRight className="size-3.5" style={{ color: "#073763" }} />
+                  <span>Select {tier.badge}</span>
+                  <ArrowRight className="size-3.5" aria-hidden="true" />
                 </a>
               </div>
             </div>
@@ -374,7 +374,7 @@ export default function DistributorPage() {
         <div className="bg-[#f8f6f0] border border-[#073763]/15 rounded-3xl p-6 sm:p-10 lg:p-12">
           <div className="max-w-3xl mb-8">
             <span className="text-xs font-bold uppercase tracking-widest text-[#073763]">
-              The SPARK-DV Advantage
+              The <BrandWordmark /> Advantage
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#073763] mt-2 font-serif">
               Why Premier Dental Depots Partner With Us
@@ -455,85 +455,37 @@ export default function DistributorPage() {
                 Request Official Distributor Pricing
               </h2>
               <p className="text-xs sm:text-sm text-[#526174] mt-1.5">
-                Complete the business profile below. Our Commercial Alliances desk will review your territory application and respond with wholesale price schedules within 4 hours.
+                Add your business details and territory requirements to request wholesale pricing from our team.
               </p>
             </div>
 
-            {submitted ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 sm:p-8 text-center"
-              >
-                <div className="size-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="size-8" />
-                </div>
-                <h3 className="text-xl font-bold text-emerald-900 font-serif">
-                  Distributor Application Received!
-                </h3>
-                <p className="text-xs text-emerald-800 mt-2 max-w-md mx-auto leading-relaxed">
-                  Thank you, <strong>{form.contactName || "Partner"}</strong>. Your distribution inquiry for <strong>{form.companyName || "your firm"}</strong> has been logged directly with our commercial logistics desk.
-                </p>
-
-                <div className="my-6 inline-flex flex-col items-center justify-center bg-white px-5 py-3 rounded-xl border border-emerald-200 shadow-2xs">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    Your Application Reference
-                  </span>
-                  <span className="text-lg font-mono font-bold text-[#073763] mt-0.5">
-                    {refId}
-                  </span>
-                  <span className="text-[11px] text-emerald-700 font-medium mt-1">
-                    Guaranteed response within 4 business hours
-                  </span>
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                  <a
-                    href="https://wa.me/919246901870?text=Hello%20SPARK-DV%2C%20I%20have%20submitted%20distributor%20application%20"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all"
-                  >
-                    <MessageCircle className="size-4" />
-                    <span>Fast-Track on WhatsApp</span>
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSubmitted(false);
-                      setForm(INITIAL_FORM);
-                    }}
-                    className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-all cursor-pointer"
-                  >
-                    Submit Another Inquiry
-                  </button>
-                </div>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} onChange={() => setDraft("")} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-company" className="block text-xs font-bold text-[#073763] mb-1">
                       Company / Dental Depot Legal Name <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="distributor-company"
+                      autoComplete="organization"
                       type="text"
                       required
                       placeholder="e.g., Prime Dental Supplies Pvt Ltd"
                       value={form.companyName}
                       onChange={(e) => setForm({ ...form, companyName: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-business" className="block text-xs font-bold text-[#073763] mb-1">
                       Business Entity Type <span className="text-red-500">*</span>
                     </label>
                     <select
+                      id="distributor-business"
                       value={form.businessType}
                       onChange={(e) => setForm({ ...form, businessType: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     >
                       <option>Dental Depot / Supply House</option>
                       <option>Hospital Pharmacy Procurement</option>
@@ -547,107 +499,116 @@ export default function DistributorPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-name" className="block text-xs font-bold text-[#073763] mb-1">
                       Authorized Contact Person <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="distributor-name"
+                      autoComplete="name"
                       type="text"
                       required
                       placeholder="e.g., Rajesh Sharma"
                       value={form.contactName}
                       onChange={(e) => setForm({ ...form, contactName: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-role" className="block text-xs font-bold text-[#073763] mb-1">
                       Designation / Role <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="distributor-role"
+                      autoComplete="organization-title"
                       type="text"
                       required
                       placeholder="e.g., Managing Director / Procurement Head"
                       value={form.designation}
                       onChange={(e) => setForm({ ...form, designation: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-email" className="block text-xs font-bold text-[#073763] mb-1">
                       Business Email Address <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="distributor-email"
+                      autoComplete="email"
                       type="email"
                       required
                       placeholder="purchases@yourcompany.com"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-phone" className="block text-xs font-bold text-[#073763] mb-1">
                       Direct Mobile / WhatsApp <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="distributor-phone"
+                      autoComplete="tel"
                       type="tel"
                       required
                       placeholder="+91 98765 43210"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-city" className="block text-xs font-bold text-[#073763] mb-1">
                       City / Headquarters <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="distributor-city"
+                      autoComplete="address-level2"
                       type="text"
                       required
                       placeholder="e.g., Bengaluru"
                       value={form.city}
                       onChange={(e) => setForm({ ...form, city: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-territory" className="block text-xs font-bold text-[#073763] mb-1">
                       Target State / Territory <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="distributor-territory"
+                      autoComplete="address-level1"
                       type="text"
                       required
                       placeholder="e.g., Karnataka &amp; Kerala"
                       value={form.stateOrRegion}
                       onChange={(e) => setForm({ ...form, stateOrRegion: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-[#073763] mb-1">
+                    <label htmlFor="distributor-volume" className="block text-xs font-bold text-[#073763] mb-1">
                       Projected Monthly Volume
                     </label>
                     <select
+                      id="distributor-volume"
                       value={form.monthlyVolume}
                       onChange={(e) => setForm({ ...form, monthlyVolume: e.target.value })}
-                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                      className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                     >
-                      <option>Trial Order (100–500 units)</option>
-                      <option>500 – 2,000 units/mo</option>
-                      <option>2,000 – 5,000 units/mo</option>
-                      <option>5,000 – 10,000 units/mo</option>
-                      <option>10,000+ units/mo (Export/National)</option>
+                      {COMMERCIAL_TIERS.map(({ volume }) => <option key={volume}>{volume}</option>)}
                     </select>
                   </div>
                 </div>
@@ -671,6 +632,7 @@ export default function DistributorPage() {
                         <button
                           key={item}
                           type="button"
+                          aria-pressed={isChecked}
                           onClick={() => handleProductToggle(item)}
                           className={cn(
                             "flex items-center gap-2 p-2.5 rounded-xl border text-left text-xs transition-all cursor-pointer",
@@ -689,7 +651,7 @@ export default function DistributorPage() {
                           >
                             {isChecked && <Check className="size-3" />}
                           </div>
-                          <span>{item}</span>
+                          <span>{brandText(item)}</span>
                         </button>
                       );
                     })}
@@ -697,56 +659,46 @@ export default function DistributorPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#073763] mb-1">
+                  <label htmlFor="distributor-brands" className="block text-xs font-bold text-[#073763] mb-1">
                     Existing Dental / Pharma Brands Handled (Optional)
                   </label>
                   <input
+                    id="distributor-brands"
                     type="text"
                     placeholder="e.g., GC India, 3M Oral Care, Dentsply Sirona, Septodont"
                     value={form.existingLines}
                     onChange={(e) => setForm({ ...form, existingLines: e.target.value })}
-                    className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                    className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-[#073763] mb-1">
+                  <label htmlFor="distributor-proposal" className="block text-xs font-bold text-[#073763] mb-1">
                     Territory Proposal or Special Commercial Requirements
                   </label>
                   <textarea
+                    id="distributor-proposal"
                     rows={3}
                     placeholder="Specify target dental clinics, college tenders, regional exclusivity preferences, or target launch timeline..."
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                    className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-[#073763] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] outline-none transition-all"
+                    className="w-full bg-[#fbf9f5] border border-slate-200 rounded-xl px-3.5 py-2.5 text-base sm:text-sm text-primary placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-[#073763] outline-none transition-all"
                   />
                 </div>
 
-                <div className="pt-2">
+                <div className="flex flex-wrap items-center gap-4 pt-2">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl bg-[#073763] hover:bg-[#052b4f] text-white font-bold text-sm shadow-md transition-all cursor-pointer disabled:opacity-50"
-                    style={{ backgroundColor: "#073763", color: "#ffffff" }}
+                    className="min-h-12 px-5 rounded-xl font-bold text-sm bg-primary hover:bg-[#052b4f] text-primary-foreground flex items-center justify-center gap-2.5"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <Clock className="size-4 animate-spin text-white" />
-                        <span>Transmitting to Alliances Desk...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Submit Distributor Pricing Request</span>
-                        <ArrowRight className="size-4" />
-                      </>
-                    )}
+                    Prepare pricing request <ArrowRight size={16} aria-hidden="true" />
                   </button>
-                  <p className="text-[11px] text-center text-[#64748b] mt-2">
-                    🔒 All commercial data and territory proposals are handled under strict confidentiality.
-                  </p>
+                  {draft && <a className="text-sm font-semibold text-primary underline" href={draft}>Open email draft</a>}
                 </div>
+                <p className="text-sm text-muted-foreground" role="status">
+                  {draft ? "Your draft is ready to review and send in your email app." : "You’ll review and send the request in your email app."}
+                </p>
               </form>
-            )}
           </div>
 
           {/* Right Direct Commercial Desk Card (5 Cols) */}
@@ -799,13 +751,15 @@ export default function DistributorPage() {
                   )}
                 </button>
               </div>
+              <p role="status" className={copyError ? "mt-2 text-sm text-muted-foreground" : "sr-only"}>
+                {copyError ? "Couldn’t copy. You can select the number directly." : copiedPhone ? "Copied to clipboard." : ""}
+              </p>
 
               <a
                 href="https://wa.me/919246901870?text=Hi%20SPARK-DV%2C%20I%20represent%20a%20dental%20depot%20%2F%20distribution%20firm%20and%20would%20like%20to%20request%20wholesale%20distributor%20pricing."
                 target="_blank"
                 rel="noreferrer"
-                className="mt-4 w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition-all"
-                style={{ backgroundColor: "#059669", color: "#ffffff" }}
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-md transition-all"
               >
                 <MessageCircle className="size-4" />
                 <span>Open Instant WhatsApp Chat</span>
@@ -826,7 +780,7 @@ export default function DistributorPage() {
                   <div>
                     <strong className="block text-[#073763]">Headquarters &amp; Alliances Desk</strong>
                     <span className="text-[#526174]">
-                      SPARK-DV / Sendan Pharmaceuticals, Hyderabad &amp; Chennai, India
+                      <BrandWordmark /> / Sendan Pharmaceuticals, Hyderabad &amp; Chennai, India
                     </span>
                   </div>
                 </div>
@@ -847,7 +801,7 @@ export default function DistributorPage() {
                     <strong className="block text-[#073763]">Commercial Email</strong>
                     <a
                       href="mailto:sparkdv310@gmail.com?subject=Distributor%20Pricing%20Inquiry"
-                      className="text-[#0284c7] hover:underline font-medium"
+                      className="text-primary hover:underline font-medium"
                     >
                       sparkdv310@gmail.com
                     </a>
@@ -871,26 +825,22 @@ export default function DistributorPage() {
               </div>
             </div>
 
-            {/* Instant Clinical Catalog Download Box */}
             <div className="bg-white rounded-3xl p-6 border border-[#073763]/15 shadow-xs flex items-center justify-between gap-4">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#0284c7]">
-                  Instant Digital Asset
-                </span>
                 <h4 className="text-sm font-bold text-[#073763] mt-0.5">
-                  SPARK-DV Clinical Catalog &amp; Dossier
+                  <BrandWordmark /> product catalogue
                 </h4>
                 <p className="text-[11px] text-[#64748b] mt-0.5">
-                  Comprehensive 28-page PDF featuring formulation specs, trial data &amp; product codes.
+                  Browse products and formulation details.
                 </p>
               </div>
-              <a
-                href="/products"
-                className="size-10 rounded-xl bg-[#073763]/5 hover:bg-[#073763] text-[#073763] hover:text-white flex items-center justify-center shrink-0 border border-[#073763]/15 transition-colors"
-                title="View All Products"
+              <Link
+                to="/products"
+                className="size-11 rounded-xl bg-primary/5 hover:bg-primary text-primary hover:text-primary-foreground flex items-center justify-center shrink-0 border border-primary/15 transition-colors"
+                aria-label="Browse the product catalogue"
               >
-                <Download className="size-4" />
-              </a>
+                <ArrowUpRight className="size-4" aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </div>
@@ -920,7 +870,7 @@ export default function DistributorPage() {
                   onClick={() => setActiveFaq(isOpen ? null : idx)}
                   className="w-full px-5 py-4 text-left flex items-center justify-between gap-4 font-bold text-sm text-[#073763] hover:bg-[#fbf9f5] transition-colors cursor-pointer"
                 >
-                  <span>{faq.q}</span>
+                  <span>{brandText(faq.q)}</span>
                   <ChevronDown
                     className={cn(
                       "size-4 shrink-0 text-[#073763] transition-transform duration-200",
@@ -939,7 +889,7 @@ export default function DistributorPage() {
                       className="overflow-hidden"
                     >
                       <div className="px-5 pb-5 text-xs text-[#526174] leading-relaxed border-t border-slate-100 pt-3">
-                        {faq.a}
+                        {brandText(faq.a)}
                       </div>
                     </motion.div>
                   )}
@@ -955,7 +905,7 @@ export default function DistributorPage() {
         <div className="bg-[#073763] rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
           <div className="max-w-xl text-center md:text-left">
             <h3 className="text-2xl sm:text-3xl font-bold font-serif text-white">
-              Ready to Distribute SPARK-DV in Your Territory?
+              Ready to Distribute <BrandWordmark /> in Your Territory?
             </h3>
             <p className="mt-2 text-xs sm:text-sm text-slate-300">
               Speak directly with Dr. Ajay Reddy Mareddy and our commercial director to secure authorized regional distribution rights.

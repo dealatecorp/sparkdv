@@ -246,6 +246,7 @@ export default function ScrollProductHero({
       tabIndex={0}
       aria-label="SPARK-DV All Featured Products Horizontal Showcase"
     >
+      <h1 className="sr-only">SPARK-DV dental care products</h1>
       <div className="scroll-product-hero-inner">
         {/* Background Layer A (Active Base Gradient) */}
         <div
@@ -388,15 +389,14 @@ export default function ScrollProductHero({
           <div className="scroll-hero-indicator-container">
             <div
               className="scroll-hero-indicators"
-              role="tablist"
+              role="group"
               aria-label="All hero product slides"
             >
               {ALL_HERO_SLIDES.map((slide, idx) => (
                 <button
-                  key={`${activeSlide}-${slide.id}`}
+                  key={slide.id}
                   type="button"
-                  role="tab"
-                  aria-selected={activeSlide === idx}
+                  aria-pressed={activeSlide === idx}
                   aria-label={`Slide ${idx + 1} of ${totalSlides}: ${slide.name}`}
                   title={`${slide.name} (${slide.category})`}
                   className={`scroll-hero-indicator-bar ${

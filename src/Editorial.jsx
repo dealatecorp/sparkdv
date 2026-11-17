@@ -1,3 +1,4 @@
+import { BrandWordmark, brandText, rehypeBrandWordmarks } from '@/components/ui/brand-wordmark';
 import React from "react";
 import AboutPage from './AboutPage';
 import ScrollImageTunnel from './components/ui/scroll-image-tunnel';
@@ -11,15 +12,17 @@ import { products } from "./data";
 import EditorialHeading from './components/editorial/editorial-heading';
 import protocols from "./protocols.json";
 
+export function productImageSrc(product) {
+  return product?.img
+    ? (product.img.startsWith("/") ? product.img : `/images/${product.img}`)
+    : product?.image || `/images/${product?.slug || "nanion-elite-pro"}.svg`;
+}
+
 export function ProductImage({ product, hero = false, className = "" }) {
   const slug = product?.slug || "nanion-elite-pro";
-  const imgSrc = product?.img
-    ? (product.img.startsWith("/") ? product.img : `/images/${product.img}`)
-    : `/images/${slug}.svg`;
-
   return (
     <img
-      src={imgSrc}
+      src={productImageSrc(product)}
       className={className}
       loading={hero ? "eager" : "lazy"}
       alt={`${product?.name || "SPARK-DV Product"} — original SPARK-DV product image`}
@@ -38,6 +41,7 @@ export function SourceArticle({ path, embedded = false, skipIntro = false }) {
   const parts = md.split("<!-- protocols -->");
   const renderMarkdown = (text) => (
     <ReactMarkdown
+      rehypePlugins={[rehypeBrandWordmarks]}
       remarkPlugins={[remarkGfm]}
       components={{
         p: ({node,children}) => node.children?.some(child=>child.tagName==='img'&&String(child.properties?.src).includes('/founder/'))
@@ -55,11 +59,14 @@ export function SourceArticle({ path, embedded = false, skipIntro = false }) {
               {children}
             </a>
           ),
-        img: ({ src, alt }) => (
+        img: ({ src, alt, className, width, height }) => (
           <img
             src={src}
             alt={alt || "SPARK-DV clinical illustration"}
-            loading="lazy"
+            className={className}
+            width={width}
+            height={height}
+            loading={className === "brand-wordmark" ? undefined : "lazy"}
           />
         ),
         table: ({ children }) => (
@@ -89,7 +96,7 @@ export function SourceArticle({ path, embedded = false, skipIntro = false }) {
             if (line < 0) return renderMarkdown(q);
             return (
               <details className="resource-accordion" key={i}>
-                <summary>{q.slice(0, line)}</summary>
+                <summary>{brandText(q.slice(0, line))}</summary>
                 {renderMarkdown(q.slice(line))}
               </details>
             );
@@ -99,7 +106,7 @@ export function SourceArticle({ path, embedded = false, skipIntro = false }) {
   };
   return (
     <article className={`source-article ${embedded ? "embedded" : ""}`}>
-      {skipIntro && path === '/school-program' && <figure className="editorial-original-photo"><img src="/assets/campaigns/school-program.webp" width="690" height="460" loading="lazy" alt="Original SPARK-DV school program photograph of a dental health assessment"/><figcaption>School dental health · Original SPARK-DV campaign photography.</figcaption></figure>}
+      {skipIntro && path === '/school-program' && <figure className="editorial-original-photo"><img src="/assets/campaigns/school-program.webp" width="690" height="460" loading="lazy" alt="Original SPARK-DV school program photograph of a dental health assessment"/><figcaption>School dental health · Original <BrandWordmark /> campaign photography.</figcaption></figure>}
       {parts.map((part, i) => (
         <React.Fragment key={i}>
           {renderPart(part)}
@@ -125,7 +132,7 @@ export function EditorialPage({ path }) {
       <EditorialHeading path={path}/>
       <div className="editorial-layout editorial-content-anchor wrap" id="editorial-content">
         <aside className="editorial-index">
-          <Link to="/">SPARK-DV</Link>
+          <Link to="/"><BrandWordmark /></Link>
           <p>
             Science. Practice.
             <br />
@@ -151,7 +158,7 @@ export function EditorialPage({ path }) {
         </div>
       </div>
       {path === "/about" && <section className="about-audience wrap" aria-labelledby="about-audience-title">
-        <div className="about-audience-heading"><p>SPARK-DV / WHO WE SERVE</p><h2 id="about-audience-title">Care for the whole community.</h2></div>
+        <div className="about-audience-heading"><p><BrandWordmark /> / WHO WE SERVE</p><h2 id="about-audience-title">Care for the whole community.</h2></div>
         <div className="about-audience-links">
           <Link to="/dentists"><span>For dental professionals</span><strong>Clinical resources and product guidance <ArrowUpRight size={16}/></strong></Link>
           <Link to="/parents"><span>For parents and caregivers</span><strong>Everyday care and safety guidance <ArrowUpRight size={16}/></strong></Link>
@@ -169,7 +176,7 @@ export function Partner() {
         <h2>
           Ready to partner
           <br />
-          with SPARK-DV?
+          with <BrandWordmark />?
         </h2>
         <div>
           <p>

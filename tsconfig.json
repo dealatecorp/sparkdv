@@ -6,6 +6,6 @@
     "esModuleInterop": true, "resolveJsonModule": true, "skipLibCheck": true,
     "paths": {"@/*": ["./src/*"]}, "ignoreDeprecations": "6.0"
   },
-  "include": ["src/components/**/*.tsx", "src/lib/**/*.ts"]
+  "include": ["src/vite-env.d.ts", "src/components/**/*.tsx", "src/lib/**/*.ts"]
 }
 

@@ -1,3 +1,4 @@
+import { BrandWordmark } from '@/components/ui/brand-wordmark';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
@@ -22,7 +23,7 @@ export function CommerceHome({ add }) {
             <em>without the guesswork.</em>
           </h2>
           <p>
-            Read clinical trial summaries, IFU use guidance, and peer-reviewed dental literature from SPARK-DV.
+            Read clinical trial summaries, IFU use guidance, and peer-reviewed dental literature from <BrandWordmark />.
           </p>
           <Link className="button button-light" to="/science">
             Explore the blogs <ArrowUpRight size={16} />

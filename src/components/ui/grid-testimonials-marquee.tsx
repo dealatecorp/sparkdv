@@ -1,5 +1,6 @@
 "use client";
 
+import { brandText } from '@/components/ui/brand-wordmark';
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -97,7 +98,7 @@ const HighlightedText = ({
   text: string;
   highlights?: string[];
 }) => {
-  if (!highlights || highlights.length === 0) return <>{text}</>;
+  if (!highlights || highlights.length === 0) return <>{brandText(text)}</>;
 
   const regex = new RegExp(`(${highlights.join("|")})`, "gi");
   const parts = text.split(regex);
@@ -110,10 +111,10 @@ const HighlightedText = ({
         );
         return isMatched ? (
           <span key={index} className="text-[#0284c7] font-semibold">
-            {part}
+            {brandText(part)}
           </span>
         ) : (
-          part
+          <React.Fragment key={index}>{brandText(part)}</React.Fragment>
         );
       })}
     </>

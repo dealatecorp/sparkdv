@@ -4,6 +4,7 @@
  * Original product photography, native scroll, and the existing Motion runtime.
  * CSS perspective moves product photographs; the headline uses a 2D liquid shader.
  */
+import { BrandWordmark } from '@/components/ui/brand-wordmark';
 import {motion, useTransform, useMotionValue, useSpring, useScroll, useInView, type MotionValue} from 'motion/react';
 import {useEffect, useRef, useState, type RefObject} from 'react';
 import {Link} from 'react-router-dom';
@@ -81,7 +82,7 @@ export default function PerspectiveTunnelHero({products}: {products:TunnelProduc
       <div ref={galleryRef} className="tunnel-space" aria-label="Featured SPARK-DV products">
         {products.map((item,index)=><TunnelCard key={item.slug} item={item} index={index} progress={progress} pointer={pointer} stage={stage} flat={flat}/>)}
       </div>
-      <div className="tunnel-foot"><span>Science in every detail.</span><a href="#home-research">Scroll to explore <ArrowDown size={16}/></a><span>Original SPARK-DV products</span></div>
+      <div className="tunnel-foot"><span>Science in every detail.</span><a href="#home-research">Scroll to explore <ArrowDown size={16}/></a><span>Original <BrandWordmark /> products</span></div>
     </div>
   </section>;
 }

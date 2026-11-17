@@ -1,16 +1,18 @@
 "use client";
 
+import { brandText } from '@/components/ui/brand-wordmark';
+
 import * as React from "react";
-import { useEffect, useRef, useState, useCallback } from "react";
-import { motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { enquiryEmail, whatsappDraft } from "@/lib/enquiry";
 import {
   ArrowRight,
   Mail,
   Phone,
   Headphones,
   MapPin,
-  CheckCircle2,
   Copy,
   Check,
   MessageCircle,
@@ -28,656 +30,140 @@ import {
   Zap,
   ExternalLink,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
-import * as d3 from "d3";
+import { geoOrthographic, geoPath, geoBounds, geoDistance, easeCubicInOut } from "d3";
 import { feature } from "topojson-client";
-import type {
-  Topology,
-  GeometryCollection,
-  GeometryObject,
-} from "topojson-specification";
-import type { GeoPermissibleObjects } from "d3";
+import type { GeometryCollection, Topology } from "topojson-specification";
+import type { Feature, Geometry, MultiPolygon } from "geojson";
+import { states } from "@/contact-states.json";
 
 const smoothEase = [0.25, 0.1, 0.25, 1] as const;
 
-const CONTACT_LINKS = [
-  {
-    icon: Mail,
-    label: "sparkdv310@gmail.com",
-    href: "mailto:sparkdv310@gmail.com",
-  },
-  { icon: Phone, label: "+91 79815 46939", href: "tel:+917981546939" },
-  {
-    icon: Headphones,
-    label: "+91 91547 41994 (Support)",
-    href: "tel:+919154741994",
-  },
-  {
-    icon: MapPin,
-    label: "Hyderabad & Chennai, India",
-    href: "#location",
-  },
-];
+const CONTACT_CITIES = [
+  { name: "Guntur (HQ)", state: "Andhra Pradesh", stateCode: "IN-AP", coordinates: [80.4365, 16.3067] },
+  { name: "Hyderabad", state: "Telangana", stateCode: "IN-TG", coordinates: [78.4867, 17.385] },
+  { name: "Chennai", state: "Tamil Nadu", stateCode: "IN-TN", coordinates: [80.2707, 13.0827] },
+] satisfies { name: string; state: string; stateCode: keyof typeof states; coordinates: [number, number] }[];
 
-interface GlobeWireframeProps {
-  width?: number;
-  height?: number;
-  className?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
-  graticuleColor?: string;
-  graticuleOpacity?: number;
-  sphereOutlineColor?: string;
-  sphereOutlineWidth?: number;
-  autoRotate?: boolean;
-  autoRotateSpeed?: number;
-  rotateToLocation?: string | [number, number];
-  rotateCities?: string[];
-  rotationSpeed?: number;
-  initialRotation?: [number, number];
-  enableInteraction?: boolean;
-  showGraticule?: boolean;
-  animationDuration?: number;
-  startAsGlobe?: boolean;
-  countryFillColor?: string;
-  countryHoverColor?: string;
-  variant?: "wireframe" | "wireframesolid" | "solid";
-  scale?: number;
-  backgroundColor?: string;
+type ContactCity = (typeof CONTACT_CITIES)[number];
+
+const globeScale = 184;
+type GlobeView = { rotation: [number, number]; scale: number };
+
+function getGlobeView(city: ContactCity, zoomed: boolean): GlobeView {
+  if (!zoomed) return { rotation: [-city.coordinates[0], -city.coordinates[1]], scale: globeScale };
+
+  const state = states[city.stateCode] as MultiPolygon;
+  const [[west, south], [east, north]] = geoBounds(state);
+  const rotation: [number, number] = [-(west + east) / 2, -(south + north) / 2];
+  const projection = geoOrthographic().scale(1).translate([0, 0]).rotate(rotation);
+  const [[left, top], [right, bottom]] = geoPath(projection).bounds(state);
+  const radius = Math.max(-left, -top, right, bottom);
+  return { rotation, scale: 140 / radius };
 }
 
-interface GeoFeature {
-  type: string;
-  geometry: GeometryObject;
-  properties: Record<string, unknown>;
-}
-
-interface WorldAtlasTopology extends Topology {
-  objects: {
-    countries: GeometryCollection;
-  };
-}
-
-interface CustomProjection extends d3.GeoProjection {
-  alpha(value: number): CustomProjection;
-  alpha(): number;
-}
-
-const cityCoordinates: Record<string, [number, number]> = {
-  "san francisco": [37.7749, -122.4194],
-  "new york": [40.7128, -74.006],
-  london: [51.5074, -0.1278],
-  tokyo: [35.6762, 139.6503],
-  paris: [48.8566, 2.3522],
-  moscow: [55.7558, 37.6176],
-  dubai: [25.2048, 55.2708],
-  singapore: [1.3521, 103.8198],
-  sydney: [-33.8688, 151.2093],
-  mumbai: [19.076, 72.8777],
-  hyderabad: [17.385, 78.4867],
-  "los angeles": [34.0522, -118.2437],
-  chicago: [41.8781, -87.6298],
-};
-
-function orthographicRaw(x: number, y: number): [number, number] {
-  const cosy = Math.cos(y);
-  return [cosy * Math.sin(x), Math.sin(y)];
-}
-
-function equirectangularRaw(lambda: number, phi: number): [number, number] {
-  return [lambda, phi];
-}
-
-function interpolateProjection(
-  raw0: (lambda: number, phi: number) => [number, number],
-  raw1: (lambda: number, phi: number) => [number, number],
-): CustomProjection {
-  let t = 0;
-
-  const createRawProjection = (
-    alpha: number,
-  ): ((lambda: number, phi: number) => [number, number]) => {
-    return (lambda: number, phi: number): [number, number] => {
-      const [x0, y0] = raw0(lambda, phi);
-      const [x1, y1] = raw1(lambda, phi);
-      return [x0 + alpha * (x1 - x0), y0 + alpha * (y1 - y0)];
-    };
-  };
-
-  const projection = d3.geoProjection(
-    createRawProjection(t),
-  ) as unknown as CustomProjection;
-
-  const alphaMethod = ((value?: number): CustomProjection | number => {
-    if (value !== undefined) {
-      t = +value;
-      const newProjection = d3.geoProjection(
-        createRawProjection(t),
-      ) as unknown as CustomProjection;
-
-      if (projection.scale()) newProjection.scale(projection.scale());
-      if (projection.translate())
-        newProjection.translate(projection.translate());
-      if (projection.rotate()) newProjection.rotate(projection.rotate());
-      if (projection.precision())
-        newProjection.precision(projection.precision());
-
-      newProjection.alpha = alphaMethod as CustomProjection["alpha"];
-
-      return newProjection;
-    }
-    return t;
-  }) as CustomProjection["alpha"];
-
-  projection.alpha = alphaMethod;
-
-  return projection;
-}
-
-function GlobeWireframe({
-  width,
-  height,
-  className = "aspect-square w-full max-w-150",
-  strokeColor = "currentColor",
-  strokeWidth = 1.0,
-  graticuleColor = "currentColor",
-  graticuleOpacity = 0.2,
-  sphereOutlineColor = "currentColor",
-  sphereOutlineWidth = 1,
-  autoRotate = true,
-  autoRotateSpeed = 0.5,
-  rotateToLocation,
-  rotateCities = [],
-  rotationSpeed = 3000,
-  initialRotation = [0, 0],
-  enableInteraction = true,
-  showGraticule = true,
-  animationDuration = 2000,
-  startAsGlobe = true,
-  countryFillColor,
-  countryHoverColor,
-  variant = "wireframe",
-  scale = 1,
-  backgroundColor,
-}: GlobeWireframeProps) {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [progress, setProgress] = useState(startAsGlobe ? 0 : 100);
-  const [worldData, setWorldData] = useState<GeoFeature[]>([]);
-  const [rotation, setRotation] = useState<[number, number]>(initialRotation);
-  const [isDragging, setIsDragging] = useState(false);
-  const [lastMouse, setLastMouse] = useState([0, 0]);
-  const [isVisible, setIsVisible] = useState(false);
-  const rotationInterval = useRef<ReturnType<typeof setInterval> | null>(null);
-  const rotationAnimFrame = useRef<number | null>(null);
-  const rotationStartTime = useRef<number | null>(null);
-  const rotationFrom = useRef<[number, number]>([0, 0]);
-  const rotationTo = useRef<[number, number]>([0, 0]);
-  const animationFrame = useRef<number | null>(null);
-  const [currentCityIndex, setCurrentCityIndex] = useState(0);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-  const resizeObserver = useRef<ResizeObserver | null>(null);
-  const rotationRef = useRef(rotation);
+function GlobeWireframe({ city, zoomed }: { city: ContactCity; zoomed: boolean }) {
+  const reduce = useReducedMotion();
+  const [countries, setCountries] = useState<Feature<Geometry>[]>([]);
+  const [view, setView] = useState(() => getGlobeView(city, zoomed));
+  const viewRef = useRef(view);
+  const frame = useRef(0);
+  const drag = useRef<{ x: number; y: number; width: number } | null>(null);
 
   useEffect(() => {
-    rotationRef.current = rotation;
-  }, [rotation]);
-
-  const useResponsive = !width && !height;
-  const finalWidth = useResponsive ? dimensions.width : width || 800;
-  const finalHeight = useResponsive ? dimensions.height : height || 500;
-
-  const defaultStrokeColor = strokeColor || "currentColor";
-  const defaultGraticuleColor = graticuleColor || "currentColor";
-  const defaultSphereOutlineColor = sphereOutlineColor || "currentColor";
-  const defaultCountryFillColor =
-    countryFillColor || (variant === "solid" ? "currentColor" : "none");
-  const defaultBackgroundColor = backgroundColor || "transparent";
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const container = containerRef.current;
-
-    const updateDimensions = () => {
-      if (container && useResponsive) {
-        const width = container.offsetWidth || 300;
-        setDimensions({ width, height: width });
-      }
-    };
-
-    updateDimensions();
-
-    if (useResponsive) {
-      resizeObserver.current = new ResizeObserver(updateDimensions);
-      resizeObserver.current.observe(container);
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        setIsVisible(entry.isIntersecting);
-      },
-      { threshold: 0.1 },
-    );
-
-    observer.observe(container);
-
-    return () => {
-      if (resizeObserver.current) {
-        resizeObserver.current.disconnect();
-      }
-      observer.unobserve(container);
-    };
-  }, [useResponsive]);
-
-  useEffect(() => {
-    let isCancelled = false;
-    const loadWorldData = async () => {
-      try {
-        const response = await fetch(
-          "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json",
-        );
-        if (!response.ok) throw new Error("Network response not ok");
-        const world = (await response.json()) as WorldAtlasTopology;
-        if (!isCancelled) {
-          const countries = feature(world, world.objects.countries)
-            .features as GeoFeature[];
-          setWorldData(countries);
-        }
-      } catch (error) {
-        console.warn("Using offline fallback world data:", error);
-        if (!isCancelled) {
-          const fallbackData: GeoFeature[] = [
-            {
-              type: "Feature",
-              geometry: {
-                type: "Polygon",
-                coordinates: [
-                  [
-                    [-180, -85],
-                    [180, -85],
-                    [180, 85],
-                    [-180, 85],
-                    [-180, -85],
-                  ],
-                ],
-              } as unknown as GeometryObject,
-              properties: {},
-            },
-          ];
-          setWorldData(fallbackData);
-        }
-      }
-    };
-    loadWorldData();
-    return () => {
-      isCancelled = true;
-    };
+    const controller = new AbortController();
+    fetch("/assets/maps/countries-110m.json", { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Could not load globe boundaries.");
+        const atlas: Topology<{ countries: GeometryCollection }> = await response.json();
+        setCountries(feature(atlas, atlas.objects.countries).features);
+      })
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) console.warn("Could not load globe boundaries.", error);
+      });
+    return () => controller.abort();
   }, []);
 
+  function updateView(next: GlobeView) {
+    viewRef.current = next;
+    setView(next);
+  }
+
   useEffect(() => {
-    if (!autoRotate || !isVisible || isDragging || rotateCities.length > 0) {
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-        animationFrame.current = null;
-      }
+    const target = getGlobeView(city, zoomed);
+    const { rotation: [lon, lat], scale } = viewRef.current;
+    const [targetLon, targetLat] = target.rotation;
+    const deltaLon = ((targetLon - lon) % 360 + 540) % 360 - 180;
+    if (reduce || (deltaLon === 0 && lat === targetLat && scale === target.scale)) {
+      updateView(target);
       return;
     }
 
-    const rotate = () => {
-      setRotation((prev) => [(prev[0] + autoRotateSpeed) % 360, prev[1]]);
-      animationFrame.current = requestAnimationFrame(rotate);
-    };
-
-    animationFrame.current = requestAnimationFrame(rotate);
-
-    return () => {
-      if (animationFrame.current) {
-        cancelAnimationFrame(animationFrame.current);
-      }
-    };
-  }, [autoRotate, autoRotateSpeed, isVisible, isDragging, rotateCities.length]);
-
-  const animateRotationTo = useCallback(
-    (target: [number, number], duration = 1200) => {
-      if (rotationAnimFrame.current) {
-        cancelAnimationFrame(rotationAnimFrame.current);
-      }
-
-      rotationFrom.current = rotationRef.current;
-      rotationTo.current = target;
-      rotationStartTime.current = performance.now();
-
-      const animate = (time: number) => {
-        const elapsed = time - (rotationStartTime.current || 0);
-        const t = Math.min(elapsed / duration, 1);
-
-        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-
-        const lon =
-          rotationFrom.current[0] +
-          (rotationTo.current[0] - rotationFrom.current[0]) * eased;
-
-        const lat =
-          rotationFrom.current[1] +
-          (rotationTo.current[1] - rotationFrom.current[1]) * eased;
-
-        setRotation([lon, lat]);
-
-        if (t < 1) {
-          rotationAnimFrame.current = requestAnimationFrame(animate);
-        }
-      };
-
-      rotationAnimFrame.current = requestAnimationFrame(animate);
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (rotateCities.length === 0 || !isVisible) return;
-
-    const rotateToNextCity = () => {
-      const nextIndex = (currentCityIndex + 1) % rotateCities.length;
-      const city = rotateCities[nextIndex].toLowerCase();
-      const coordinates = cityCoordinates[city];
-
-      if (coordinates) {
-        animateRotationTo(
-          [-coordinates[1], -coordinates[0]],
-          rotationSpeed * 0.6,
-        );
-        setCurrentCityIndex(nextIndex);
-      }
-    };
-
-    const city = rotateCities[currentCityIndex].toLowerCase();
-    const coordinates = cityCoordinates[city];
-
-    if (coordinates) {
-      animateRotationTo(
-        [-coordinates[1], -coordinates[0]],
-        rotationSpeed * 0.6,
-      );
-    }
-
-    rotationInterval.current = setInterval(rotateToNextCity, rotationSpeed);
-
-    return () => {
-      if (rotationInterval.current) clearInterval(rotationInterval.current);
-    };
-  }, [
-    rotateCities,
-    currentCityIndex,
-    rotationSpeed,
-    isVisible,
-    animateRotationTo,
-  ]);
-
-  useEffect(() => {
-    if (!rotateToLocation) return;
-
-    let coordinates: [number, number];
-    if (typeof rotateToLocation === "string") {
-      const city = rotateToLocation.toLowerCase();
-      coordinates = cityCoordinates[city] || [0, 0];
-    } else {
-      coordinates = rotateToLocation;
-    }
-
-    setRotation([-coordinates[1], -coordinates[0]]);
-  }, [rotateToLocation]);
-
-  const handleMouseDown = (event: React.MouseEvent) => {
-    if (!enableInteraction) return;
-    setIsDragging(true);
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (rect) {
-      setLastMouse([event.clientX - rect.left, event.clientY - rect.top]);
-    }
-  };
-
-  const handleMouseMove = (event: React.MouseEvent) => {
-    if (!isDragging || !enableInteraction) return;
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const currentMouse = [event.clientX - rect.left, event.clientY - rect.top];
-    const dx = currentMouse[0] - lastMouse[0];
-    const dy = currentMouse[1] - lastMouse[1];
-
-    const t = progress / 100;
-    let sensitivity: number;
-
-    if (variant === "wireframe") {
-      sensitivity = t < 0.5 ? 0.5 : 0.25;
-    } else {
-      sensitivity = 0.5;
-    }
-
-    setRotation((prev) => [
-      prev[0] + dx * sensitivity,
-      Math.max(-90, Math.min(90, prev[1] - dy * sensitivity)),
-    ]);
-
-    setLastMouse(currentMouse);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-
-  useEffect(() => {
-    if (!svgRef.current || worldData.length === 0 || !isVisible) return;
-    if (useResponsive && dimensions.width === 0) return;
-
-    const svg = d3.select(svgRef.current);
-    svg.selectAll("*").remove();
-
-    let finalCountryFill = "none";
-    let finalStrokeWidth = strokeWidth;
-    let finalOpacity = 1.0;
-    let renderGraticule = showGraticule;
-    let finalGraticuleOpacity = graticuleOpacity;
-    let finalSphereOutlineWidth = sphereOutlineWidth;
-
-    if (variant === "wireframe") {
-      finalCountryFill = "none";
-      finalStrokeWidth = strokeWidth;
-      finalOpacity = 1.0;
-      renderGraticule = showGraticule;
-      finalGraticuleOpacity = graticuleOpacity;
-      finalSphereOutlineWidth = sphereOutlineWidth;
-    } else if (variant === "wireframesolid") {
-      finalCountryFill = "none";
-      finalStrokeWidth = strokeWidth;
-      finalOpacity = 1.0;
-      renderGraticule = false;
-      finalGraticuleOpacity = 0;
-      finalSphereOutlineWidth = 1.5;
-    } else if (variant === "solid") {
-      finalCountryFill = defaultCountryFillColor;
-      finalStrokeWidth = strokeWidth * 0.5;
-      finalOpacity = 0.3;
-      renderGraticule = false;
-      finalGraticuleOpacity = 0;
-      finalSphereOutlineWidth = 1.5;
-    }
-
-    if (defaultBackgroundColor !== "transparent") {
-      const radius = (Math.min(finalWidth, finalHeight) / 2) * scale * 0.9;
-      svg
-        .append("circle")
-        .attr("cx", finalWidth / 2)
-        .attr("cy", finalHeight / 2)
-        .attr("r", radius)
-        .attr("fill", defaultBackgroundColor);
-    }
-
-    let projection: d3.GeoProjection | CustomProjection;
-    const path = d3.geoPath();
-
-    if (variant === "wireframe") {
-      const t = progress / 100;
-      const alpha = Math.pow(t, 0.5);
-
-      const baseScale = Math.min(finalWidth, finalHeight) / 2;
-      const scaleRange = d3
-        .scaleLinear()
-        .domain([0, 1])
-        .range([baseScale * 0.9 * scale, baseScale * 0.54 * scale]);
-      const baseRotate = d3.scaleLinear().domain([0, 1]).range([0, 0]);
-
-      projection = interpolateProjection(orthographicRaw, equirectangularRaw)
-        .scale(scaleRange(alpha))
-        .translate([finalWidth / 2, finalHeight / 2])
-        .rotate([baseRotate(alpha) + rotation[0], rotation[1]])
-        .precision(0.1);
-
-      (projection as CustomProjection).alpha(alpha);
-      path.projection(projection);
-    } else {
-      projection = d3
-        .geoOrthographic()
-        .scale((Math.min(finalWidth, finalHeight) / 2) * scale * 0.9)
-        .translate([finalWidth / 2, finalHeight / 2])
-        .rotate([rotation[0], rotation[1]])
-        .precision(0.1);
-
-      path.projection(projection);
-    }
-
-    if (renderGraticule && finalGraticuleOpacity > 0) {
-      try {
-        const graticule = d3.geoGraticule();
-        const graticulePath = path(graticule());
-        if (graticulePath) {
-          svg
-            .append("path")
-            .datum(graticule())
-            .attr("d", graticulePath)
-            .attr("fill", "none")
-            .attr("stroke", defaultGraticuleColor)
-            .attr("stroke-width", 1)
-            .attr("opacity", finalGraticuleOpacity);
-        }
-      } catch (error) {
-        console.error("Error creating graticule:", error);
-      }
-    }
-
-    svg
-      .selectAll(".country")
-      .data(worldData)
-      .enter()
-      .append("path")
-      .attr("class", "country")
-      .attr("d", (d: GeoFeature) => {
-        try {
-          const pathString = path(d as unknown as GeoPermissibleObjects);
-          if (!pathString) return "";
-          if (
-            typeof pathString === "string" &&
-            (pathString.includes("NaN") || pathString.includes("Infinity"))
-          ) {
-            return "";
-          }
-          return pathString;
-        } catch (error) {
-          return "";
-        }
-      })
-      .attr("fill", finalCountryFill)
-      .attr("stroke", defaultStrokeColor)
-      .attr("stroke-width", finalStrokeWidth)
-      .attr("opacity", finalOpacity)
-      .style("visibility", function (this: SVGPathElement) {
-        const pathData = d3.select(this).attr("d");
-        return pathData && pathData.length > 0 && !pathData.includes("NaN")
-          ? "visible"
-          : "hidden";
-      })
-      .on("mouseenter", function (this: SVGPathElement) {
-        if (countryHoverColor && variant === "solid") {
-          d3.select(this).attr("fill", countryHoverColor);
-        }
-      })
-      .on("mouseleave", function (this: SVGPathElement) {
-        if (variant === "solid") {
-          d3.select(this).attr("fill", finalCountryFill);
-        }
+    const start = performance.now();
+    function animate(now: number) {
+      const fraction = Math.min((now - start) / 500, 1);
+      const progress = easeCubicInOut(fraction);
+      updateView(fraction === 1 ? target : {
+        rotation: [lon + deltaLon * progress, lat + (targetLat - lat) * progress],
+        scale: scale * (target.scale / scale) ** progress,
       });
-
-    try {
-      const sphereOutline = path({ type: "Sphere" });
-      if (sphereOutline) {
-        svg
-          .append("path")
-          .datum({ type: "Sphere" })
-          .attr("d", sphereOutline)
-          .attr("fill", "none")
-          .attr("stroke", defaultSphereOutlineColor)
-          .attr("stroke-width", finalSphereOutlineWidth)
-          .attr("opacity", variant === "wireframe" ? 1.0 : 0.8);
-      }
-    } catch (error) {
-      console.error("Error creating sphere outline:", error);
+      if (fraction < 1) frame.current = requestAnimationFrame(animate);
     }
-  }, [
-    worldData,
-    progress,
-    rotation,
-    isVisible,
-    finalWidth,
-    finalHeight,
-    defaultStrokeColor,
-    strokeWidth,
-    defaultGraticuleColor,
-    graticuleOpacity,
-    defaultSphereOutlineColor,
-    sphereOutlineWidth,
-    showGraticule,
-    defaultCountryFillColor,
-    countryHoverColor,
-    variant,
-    scale,
-    defaultBackgroundColor,
-    useResponsive,
-    dimensions.width,
-  ]);
+    frame.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame.current);
+  }, [city, zoomed, reduce]);
+
+  const { rotation, scale } = view;
+  const projection = geoOrthographic()
+    .scale(scale)
+    .translate([200, 200])
+    .rotate(rotation)
+    .clipExtent([[0, 0], [400, 400]]);
+  const path = geoPath(projection);
+  const state = states[city.stateCode] as MultiPolygon;
+  const isCityVisible = geoDistance([-rotation[0], -rotation[1]], city.coordinates) <= Math.PI / 2;
+  const pin = isCityVisible ? projection(city.coordinates) : null;
 
   return (
-    <div ref={containerRef} className={`relative ${className}`}>
-      <svg
-        ref={svgRef}
-        width={finalWidth}
-        height={finalHeight}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        className={
-          useResponsive
-            ? "w-full h-full opacity-0 transition-opacity duration-1000"
-            : ""
-        }
-        style={{
-          cursor: enableInteraction
-            ? isDragging
-              ? "grabbing"
-              : "grab"
-            : "default",
-          opacity: useResponsive ? (dimensions.width > 0 ? 1 : 0) : 1,
-        }}
-      />
-    </div>
+    <svg
+      viewBox="0 0 400 400"
+      role="img"
+      aria-label={`${city.name}, ${city.state}, India on the globe`}
+      className="mx-auto block aspect-square w-full max-w-[26rem] cursor-grab touch-pan-y active:cursor-grabbing"
+      onPointerDown={(event) => {
+        if (!event.isPrimary || event.button !== 0) return;
+        cancelAnimationFrame(frame.current);
+        event.currentTarget.setPointerCapture(event.pointerId);
+        drag.current = { x: event.clientX, y: event.clientY, width: event.currentTarget.clientWidth };
+      }}
+      onPointerMove={(event) => {
+        if (!event.isPrimary || !drag.current) return;
+        const { x, y, width } = drag.current;
+        const { rotation: [lon, lat], scale: dragScale } = viewRef.current;
+        const sensitivity = (180 / width) * (globeScale / dragScale);
+        updateView({
+          rotation: [
+            lon + (event.clientX - x) * sensitivity,
+            Math.max(-90, Math.min(90, lat - (event.clientY - y) * sensitivity)),
+          ],
+          scale: dragScale,
+        });
+        drag.current = { x: event.clientX, y: event.clientY, width };
+      }}
+      onLostPointerCapture={() => { drag.current = null; }}
+    >
+      <circle cx="200" cy="200" r={scale} fill="#fff" stroke="#073763" strokeWidth="1.2" />
+      <g fill="none" stroke="#073763" strokeWidth="0.7">
+        {countries.map((country) => <path key={country.id ?? country.properties?.name} d={path(country) ?? undefined} />)}
+      </g>
+      <path data-state={city.stateCode} d={path(state) ?? undefined} fill="#ffbc7c" stroke="#b74304" strokeWidth="0.8" />
+      {pin && (
+        <g transform={`translate(${pin[0]}, ${pin[1]})`} fill="#073763">
+          <circle r="6" opacity="0.24" />
+          <circle r="2.5" stroke="#fff" strokeWidth="0.8" />
+        </g>
+      )}
+    </svg>
   );
 }
 
@@ -731,7 +217,19 @@ export interface ContactWithGlobeProps {
   subtitle?: string;
   description?: string;
   className?: string;
+  search?: string;
 }
+
+const ENQUIRY_DEPARTMENTS = new Map([
+  ["Distributor enquiry", "distribution"],
+  ["Clinical enquiry", "clinical"],
+  ["Sample request", "clinical"],
+  ["Professional pricing", "clinical"],
+  ["Demo request", "clinical"],
+  ["School program", "institutional"],
+  ["General contact", "clinical"],
+  ["Whitepaper request", "clinical"],
+]);
 
 const DEPARTMENTS = [
   {
@@ -820,38 +318,64 @@ export default function ContactWithGlobe({
   subtitle = "Direct Clinical & Institutional Access",
   description = "Connect directly with SPARK-DV researchers, clinical application specialists, and distribution directors. We respond to verified practitioners within 15 minutes.",
   className,
+  search = "",
 }: ContactWithGlobeProps) {
-  const [activeDept, setActiveDept] = useState("clinical");
+  const params = new URLSearchParams(search);
+  const enquiryType = params.get("type") ?? "";
+  const requestedDept = ENQUIRY_DEPARTMENTS.get(enquiryType);
+  const [activeDept, setActiveDept] = useState(requestedDept ?? "clinical");
   const [name, setName] = useState("");
   const [clinic, setClinic] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(() => {
+    const product = params.get("product")?.trim();
+    const resource = params.get("resource")?.trim();
+    return [requestedDept && `Enquiry: ${enquiryType}`, product && `Product: ${product}`, resource && `Resource: ${resource}`]
+      .filter(Boolean)
+      .join("\n");
+  });
+  const [draft, setDraft] = useState("");
+  const messageRef = useRef<HTMLTextAreaElement>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [selectedCity, setSelectedCity] = useState("hyderabad");
+  const [copyError, setCopyError] = useState(false);
+  const [{ city: selectedCity, zoomed }, setGlobeSelection] = useState({ city: CONTACT_CITIES[0], zoomed: false });
   const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
   const curDept = DEPARTMENTS.find((d) => d.id === activeDept) || DEPARTMENTS[0];
 
-  const handleCopy = (text: string, key: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2200);
+  const handleCopy = async (text: string, key: string) => {
+    setCopyError(false);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2200);
+    } catch {
+      setCopiedKey(null);
+      setCopyError(true);
+    }
   };
 
   const handleChipClick = (chipText: string) => {
-    setMessage((prev) => (prev ? `${prev}\n• ${chipText}` : `• ${chipText}: `));
+    const line = `• ${chipText}`;
+    setMessage((prev) => {
+      const lines = prev.split("\n");
+      return lines.includes(line) ? lines.filter((entry) => entry !== line).join("\n") : [prev, line].filter(Boolean).join("\n");
+    });
+    setDraft("");
+    messageRef.current?.focus();
+    requestAnimationFrame(() => {
+      const field = messageRef.current;
+      if (field) field.setSelectionRange(field.value.length, field.value.length);
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-    }, 800);
+    setDraft(enquiryEmail(requestedDept === activeDept ? enquiryType : curDept.subject, [
+      ["Department", curDept.label], ["Name", name], ["Clinic / Organization", clinic],
+      ["Email", email], ["Phone / WhatsApp", phone], ["Detailed requirements", message],
+    ]));
   };
 
   return (
@@ -903,7 +427,7 @@ export default function ContactWithGlobe({
             transition={{ duration: 0.8, delay: 0.2, ease: smoothEase }}
             className="text-base md:text-lg text-[#526174] max-w-2xl leading-relaxed"
           >
-            {description}
+            {brandText(description)}
           </motion.p>
 
           {/* 4 Animated Trust SLA Badges */}
@@ -953,7 +477,8 @@ export default function ContactWithGlobe({
                 <button
                   key={dept.id}
                   type="button"
-                  onClick={() => setActiveDept(dept.id)}
+                  aria-pressed={isSelected}
+                  onClick={() => { setActiveDept(dept.id); setDraft(""); }}
                   className={cn(
                     "flex items-center gap-2.5 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer text-left",
                     isSelected
@@ -999,13 +524,12 @@ export default function ContactWithGlobe({
                 Connect directly with our clinical representatives on WhatsApp for immediate protocol clarification or dispatch tracking.
               </p>
               <a
-                href="https://wa.me/917981546939?text=Hello%20SPARK-DV,%20I%20would%20like%20to%20enquire%20about%20your%20clinical%20products."
+                href={whatsappDraft("Hello SPARK-DV, I would like to enquire about your clinical products.")}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-3 px-5 shadow-sm transition-all active:scale-[0.98]"
-                style={{ backgroundColor: "#059669", color: "#ffffff" }}
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm py-3 px-5 shadow-sm transition-all active:scale-[0.98]"
               >
-                <MessageCircle className="size-4" style={{ color: "#ffffff" }} />
+                <MessageCircle className="size-4" aria-hidden="true" />
                 <span>Chat on WhatsApp (+91 79815 46939)</span>
               </a>
             </div>
@@ -1116,66 +640,60 @@ export default function ContactWithGlobe({
                   </div>
                   <div>
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block">
-                      R&amp;D Lab &amp; Headquarters
+                      Locations
                     </span>
                     <span className="text-sm font-bold text-[#073763]">
-                      Hyderabad &amp; Chennai, India
+                      {CONTACT_CITIES.map((city) => city.name).join(" · ")}
                     </span>
                   </div>
                 </div>
               </div>
             </div>
 
+            <p role="status" className={copyError ? "m-0 text-sm text-muted-foreground" : "sr-only"}>
+              {copyError ? "Couldn’t copy. You can select the contact details directly." : copiedKey ? "Copied to clipboard." : ""}
+            </p>
+
             {/* Light Interactive Rotating Globe with City Selectors */}
             <div className="relative overflow-hidden rounded-2xl border border-[#073763]/15 bg-white p-4 shadow-[0_8px_30px_rgba(7,55,99,0.06)] flex flex-col gap-3">
               <div className="flex items-center justify-between z-10 relative">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#073763] inline-flex items-center gap-1.5">
                   <span className="size-2 rounded-full bg-cyan-500 animate-ping" />
-                  Live Distribution Hubs
+                  Our Locations
                 </span>
-                <span className="text-[11px] font-semibold text-slate-500">Click to rotate</span>
+                <button
+                  type="button"
+                  onClick={() => setGlobeSelection({ city: { ...selectedCity }, zoomed: false })}
+                  className="rounded-lg px-2 py-1 text-[11px] font-semibold text-[#073763] hover:bg-slate-100 disabled:text-slate-500 disabled:hover:bg-transparent"
+                  disabled={!zoomed}
+                >
+                  Show full globe
+                </button>
               </div>
 
-              <div className="relative h-60 w-full overflow-hidden rounded-xl bg-slate-50/50">
-                <GlobeWireframe
-                  className="w-full aspect-square max-w-full absolute top-0 left-0"
-                  variant="wireframesolid"
-                  autoRotate={true}
-                  autoRotateSpeed={0.4}
-                  rotateToLocation={selectedCity}
-                  strokeColor="#073763"
-                  strokeWidth={0.8}
-                  graticuleColor="#0284c7"
-                  graticuleOpacity={0.16}
-                  sphereOutlineColor="#073763"
-                  sphereOutlineWidth={1.2}
-                  countryFillColor="#e6f0fa"
-                  countryHoverColor="#bae0f8"
-                  backgroundColor="#ffffff"
-                  rotateCities={["hyderabad", "mumbai", "dubai", "london", "singapore"]}
-                />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white to-transparent" />
+              <div className="overflow-hidden rounded-xl bg-slate-50/50">
+                <GlobeWireframe city={selectedCity} zoomed={zoomed} />
               </div>
 
-              <div className="flex flex-wrap gap-1.5 z-10 relative pt-1">
-                {[
-                  { name: "Hyderabad (HQ)", id: "hyderabad" },
-                  { name: "Chennai (R&D)", id: "chennai" },
-                  { name: "Mumbai Hub", id: "mumbai" },
-                  { name: "Dubai", id: "dubai" },
-                  { name: "Singapore", id: "singapore" },
-                ].map((city) => (
+              <p role="status" className="m-0 flex items-center gap-1.5 text-xs font-semibold text-[#073763]">
+                <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
+                {selectedCity.name}, {selectedCity.state}
+              </p>
+
+              <div className="flex flex-wrap gap-1.5">
+                {CONTACT_CITIES.map((city) => (
                   <button
-                    key={city.id}
+                    key={city.name}
                     type="button"
-                    onClick={() => setSelectedCity(city.id)}
+                    aria-pressed={selectedCity.name === city.name}
+                    onClick={() => setGlobeSelection({ city: { ...city }, zoomed: true })}
                     className={cn(
-                      "text-[11px] font-bold px-2.5 py-1 rounded-lg border transition-all cursor-pointer",
-                      selectedCity === city.id
+                      "min-h-10 text-xs font-bold px-2.5 rounded-lg border transition-all cursor-pointer",
+                      selectedCity.name === city.name
                         ? "bg-[#073763] text-white border-[#073763]"
                         : "bg-white text-slate-600 border-slate-200 hover:border-[#073763]"
                     )}
-                    style={selectedCity === city.id ? { backgroundColor: "#073763", color: "#ffffff" } : {}}
+                    style={selectedCity.name === city.name ? { backgroundColor: "#073763", color: "#ffffff" } : {}}
                   >
                     {city.name}
                   </button>
@@ -1186,50 +704,14 @@ export default function ContactWithGlobe({
 
           {/* RIGHT COLUMN: Elevated Interactive Form (7 cols) */}
           <motion.div
+            id="contact-form"
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: smoothEase }}
             className="lg:col-span-7 rounded-3xl border border-[#073763]/15 bg-white p-6 sm:p-10 shadow-[0_16px_50px_rgba(7,55,99,0.08)] flex flex-col gap-6"
           >
-            {submitted ? (
-              <div className="py-16 flex flex-col items-center text-center gap-4 animate-in fade-in zoom-in-95 duration-400">
-                <div className="size-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-2">
-                  <CheckCircle2 className="size-10" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-bold text-[#073763]">
-                  Enquiry Successfully Sent!
-                </h3>
-                <p className="text-sm md:text-base text-[#526174] max-w-md leading-relaxed">
-                  Thank you, <strong className="text-[#073763]">{name || "Doctor"}</strong>. Your enquiry for the{" "}
-                  <strong className="text-[#073763]">{curDept.label}</strong> team has been routed. We typically review and respond within 15 minutes.
-                </p>
-                <div className="flex flex-wrap items-center justify-center gap-3 mt-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSubmitted(false);
-                      setMessage("");
-                    }}
-                    className="px-6 py-3 rounded-xl bg-[#073763] text-white font-bold text-sm hover:bg-[#052b4f] transition-all cursor-pointer shadow-sm"
-                    style={{ backgroundColor: "#073763", color: "#ffffff" }}
-                  >
-                    Send another enquiry
-                  </button>
-                  <a
-                    href="https://wa.me/917981546939"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-6 py-3 rounded-xl bg-emerald-600 text-white font-bold text-sm hover:bg-emerald-700 transition-all inline-flex items-center gap-2 shadow-sm"
-                    style={{ backgroundColor: "#059669", color: "#ffffff" }}
-                  >
-                    <MessageCircle className="size-4" style={{ color: "#ffffff" }} />
-                    Continue on WhatsApp
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              <form onSubmit={handleSubmit} onChange={() => setDraft("")} className="flex flex-col gap-6">
                 <div>
                   <div className="flex items-center justify-between gap-4">
                     <h2 className="text-2xl sm:text-3xl font-bold text-[#073763]">
@@ -1246,18 +728,19 @@ export default function ContactWithGlobe({
 
                 {/* Quick Suggestion Chips */}
                 <div className="flex flex-col gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                    💡 Click a topic to auto-fill:
-                  </span>
+                  <p id="contact-topic-hint" className="m-0 text-sm font-semibold text-muted-foreground">
+                    Choose a topic to add it to your message.
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {curDept.chips.map((chip) => (
                       <button
                         key={chip}
                         type="button"
+                        aria-pressed={message.split("\n").includes(`• ${chip}`)}
                         onClick={() => handleChipClick(chip)}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#fbf9f5] border border-[#073763]/15 text-[#073763] hover:bg-[#073763] hover:text-white hover:border-[#073763] transition-all cursor-pointer shadow-2xs text-left"
+                        className="min-h-11 rounded-lg border border-border bg-background px-3 py-2 text-left text-sm font-semibold text-primary aria-pressed:border-primary aria-pressed:bg-secondary hover:border-primary hover:bg-primary hover:text-primary-foreground aria-pressed:hover:bg-primary"
                       >
-                        + {chip}
+                        {chip}
                       </button>
                     ))}
                   </div>
@@ -1268,28 +751,32 @@ export default function ContactWithGlobe({
                 {/* Name & Clinic Inputs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
+                    <label htmlFor="contact-name" className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
                       Full Name *
                     </label>
                     <input
+                      id="contact-name"
+                      autoComplete="name"
                       type="text"
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Dr. Rajesh Kumar"
-                      className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-sm font-medium text-[#073763] placeholder:text-[#94a3b8] shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 transition-all duration-200"
+                      className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-base sm:text-sm font-medium text-primary placeholder:text-muted-foreground shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 transition-all duration-200"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
+                    <label htmlFor="contact-organization" className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
                       Clinic / Organization
                     </label>
                     <input
+                      id="contact-organization"
+                      autoComplete="organization"
                       type="text"
                       value={clinic}
                       onChange={(e) => setClinic(e.target.value)}
                       placeholder="SmileCare Pediatric Dental Clinic"
-                      className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-sm font-medium text-[#073763] placeholder:text-[#94a3b8] shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 transition-all duration-200"
+                      className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-base sm:text-sm font-medium text-primary placeholder:text-muted-foreground shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -1297,29 +784,33 @@ export default function ContactWithGlobe({
                 {/* Email & Phone Inputs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
+                    <label htmlFor="contact-email" className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
                       Email Address *
                     </label>
                     <input
+                      id="contact-email"
+                      autoComplete="email"
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="doctor@example.com"
-                      className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-sm font-medium text-[#073763] placeholder:text-[#94a3b8] shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 transition-all duration-200"
+                      className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-base sm:text-sm font-medium text-primary placeholder:text-muted-foreground shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 transition-all duration-200"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
+                    <label htmlFor="contact-phone" className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
                       Phone / WhatsApp *
                     </label>
                     <input
+                      id="contact-phone"
+                      autoComplete="tel"
                       type="tel"
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 98480 14443"
-                      className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-sm font-medium text-[#073763] placeholder:text-[#94a3b8] shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 transition-all duration-200"
+                      className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-base sm:text-sm font-medium text-primary placeholder:text-muted-foreground shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 transition-all duration-200"
                     />
                   </div>
                 </div>
@@ -1327,46 +818,40 @@ export default function ContactWithGlobe({
                 {/* Message Textarea */}
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
+                    <label htmlFor="contact-message" className="text-xs font-bold tracking-wider uppercase text-[#1e293b]">
                       Detailed Requirements *
                     </label>
-                    <span className="text-[11px] font-medium text-slate-400">
+                    <span className="text-[11px] font-medium text-muted-foreground">
                       {message.length} characters
                     </span>
                   </div>
                   <textarea
+                    id="contact-message"
+                    ref={messageRef}
+                    aria-describedby="contact-topic-hint"
                     required
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Tell us about your practice, sample request, or partnership requirements..."
                     rows={4}
-                    className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-sm font-medium text-[#073763] placeholder:text-[#94a3b8] shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 resize-none transition-all duration-200"
+                    className="w-full bg-[#fbf9f5] border border-[#cbd5e1] rounded-xl px-4 py-3 text-base sm:text-sm font-medium text-primary placeholder:text-muted-foreground shadow-2xs outline-none focus:border-[#073763] focus:bg-white focus:ring-2 focus:ring-[#073763]/20 resize-none transition-all duration-200"
                   />
                 </div>
 
                 {/* Submit Button */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+                <div className="flex flex-wrap items-center gap-4 pt-2">
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full sm:w-auto h-12 px-8 rounded-xl font-bold text-sm bg-[#073763] hover:bg-[#052b4f] !text-white shadow-md flex items-center justify-center gap-2.5 transition-all duration-200 cursor-pointer disabled:opacity-60 active:scale-[0.98]"
-                    style={{ color: "#ffffff", backgroundColor: "#073763" }}
+                    className="min-h-12 px-5 rounded-xl font-bold text-sm bg-primary hover:bg-[#052b4f] text-primary-foreground flex items-center justify-center gap-2.5"
                   >
-                    <span style={{ color: "#ffffff", fontWeight: 700 }}>
-                      {loading ? "Transmitting..." : "Send Clinical Enquiry"}
-                    </span>
-                    <Send
-                      className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1"
-                      style={{ color: "#ffffff" }}
-                    />
+                    Prepare enquiry email <Send size={16} aria-hidden="true" />
                   </button>
-
-                  <span className="text-xs text-slate-500 text-center sm:text-right">
-                    🔒 Protected by clinical NDA &amp; data privacy standards.
-                  </span>
+                  {draft && <a className="text-sm font-semibold text-primary underline" href={draft}>Open email draft</a>}
                 </div>
+                <p className="m-0 text-sm text-muted-foreground" role="status">
+                  {draft ? "Your draft is ready to review and send in your email app." : "You’ll review and send the enquiry in your email app."}
+                </p>
               </form>
-            )}
           </motion.div>
         </div>
 
@@ -1398,7 +883,7 @@ export default function ContactWithGlobe({
                     onClick={() => setActiveFaq(isOpen ? null : idx)}
                     className="w-full flex items-center justify-between p-5 text-left font-bold text-sm sm:text-base text-[#073763] transition-colors cursor-pointer"
                   >
-                    <span>{faq.q}</span>
+                    <span>{brandText(faq.q)}</span>
                     <ChevronDown
                       className={cn(
                         "size-5 shrink-0 text-[#073763] transition-transform duration-300 ml-4",
@@ -1414,7 +899,7 @@ export default function ContactWithGlobe({
                       transition={{ duration: 0.3, ease: smoothEase }}
                       className="px-5 pb-5 text-sm text-[#526174] leading-relaxed border-t border-slate-100 pt-3"
                     >
-                      {faq.a}
+                      {brandText(faq.a)}
                     </motion.div>
                   )}
                 </div>

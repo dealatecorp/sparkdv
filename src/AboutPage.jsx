@@ -1,3 +1,4 @@
+import { BrandWordmark } from '@/components/ui/brand-wordmark';
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDown, ArrowUpRight, Plus, Minus, Quote } from 'lucide-react';
@@ -46,7 +47,7 @@ export default function AboutPage() {
           <span className="glow-orb glow-gold" />
         </div>
 
-        <div className="about-manifesto-top"><h1 id="about-page-title">About SPARK-DV</h1><span>Made in India. R&D-driven.</span></div>
+        <div className="about-manifesto-top"><h1 id="about-page-title">About <BrandWordmark /></h1><span>Made in India. R&D-driven.</span></div>
         <div className="about-manifesto-message"><div className="about-statement-window" aria-hidden="true">
           {['Dental science. Everyday care.', 'Prevention. Restoration. Care.', 'Small details. Brighter futures.'].map((line, i) => <div className="about-statement-line" data-motion-item key={line} data-index={i}>{line}</div>)}
         </div><p className="about-product-intro">Discover Nanion toothpaste, mouthrinse, and our range of professional dental products.</p>
@@ -61,9 +62,9 @@ export default function AboutPage() {
       <div className="about-founder-section" aria-labelledby="about-founder-title">
         <h2 id="about-founder-title" className="about-founder-heading">Meet <span className="about-founder-script">the</span><br />Founder<span aria-hidden="true">.</span></h2>
         <figure className="about-founder-portrait"><img src="/assets/founder/founder-ajay-BGDk7WSG.webp" alt="Dr. Ajay Reddy Mareddy, founder of SPARK-DV" width="768" height="1152" loading="lazy" /><figcaption>Dr. Ajay Reddy Mareddy<span>Founder & Managing Director</span></figcaption></figure>
-        <div className="about-founder-copy"><Quote className="about-founder-quote" size={44} strokeWidth={1.5} aria-hidden="true" /><h3>Clinical insight.<br />A personal commitment.</h3><p>A practicing dentist and academic researcher, Dr. Ajay Reddy Mareddy works at the intersection of patient care, dental biomaterials, and minimally invasive treatment.</p><p>His work brings clinical insight and product innovation together, with research in pediatric and preventive dentistry shaping SPARK-DV’s approach to everyday care.</p>
+        <div className="about-founder-copy"><Quote className="about-founder-quote" size={44} strokeWidth={1.5} aria-hidden="true" /><h3>Clinical insight.<br />A personal commitment.</h3><p>A practicing dentist and academic researcher, Dr. Ajay Reddy Mareddy works at the intersection of patient care, dental biomaterials, and minimally invasive treatment.</p><p>His work brings clinical insight and product innovation together, with research in pediatric and preventive dentistry shaping <BrandWordmark />’s approach to everyday care.</p>
           <details className="about-founder-details"><summary>Research & innovation <Plus size={18} /></summary><p>His innovation journey includes publicly available WIPO patent publications WO2009098710A1 (Formocresol gel) and WO2015155629A1 (Saturation method of a drug for dental), exploring dental materials and delivery systems.</p><p>His research includes nanosilver fluoride, silver diamine fluoride, dental sealants, and remineralization-focused care.</p><Link className="about-arrow-link" to="/science">Explore our blogs <ArrowUpRight size={18} /></Link></details>
-          <Link className="about-founder-contact" to="/contact">Connect with SPARK-DV <ArrowUpRight size={18} /></Link>
+          <Link className="about-founder-contact" to="/contact">Connect with <BrandWordmark /> <ArrowUpRight size={18} /></Link>
         </div>
       </div>
     </section>

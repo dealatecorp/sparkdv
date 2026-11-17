@@ -1,3 +1,4 @@
+import { BrandWordmark, brandText } from '@/components/ui/brand-wordmark';
 import TextRoll from './components/ui/text-roll';
 import CheckoutPage from './CheckoutPage';
 import ScienceGallery from './ScienceGallery';
@@ -7,9 +8,11 @@ import DistributorPage from './DistributorPage';
 import { CinematicFooter } from './components/ui/motion-footer';
 import UserProfile from './components/ui/user-profile';
 import MercuryLogin from './components/ui/mercury-login';
+import { useAuth } from './components/auth-provider';
+import { rememberProduct } from './lib/recent-products';
 import ClinicalChatbot from './components/ui/clinical-chatbot';
 import React, { useEffect, useMemo, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Dock, DockItem } from './components/ui/dock';
 import {
   ArrowDown,
@@ -39,6 +42,7 @@ import {
   EditorialPage,
   SourceArticle,
   ProductImage,
+  productImageSrc,
 } from "./Editorial";
 import sourceContent from "./source-content.json";
 import productAssets from "./product-assets.json";
@@ -99,6 +103,8 @@ const scienceSteps = [
 function App() {
   const navigate = useNavigate();
   const loc = useLocation();
+  const { status: authStatus } = useAuth();
+  const accountLabel = authStatus === 'signed-out' ? 'Sign in' : 'Account';
   const [menu, setMenu] = useState(false),
     [cartOpen, setCartOpen] = useState(false),
     [cart, setCart] = useState(() => {
@@ -115,16 +121,16 @@ function App() {
     localStorage.setItem("spark-cart", JSON.stringify(cart));
   }, [cart]);
   useEffect(() => {
-    if (loc.hash)
+    if (loc.hash && loc.pathname !== '/login')
       requestAnimationFrame(() =>
-        document.querySelector(loc.hash)?.scrollIntoView(),
+        document.getElementById(loc.hash.slice(1))?.scrollIntoView(),
       );
     else window.scrollTo(0, 0);
     document
       .querySelectorAll("details[open]")
       .forEach((e) => e.removeAttribute("open"));
     setMenu(false);
-  }, [loc.pathname]);
+  }, [loc.pathname, loc.hash]);
   useEffect(() => {
     const f = () => {
       if (loc.pathname === "/") {
@@ -345,9 +351,7 @@ function App() {
     const animId = Date.now() + Math.random();
     const imgSrc =
       p.image ||
-      (p.img ? img(p.img) : null) ||
-      productAssets[p.slug]?.local ||
-      "/images/nanion-tube-clean.webp";
+      productImageSrc(p);
 
     const newItem = {
       id: animId,
@@ -412,7 +416,7 @@ function App() {
             aria-label="Main navigation"
           >
             <div className="mobile-menu-content">
-              <div className="mobile-menu-top"><span>Explore SPARK-DV</span><button type="button" aria-label="Close navigation" onClick={() => setMenu(false)}><X size={23} /></button></div>
+              <div className="mobile-menu-top"><span>Explore <BrandWordmark /></span><button type="button" aria-label="Close navigation" onClick={() => setMenu(false)}><X size={23} /></button></div>
               <div className="mobile-menu-links">{[
                 ['/', 'Home'],
                 ['/products', 'Products'],
@@ -423,7 +427,7 @@ function App() {
                 ['/parents', 'For Parents'],
                 ['/contact', 'Contact'],
                 ['/distributor', 'Distributor Pricing'],
-                ['/profile', 'Account'],
+                ['/profile', accountLabel],
               ].map(([to, label]) => (
                 <Link
                   key={to}
@@ -476,8 +480,8 @@ function App() {
             <Link
               to="/profile"
               className="cart-trigger header-profile-link"
-              aria-label="Doctor and Member Profile"
-              title="My Account / Profile"
+              aria-label={accountLabel}
+              title={accountLabel}
             >
               <User size={19} />
             </Link>
@@ -508,7 +512,7 @@ function App() {
       <main id="main">
         <RoutesView add={add} cartQty={qty} cart={cart} update={update} remove={remove} />
       </main>
-      {loc.pathname === '/checkout' ? <footer className="checkout-footer"><strong>SPARK-DV</strong><span>Questions about your order? <Link to="/contact">Contact our team</Link></span><div><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/shipping">Shipping & returns</Link></div></footer> : <CinematicFooter />}
+      {loc.pathname === '/checkout' ? <footer className="checkout-footer"><strong><BrandWordmark /></strong><span>Questions about your order? <Link to="/contact">Contact our team</Link></span><div><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/shipping">Shipping & returns</Link></div></footer> : <CinematicFooter />}
       <ClinicalChatbot />
       {cartOpen && (
         <div
@@ -557,7 +561,7 @@ function App() {
                   {cart.map((item) => (
                     <div className="cart-item" key={item.slug}>
                       <div className="cart-thumb">
-                        <img src={img(item.img)} alt="" />
+                        <img src={productImageSrc(item)} alt="" />
                       </div>
                       <div className="cart-item-copy">
                         <div className="cart-line">
@@ -752,12 +756,17 @@ function FlyingCartItem({ item, onArrival }) {
 }
 function RoutesView({ add, cartQty, cart, update, remove }) {
   const location = useLocation();
+  const { status, user } = useAuth();
   const path = location.pathname;
   const detail = path.startsWith("/products/") ? path.split("/").pop() : null;
+  const userId = user?.id;
+  useEffect(() => {
+    if (userId && detail && products.some(product => product.slug === detail)) rememberProduct(userId, detail);
+  }, [detail, userId]);
   if (path === "/") return <NewHome add={add} />;
   if (path === "/products") return <Catalog key={location.search} add={add} />;
   if (detail) {
-    if (detail === "nanion-pro")
+    if (detail === "nanion-pro" || detail === "spark-files")
       return <ProductFamilyDetail familySlug={detail} add={add} />;
     return <ProductDetail slug={detail} add={add} />;
   }
@@ -772,8 +781,12 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
   if (path === "/distributor" || path === "/distributor-pricing" || path === "/distributors")
     return <DistributorPage />;
   if (path === "/checkout") return <CheckoutPage cart={cart} update={update} remove={remove} />;
-  if (path === "/account" || path === "/profile") return <UserProfile />;
-  if (path === "/login") return <MercuryLogin />;
+  if (path === "/account" || path === "/profile") {
+    if (status === 'loading') return <p className="mx-auto max-w-5xl px-5 py-20" role="status">Checking your session…</p>;
+    if (user) return <UserProfile key={user.id} user={user} cartQty={cartQty} />;
+    return <Navigate to="/login" replace state={{ from: path }} />;
+  }
+  if (path === "/login") return <MercuryLogin key={location.search} />;
   if (["/privacy", "/terms", "/shipping"].includes(path))
     return <Policy path={path} />;
   if (path === "/cart") return <CartPage cart={cart} update={update} remove={remove} />;
@@ -788,8 +801,8 @@ function SectionHead({ number, label, title, copy, link, linkText }) {
       </div>
       <div className="section-head-body">
         <p className="eyebrow">{label}</p>
-        <h2>{title}</h2>
-        {copy && <p className="section-copy">{copy}</p>}
+        <h2>{brandText(title)}</h2>
+        {copy && <p className="section-copy">{brandText(copy)}</p>}
       </div>
       {link && (
         <Link className="text-link section-head-link" to={link}>
@@ -831,16 +844,12 @@ function ProductCard({ product: p, add, compact = false }) {
             <button
               type="button"
               aria-label={`Add ${p.name} to cart`}
-              onClick={(e) =>
-                p.price
-                  ? add(p, 1, e)
-                  : (window.location.href = "/contact?type=Clinical%20enquiry")
-              }
+              onClick={(e) => add(p, 1, e)}
             >
               <Plus size={15} /> Add
             </button>
           ) : (
-            <Link to="/contact">
+            <Link to={`/contact?product=${encodeURIComponent(p.name)}`}>
               Enquire <ArrowRight size={14} />
             </Link>
           )}
@@ -928,7 +937,7 @@ function Catalog({ add }) {
             <div className="search-field"><Search size={18} /><input aria-label="Search products" placeholder="Search products and categories" value={query} onChange={e => setQuery(e.target.value)} />{query && <button aria-label="Clear search" onClick={() => setQuery("")}><X size={15} /></button>}</div>
             <label className="sort-label">Sort by <select value={sort} onChange={e => setSort(e.target.value)}><option value="featured">Featured</option><option value="name">Name</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option></select></label>
           </div>
-          <div className="catalog-meta-row" aria-live="polite" aria-atomic="true"><span><strong>{filtered.length}</strong> products</span><span className="catalog-result-note">Original SPARK-DV product photography</span></div>
+          <div className="catalog-meta-row" aria-live="polite" aria-atomic="true"><span><strong>{filtered.length}</strong> products</span><span className="catalog-result-note">Original <BrandWordmark /> product photography</span></div>
           {(selectedCategories.length > 0 || statusFilters.length > 0 || prof || priceFilterActive) && <div className="catalog-active-filters" aria-label="Active filters">
             {selectedCategories.map(category => <button key={category} onClick={() => toggleCategory(category)}>{category}<X size={13} /></button>)}
             {statusFilters.map(status => <button key={status} onClick={() => toggleStatus(status)}>{status === "priced" ? "Priced products" : status === "enquiry" ? "Price on request" : "Coming soon"}<X size={13} /></button>)}
@@ -951,13 +960,13 @@ function PageHero({ eyebrow, title, copy, actions, side }) {
           <span className="eyebrow-mark" />
           {eyebrow}
         </p>
-        <h1>{title}</h1>
-        {copy && <p className="hero-lede">{copy}</p>}
+        <h1>{brandText(title)}</h1>
+        {copy && <p className="hero-lede">{brandText(copy)}</p>}
         {actions && <div className="hero-actions">{actions}</div>}
       </div>
       {side && <div className="page-hero-side">{side}</div>}
       <div className="page-hero-foot">
-        <span>SPARK-DV / INDIA</span>
+        <span><BrandWordmark /> / INDIA</span>
         <span>CLINICALLY ORIENTED CARE</span>
         <ArrowDown size={15} />
       </div>
@@ -967,7 +976,6 @@ function PageHero({ eyebrow, title, copy, actions, side }) {
 function ProductFamilyDetail({ familySlug, add }) {
   const variants = products.filter((p) => p.familySlug === familySlug),
     files = familySlug === "spark-files",
-    title = files ? "SPARK DV Files" : "Nanion Pro",
     copy = files
       ? "Black Gold (TiN) and Black Oxide (TiO₂) surface-engineered NiTi rotary files, bio-engineered for delicate primary-tooth anatomy. Includes non-cutting tips, pediatric lengths, and S-shape or triangular options."
       : "Four-action dual-matrix caries prevention. NSF antibacterial action, biofilm disruption, sustained fluoride release, and 5% nano-hydroxyapatite for biomimetic repair and dentinal tubule occlusion.";
@@ -975,7 +983,7 @@ function ProductFamilyDetail({ familySlug, add }) {
     <>
       <PageHero
         eyebrow={
-          files ? "BLACK OXIDE NITI ENDO FILES" : "NSF + 5% nHA DUAL-MATRIX"
+          files ? brandText("SPARK DV Files") : "NSF + 5% nHA DUAL-MATRIX"
         }
         title={
           <>
@@ -1090,8 +1098,23 @@ function ProductFamilyDetail({ familySlug, add }) {
   );
 }
 function ProductDetail({ slug, add }) {
-  let p = products.find((x) => x.slug === slug);
-  if (!p) return <NotFound />;
+  const p = products.find((x) => x.slug === slug);
+  if (!p) {
+    const sourcePath = `/products/${slug}`;
+    const source = sourceContent[sourcePath];
+    if (!source) return <NotFound />;
+    const title = slug === 'nanion-lite-pro' ? 'Nanion Lite Pro' : source.title;
+    return (
+      <>
+        <PageHero title={title} copy="Contact our team for product information and availability." actions={
+          <Link className="button button-dark" to={`/contact?type=Clinical%20enquiry&product=${encodeURIComponent(title)}`}>
+            Enquire about this product <ArrowUpRight size={16} />
+          </Link>
+        } />
+        <section className="section wrap"><SourceArticle path={sourcePath} embedded /></section>
+      </>
+    );
+  }
   const related = products
     .filter((x) => x.category === p.category && x.slug !== p.slug)
     .slice(0, 3);
@@ -1108,7 +1131,7 @@ function ProductDetail({ slug, add }) {
         <div className="detail-image">
           <ProductImage product={p} hero />
           <span className="image-index">
-            SPARK-DV / PRODUCT{" "}
+            <BrandWordmark /> / PRODUCT{" "}
             {String(products.indexOf(p) + 1).padStart(2, "0")}
           </span>
         </div>
@@ -1153,17 +1176,15 @@ function ProductDetail({ slug, add }) {
                 <strong>{money(p.price)}</strong>
                 {p.compare && <del>{money(p.compare)}</del>}
               </div>
-              <button
-                type="button"
-                className="button button-dark"
-                onClick={(e) =>
-                  p.price
-                    ? add(p, 1, e)
-                    : (window.location.href = "/contact?type=Clinical%20enquiry")
-                }
-              >
-                {p.price ? "Add to cart" : "Request pricing"} <ShoppingBag size={16} />
-              </button>
+              {p.price ? (
+                <button type="button" className="button button-dark" onClick={(e) => add(p, 1, e)}>
+                  Add to cart <ShoppingBag size={16} />
+                </button>
+              ) : (
+                <Link className="button button-dark" to={`/contact?type=Professional%20pricing&product=${encodeURIComponent(p.name)}`}>
+                  Request pricing <ArrowUpRight size={16} />
+                </Link>
+              )}
             </div>
           )}
           <p className="detail-note">
@@ -1172,13 +1193,13 @@ function ProductDetail({ slug, add }) {
               ? "Professional use only. Product use should follow the official Instructions for Use (IFU) and clinician judgment."
               : "For children, use under adult supervision. Consult a qualified dental professional for personalized guidance."}
           </p>
-          <Link className="text-link" to="/contact">
+          <Link className="text-link" to={`/contact?type=Clinical%20enquiry&product=${encodeURIComponent(p.name)}`}>
             Ask a clinical specialist <ArrowUpRight size={15} />
           </Link>
         </div>
       </section>
       <div className="detail-subnav">
-        <a href="#overview">Overview</a>
+        <a href="#overview-summary">Overview</a>
         <a href="#overview">Clinical information</a>
         <a href="#safety">Use & safety</a>
         <a href="#related">Related products</a>
@@ -1206,7 +1227,7 @@ function ProductDetail({ slug, add }) {
           <div>
             <span>01</span>
             <h3>Product family</h3>
-            <p>{p.family || p.category}</p>
+            <p>{brandText(p.family || p.category)}</p>
           </div>
           <div>
             <span>02</span>
@@ -1228,31 +1249,33 @@ function ProductDetail({ slug, add }) {
           </div>
         </div>
       </section>
-      <section className="section detail-tint" id="technology">
-        <div className="wrap">
-          <SectionHead
-            number="02"
-            label="FORMULATION & FEATURES"
-            title={
-              <>
-                A closer look at
-                <br />
-                <em>the formulation.</em>
-              </>
-            }
-            copy="Product information reproduced from the SPARK-DV catalogue. Review the official product label and IFU for complete specifications."
-          />
-          <div className="feature-list">
-            {p.features?.map((f, i) => (
-              <div className="feature-row reveal" key={f}>
-                <span>0{i + 1}</span>
-                <strong>{f}</strong>
-                <ArrowUpRight size={16} />
-              </div>
-            ))}
+      {p.features?.length > 0 && (
+        <section className="section detail-tint" id="technology">
+          <div className="wrap">
+            <SectionHead
+              number="02"
+              label="FORMULATION & FEATURES"
+              title={
+                <>
+                  A closer look at
+                  <br />
+                  <em>the formulation.</em>
+                </>
+              }
+              copy="Product information reproduced from the SPARK-DV catalogue. Review the official product label and IFU for complete specifications."
+            />
+            <div className="feature-list">
+              {p.features?.map((f, i) => (
+                <div className="feature-row reveal" key={f}>
+                  <span>0{i + 1}</span>
+                  <strong>{f}</strong>
+                  <ArrowUpRight size={16} />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
       <section className="section wrap" id="safety">
         <div className="safety-note">
           <ShieldCheck size={23} />
@@ -1296,7 +1319,8 @@ function ProductDetail({ slug, add }) {
 }
 
 function Contact() {
-  return <ContactWithGlobe />;
+  const { search } = useLocation();
+  return <ContactWithGlobe key={search} search={search} />;
 }
 
 function EnquiryForm({ defaultType, defaultProduct = 'General enquiry' }) {
@@ -1440,15 +1464,15 @@ function Policy({ path }) {
       />
       <section className="section wrap policy-body">
         <p className="policy-alert">
-          {isUnavailable
+          {brandText(isUnavailable
             ? "This policy is not currently available online. Please contact SPARK-DV for current information before placing an order or sharing personal information."
-            : "Full current source text was not accessible during inspection. Approved policy copy is needed before publication."}
+            : "Full current source text was not accessible during inspection. Approved policy copy is needed before publication.")}
         </p>
         <h2>{data[0]}</h2>
-        <p>For current information, contact SPARK-DV directly.</p>
+        <p>For current information, contact <BrandWordmark /> directly.</p>
         <p>
           <a className="text-link" href="mailto:sparkdv310@gmail.com">
-            Contact SPARK-DV <ArrowUpRight size={15} />
+            Contact <BrandWordmark /> <ArrowUpRight size={15} />
           </a>
         </p>
       </section>
@@ -1462,7 +1486,7 @@ function orderEnquiryHref(cart) {
 }
 function CartPage({ cart, update, remove }) {
   const subtotal = cart.reduce((sum, item) => sum + (item.price || 0) * item.qty, 0);
-  return <section className="order-page wrap"><p className="shop-hero-context">SPARK-DV / YOUR SELECTION</p><h1>Your cart.</h1>{cart.length ? <><div className="order-items">{cart.map(item => <article key={item.slug}><Link to={`/products/${item.slug}`}><ProductImage product={item} /></Link><div><h2>{item.name}</h2><p>{money(item.price)}</p><div className="quantity"><button onClick={() => update(item.slug, -1)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16} /></button><span aria-live="polite">{item.qty}</span><button onClick={() => update(item.slug, 1)} aria-label={`Increase ${item.name} quantity`}><Plus size={16} /></button><button onClick={() => remove(item.slug)} aria-label={`Remove ${item.name}`}><X size={16} /></button></div></div></article>)}</div><div className="cart-summary"><h2>Subtotal <strong>{money(subtotal)}</strong></h2><p>This is an enquiry selection. The team will confirm current pricing, availability, shipping and order details.</p><Link className="button button-dark" to="/checkout">Continue to checkout <ArrowUpRight size={17} /></Link></div></> : <div className="cart-empty"><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Shop products <ArrowRight size={17} /></Link></div>}</section>;
+  return <section className="order-page wrap"><p className="shop-hero-context"><BrandWordmark /> / YOUR SELECTION</p><h1>Your cart.</h1>{cart.length ? <><div className="order-items">{cart.map(item => <article key={item.slug}><Link to={`/products/${item.slug}`}><ProductImage product={item} /></Link><div><h2>{item.name}</h2><p>{money(item.price)}</p><div className="quantity"><button onClick={() => update(item.slug, -1)} aria-label={`Decrease ${item.name} quantity`}><Minus size={16} /></button><span aria-live="polite">{item.qty}</span><button onClick={() => update(item.slug, 1)} aria-label={`Increase ${item.name} quantity`}><Plus size={16} /></button><button onClick={() => remove(item.slug)} aria-label={`Remove ${item.name}`}><X size={16} /></button></div></div></article>)}</div><div className="cart-summary"><h2>Subtotal <strong>{money(subtotal)}</strong></h2><p>This is an enquiry selection. The team will confirm current pricing, availability, shipping and order details.</p><Link className="button button-dark" to="/checkout">Continue to checkout <ArrowUpRight size={17} /></Link></div></> : <div className="cart-empty"><p>Your selection is empty.</p><Link className="button button-dark" to="/products">Shop products <ArrowRight size={17} /></Link></div>}</section>;
 }
 function NotFound() {
   return (

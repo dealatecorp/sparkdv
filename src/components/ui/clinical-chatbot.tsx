@@ -1,3 +1,4 @@
+import { BrandWordmark, brandText } from '@/components/ui/brand-wordmark';
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -66,7 +67,7 @@ export const PREDEFINED_FAQS: FAQItem[] = [
     answer:
       "We provide starter evaluation kits and wholesale pricing for verified dental clinics, pedodontic departments, and healthcare distribution partners. You can submit an institutional inquiry on our Contact page or message our direct logistics desk on WhatsApp at +91 9246901870.",
     actionText: "Request Clinic Pricing",
-    actionLink: "/contact",
+    actionLink: "/contact?type=Professional%20pricing",
   },
 
   // 2. PRODUCTS
@@ -370,7 +371,7 @@ export function ClinicalChatbot() {
           )}
         />
         <span className="font-semibold tracking-tight text-xs sm:text-sm">
-          {isOpen ? "Close Assistant" : "Chat with SPARK-DV"}
+          {brandText(isOpen ? "Close Assistant" : "Chat with SPARK-DV")}
         </span>
       </button>
 
@@ -391,7 +392,7 @@ export function ClinicalChatbot() {
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
                   <h3 id="spark-chatbot-title" className="text-sm font-bold text-white tracking-tight">
-                    SPARK-DV Clinical Assistant
+                    <BrandWordmark /> Clinical Assistant
                   </h3>
                   <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-white/15 text-cyan-200">
                     AI
@@ -502,7 +503,7 @@ export function ClinicalChatbot() {
                       : "bg-white text-[#1e293b] border border-[#073763]/10 rounded-bl-xs"
                   )}
                 >
-                  {m.text}
+                  {brandText(m.text)}
 
                   {/* Action Link / Button if included */}
                   {m.actionText && m.actionLink && (
@@ -530,7 +531,7 @@ export function ClinicalChatbot() {
                     </div>
                   )}
                 </div>
-                <span className="text-[10px] text-slate-400 mt-1 px-1">
+                <span className="text-[10px] text-muted-foreground mt-1 px-1">
                   {m.timestamp}
                 </span>
               </div>
@@ -575,7 +576,7 @@ export function ClinicalChatbot() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about NSF, staining, files, orders..."
-              className="flex-1 bg-[#fbf9f5] border border-[#cbd5e1] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] rounded-xl px-3.5 py-2 text-xs text-[#073763] placeholder:text-slate-400 outline-none transition-all"
+              className="flex-1 bg-[#fbf9f5] border border-[#cbd5e1] focus:border-[#073763] focus:ring-1 focus:ring-[#073763] rounded-xl px-3.5 py-2 text-base sm:text-sm text-primary placeholder:text-muted-foreground outline-none transition-all"
             />
             <button
               type="submit"

@@ -9,5 +9,8 @@ dist/
 !.env.example
 *.log
 .tmp/
+.data/
 motion/*/frames/
 motion/*/curves/
+
+.vercel

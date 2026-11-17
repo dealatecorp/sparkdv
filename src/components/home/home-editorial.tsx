@@ -1,3 +1,4 @@
+import { BrandWordmark, brandText } from '@/components/ui/brand-wordmark';
 import {useEffect, useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
 import {AnimatePresence, motion, useReducedMotion} from 'motion/react';
@@ -51,7 +52,7 @@ export function HomeResearchStory() {
           <div className="home-research-images">
             <AnimatePresence initial={false} mode="wait"><motion.img key={chapters[active].image} src={chapters[active].image} alt={chapters[active].caption} loading="lazy" initial={reduce?false:{opacity:0,clipPath:'inset(0% 0% 0% 4%)'}} animate={{opacity:1,clipPath:'inset(0% 0% 0% 0%)'}} exit={{opacity:0,transition:{duration:reduce?0:.1}}} transition={{duration:reduce?0:.3,ease:[.16,1,.3,1]}}/></AnimatePresence>
           </div>
-          <figcaption>{chapters[active].caption}</figcaption>
+          <figcaption>{brandText(chapters[active].caption)}</figcaption>
         </figure>
       </div>
       <div className="home-research-copy">
@@ -67,7 +68,7 @@ export function HomeResearchStory() {
 export function HomeCommunity() {
   const reduce=useReducedMotion();
   return <section className="home-community wrap">
-    <figure><motion.div initial={false} whileInView={reduce?undefined:{clipPath:['inset(5% 0% 5% 0%)','inset(0% 0% 0% 0%)']}} viewport={{once:true,amount:.25}} transition={{duration:.7,ease:[.16,1,.3,1]}}><img src="/assets/campaigns/school-program.webp" alt="Original SPARK-DV school dental health program photograph" loading="lazy" width="690" height="460"/></motion.div><figcaption>Care beyond the clinic. The SPARK-DV school program.</figcaption></figure>
+    <figure><motion.div initial={false} whileInView={reduce?undefined:{clipPath:['inset(5% 0% 5% 0%)','inset(0% 0% 0% 0%)']}} viewport={{once:true,amount:.25}} transition={{duration:.7,ease:[.16,1,.3,1]}}><img src="/assets/campaigns/school-program.webp" alt="Original SPARK-DV school dental health program photograph" loading="lazy" width="690" height="460"/></motion.div><figcaption>Care beyond the clinic. The <BrandWordmark /> school program.</figcaption></figure>
     <div><h2>A healthier future.<br/>One school at a time.</h2><p>Our School Dental Health Preventive Program brings preventive care and oral-health education to students, in partnership with dental professionals.</p><Link className="text-link" to="/school-program">Discover the program <ArrowUpRight size={18}/></Link></div>
   </section>;
 }

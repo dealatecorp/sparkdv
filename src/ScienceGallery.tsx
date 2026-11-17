@@ -1,3 +1,4 @@
+import { BrandWordmark, brandText, rehypeBrandWordmarks } from '@/components/ui/brand-wordmark';
 import React, { useState, useMemo, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
@@ -301,7 +302,7 @@ export default function ScienceGallery() {
           <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#073763]/5 border border-[#073763]/15 text-xs font-bold uppercase tracking-widest text-[#073763] mb-4">
               <Microscope className="size-3.5 text-[#0284c7]" />
-              SPARK-DV Clinical Science &amp; Editorial
+              <BrandWordmark /> Clinical Science &amp; Editorial
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#073763]">
               Blogs &amp; Dental Science
@@ -318,13 +319,13 @@ export default function ScienceGallery() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search research topics, mechanisms, keywords (e.g. biofilm, remineralization)..."
-                className="w-full bg-white border border-[#ded8d4] focus:border-[#073763] focus:ring-2 focus:ring-[#073763]/20 rounded-2xl pl-11 pr-4 py-3 text-sm text-[#073763] placeholder:text-slate-400 shadow-sm outline-none transition-all"
+                className="w-full bg-white border border-[#ded8d4] focus:border-[#073763] focus:ring-2 focus:ring-[#073763]/20 rounded-2xl pl-11 pr-4 py-3 text-base sm:text-sm text-primary placeholder:text-muted-foreground shadow-sm outline-none transition-all"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#073763] text-xs font-bold"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary text-xs font-bold"
                 >
                   Clear
                 </button>
@@ -489,7 +490,7 @@ export default function ScienceGallery() {
                     </h3>
 
                     <p className="mt-2.5 text-xs sm:text-sm text-[#475569] leading-relaxed line-clamp-2">
-                      {art.summary}
+                      {brandText(art.summary)}
                     </p>
                   </div>
                 </div>
@@ -538,7 +539,7 @@ export default function ScienceGallery() {
                 Peer-Reviewed Evidence Library
               </h2>
               <p className="text-sm sm:text-base text-[#526174] mt-3 leading-relaxed">
-                Access published multi-center trials, WIPO patent filings, and clinical safety dossiers documenting the non-staining caries arrest of SPARK-DV formulations.
+                Access published multi-center trials, WIPO patent filings, and clinical safety dossiers documenting the non-staining caries arrest of <BrandWordmark /> formulations.
               </p>
               <Link
                 to="/contact?type=Clinical%20enquiry"
@@ -653,7 +654,7 @@ export default function ScienceGallery() {
                     </div>
                     <div>
                       <p className="font-bold text-[#073763]">{selectedArticle.author}</p>
-                      <p className="text-[11px] text-slate-400">{selectedArticle.authorRole}</p>
+                      <p className="text-[11px] text-muted-foreground">{brandText(selectedArticle.authorRole)}</p>
                     </div>
                   </div>
                   <div className="ml-auto flex items-center gap-3">
@@ -687,6 +688,7 @@ export default function ScienceGallery() {
               {/* Formatted Markdown Body */}
               <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed text-[#334155]">
                 <ReactMarkdown
+                  rehypePlugins={[rehypeBrandWordmarks]}
                   components={{
                     h3: ({ children }) => (
                       <h3 className="text-xl sm:text-2xl font-bold text-[#073763] mt-8 mb-4">

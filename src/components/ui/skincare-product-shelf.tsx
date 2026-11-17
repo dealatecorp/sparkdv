@@ -8,6 +8,7 @@
  */
 "use client";
 
+import { BrandWordmark } from '@/components/ui/brand-wordmark';
 import { useEffect, useId, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type RefObject } from "react";
 import { AnimatePresence, LayoutGroup, animate, motion, useMotionValue, useReducedMotion, useTransform, type MotionValue } from "motion/react";
 import { ChevronDown, ChevronLeft, Minus, Plus, ShoppingBag, Star, ShieldCheck } from "lucide-react";
@@ -157,6 +158,14 @@ export type ProductShelfProps = {
 
 const SPRING = { type: "spring" as const, bounce: 0, duration: 0.55 };
 
+function ProductArt({ product }: { product: Product }) {
+  return product.image ? (
+    <img src={product.image} alt={product.name} className="size-full object-contain" />
+  ) : (
+    <span className="grid size-full place-items-center text-sm text-muted-foreground">Image unavailable</span>
+  );
+}
+
 export function ProductShelf({
   products = DEFAULT_PRODUCTS,
   currency = "₹",
@@ -205,7 +214,7 @@ export function ProductShelf({
       {showFloatingNav && (
         <>
           <div className="pointer-events-none fixed top-4 left-5 z-30 flex h-11 items-center text-[15px] font-semibold tracking-[0.18em] text-[#073763]">
-            SPARK-DV
+            <BrandWordmark />
           </div>
           <button
             ref={bagRef}
@@ -233,7 +242,7 @@ export function ProductShelf({
         <main className="mx-auto w-full max-w-[1140px] px-5 pt-8 pb-12">
           <div className="mb-10 text-center">
             <span className="text-xs uppercase tracking-[0.2em] font-semibold text-[#6f6a64]">
-              SPARK-DV DENTAL SCIENCE CATALOGUE
+              <BrandWordmark /> DENTAL SCIENCE CATALOGUE
             </span>
             <h2 className="mt-1 text-3xl sm:text-4xl font-medium tracking-tight text-[#073763]">
               All 5 Breakthrough Products On Display
@@ -263,7 +272,7 @@ export function ProductShelf({
                         transition={SPRING}
                         className="group relative aspect-[2/3] w-full max-w-[175px] cursor-pointer !bg-transparent !border-0 !border-none !shadow-none p-0 outline-none focus-visible:ring-2 focus-visible:ring-[#073763] flex items-end justify-center"
                       >
-                        <ProductArt p={p} className="size-full" />
+                        <ProductArt product={p} />
                       </motion.button>
                     )}
                   </div>
@@ -404,7 +413,7 @@ function ProductPage({
                 />
               </div>
             ) : (
-              <ProductArt p={p} className="size-full" />
+              <ProductArt product={p} />
             )}
           </motion.div>
           <motion.div
@@ -416,7 +425,7 @@ function ProductPage({
             transition={{ duration: 0.3 }}
           />
           <div className="mt-4 flex items-center gap-2 text-xs text-[#073763] font-medium">
-            <ShieldCheck size={14} /> SPARK-DV Original Dental Product
+            <ShieldCheck size={14} /> <BrandWordmark /> Original Dental Product
           </div>
         </div>
 

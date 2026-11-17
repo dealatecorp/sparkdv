@@ -1,3 +1,4 @@
+import { BrandWordmark } from '@/components/ui/brand-wordmark';
 import { useRef, useState, type PointerEvent } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion, useSpring, type MotionStyle } from 'motion/react';
 import StickerSwapHeadline from './sticker-swap-headline';
@@ -21,7 +22,7 @@ export default function StickerCurtainHero({photos}: {photos: {src: string; alt:
   const progress = useTransform(scrollYProgress, [0, .8], [.45, 1]);
   return <section ref={root} className="shop-sticker-hero" aria-label="SPARK-DV products">
     <motion.div className="shop-sticker-stage" onPointerMove={followCursor} onPointerLeave={resetText} style={{'--hero-text-x': textX, '--hero-text-y': textY, '--hero-text-tilt': textTilt} as MotionStyle}>
-      <div className="shop-sticker-brand">SPARK-DV</div>
+      <div className="shop-sticker-brand"><BrandWordmark /></div>
       <div className="shop-sticker-curtain"><CurtainProductSplit progress={progress} photos={photos}/></div>
       <StickerSwapHeadline className="shop-sticker-headline" lead="BETTER" words={[
         {word: 'TOMORROWS', sticker: photos[0].src, alt: photos[0].alt, tilt: -8},

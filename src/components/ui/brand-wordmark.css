@@ -1,0 +1,33 @@
+img.brand-wordmark {
+  display: inline-block;
+  flex: none;
+  width: 5.15em;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 418 / 77;
+  object-fit: contain;
+  vertical-align: -.11em;
+  mix-blend-mode: multiply;
+}
+
+.mercury-wrapper img.brand-wordmark,
+.footer-legal img.brand-wordmark,
+[class~="bg-[#073763]"] img.brand-wordmark,
+[class~="from-[#073763]"] img.brand-wordmark {
+  border-radius: .15em;
+  mix-blend-mode: normal;
+}
+
+.mercury-wrapper .brand-id img.brand-wordmark { width: 8em; }
+.shop-sticker-brand img.brand-wordmark { width: min(5.4em, 88vw); }
+.footer-giant-bg-text:has(.brand-wordmark) { mix-blend-mode: screen; }
+.footer-giant-bg-text img.brand-wordmark {
+  width: min(92%, 1240px);
+  filter: grayscale(1) invert(1) contrast(2);
+  mix-blend-mode: normal;
+  opacity: .12;
+}
+
+@media (forced-colors: active) {
+  img.brand-wordmark { mix-blend-mode: normal; }
+}

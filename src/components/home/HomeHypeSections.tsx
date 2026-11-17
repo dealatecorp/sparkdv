@@ -1,3 +1,4 @@
+import { BrandWordmark, brandText } from '@/components/ui/brand-wordmark';
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
@@ -28,7 +29,7 @@ interface HomeHypeProps {
 
 export function HomeHypeSections({ add }: HomeHypeProps) {
   return (
-    <div className="home-hype-container w-full bg-[#fbf9f5] text-[#073763] overflow-hidden" id="home-content">
+    <div className="home-hype-container w-full bg-[#fbf9f5] text-[#073763] overflow-hidden">
       {/* 1. Authority & Impact Metrics Band */}
       <AuthorityMetricsBand />
 
@@ -100,7 +101,7 @@ function AuthorityMetricsBand() {
             Setting the Clinical Gold Standard for Children’s Enamel Care
           </h2>
           <p className="mt-3 text-base sm:text-lg text-[#526174] max-w-2xl font-medium">
-            SPARK-DV replaces invasive dental drilling with patented nanotechnology and bioactive minerals engineered for young anatomy.
+            <BrandWordmark /> replaces invasive dental drilling with patented nanotechnology and bioactive minerals engineered for young anatomy.
           </p>
         </div>
 
@@ -132,7 +133,7 @@ function AuthorityMetricsBand() {
                   {m.label}
                 </h3>
                 <p className="mt-1 text-xs text-[#64748b] leading-relaxed">
-                  {m.sub}
+                  {brandText(m.sub)}
                 </p>
               </motion.div>
             );
@@ -177,7 +178,7 @@ function LeadershipBentoGrid() {
               Engineering the Unrivaled Gold Standard in Bioactive Care
             </h2>
             <p className="mt-3 text-base sm:text-lg text-[#526174]">
-              Where traditional dentistry waits for cavitations, SPARK-DV arrests decay at the molecular level with non-invasive biomimetic science.
+              Where traditional dentistry waits for cavitations, <BrandWordmark /> arrests decay at the molecular level with non-invasive biomimetic science.
             </p>
           </div>
           <Link
@@ -212,7 +213,7 @@ function LeadershipBentoGrid() {
                 Proprietary NanoSilver Fluoride (NSF) Matrix
               </h3>
               <p className="mt-2 text-sm sm:text-base text-[#475569] leading-relaxed max-w-2xl">
-                Unlike archaic Silver Diamine Fluoride (SDF) that turns baby teeth irreversibly black, SPARK-DV’s colloidal 10–20nm NanoSilver delivers 3x antibacterial power with zero discoloration. It deeply infiltrates the microbial biofilm, halting active caries in 60 seconds.
+                Unlike archaic Silver Diamine Fluoride (SDF) that turns baby teeth irreversibly black, <BrandWordmark />’s colloidal 10–20nm NanoSilver delivers 3x antibacterial power with zero discoloration. It deeply infiltrates the microbial biofilm, halting active caries in 60 seconds.
               </p>
               <div className="mt-5 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-slate-100 pt-5">
                 <div className="flex items-center gap-2 text-xs font-bold text-[#073763]">
@@ -316,7 +317,7 @@ function LeadershipBentoGrid() {
                 Loved by Children. Trusted by Families Nationwide.
               </h3>
               <p className="mt-2 text-sm sm:text-base text-[#475569] leading-relaxed max-w-2xl">
-                Dental anxiety begins with painful procedures. By providing minimally invasive lesion arrest, non-burning alcohol-free mouthwashes, and delicious chewable gummies, SPARK-DV transforms the dental visit into a happy, confident milestone.
+                Dental anxiety begins with painful procedures. By providing minimally invasive lesion arrest, non-burning alcohol-free mouthwashes, and delicious chewable gummies, <BrandWordmark /> transforms the dental visit into a happy, confident milestone.
               </p>
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
@@ -357,7 +358,7 @@ function DualPortalsSection() {
             Dedicated Portals for Every Smile
           </h2>
           <p className="mt-3 text-base sm:text-lg text-[#526174]">
-            Whether you are equipping a multi-chair pediatric practice or protecting your child’s first teeth at home, SPARK-DV has a specialized suite designed for you.
+            Whether you are equipping a multi-chair pediatric practice or protecting your child’s first teeth at home, <BrandWordmark /> has a specialized suite designed for you.
           </p>
         </div>
 
@@ -720,7 +721,7 @@ function ClinicianTestimonialMarquee() {
             What Department Heads &amp; Surgeons Say
           </h2>
           <p className="mt-3 text-base text-[#526174]">
-            Read direct feedback from academic researchers and practicing pediatric surgeons who rely on SPARK-DV chairside every day.
+            Read direct feedback from academic researchers and practicing pediatric surgeons who rely on <BrandWordmark /> chairside every day.
           </p>
         </div>
       </div>
