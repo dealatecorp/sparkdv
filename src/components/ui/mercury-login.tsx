@@ -17,7 +17,8 @@ export default function MercuryLogin() {
     const mode = requestedMode === 'register' || requestedMode === 'change'
         ? requestedMode : 'login';
     const { status, user, changeSession, refresh } = useAuth();
-    const returnTo = location.state?.from === '/profile' ? '/profile' : '/account';
+    const from = location.state?.from;
+    const returnTo = typeof from === 'string' && /^\/(?:profile|checkout|(?:manage\/)?orders(?:\/[a-f0-9-]{36})?)$/.test(from) ? from : '/account';
     const [pending, setPending] = useState(false);
     const [error, setError] = useState('');
 

@@ -14,7 +14,7 @@ const hash = promisify(scrypt);
 const hashOptions = { N: 2 ** 15, r: 8, p: 3, maxmem: 64 * 1024 * 1024 };
 const dummyHash = `${'0'.repeat(32)}.${'0'.repeat(128)}`;
 
-class AuthError extends Error {
+export class AuthError extends Error {
   constructor(status, message) {
     super(message);
     this.status = status;
@@ -148,7 +148,7 @@ async function limitAttempts(db, req, action, deployed) {
   }
 }
 
-async function readBody(req) {
+export async function readBody(req) {
   if (Number(req.headers['content-length']) > 8192) throw new AuthError(413, 'Request is too large.');
   const type = req.headers['content-type']?.split(';')[0];
   if (type !== 'application/json') throw new AuthError(415, 'Use a JSON request.');
@@ -168,34 +168,53 @@ async function readBody(req) {
   }
 }
 
-export function createAuthHandler(env, deployed = false) {
+export function createStoreAccess(env, deployed) {
   let store;
+  return () => store ??= openStore(env, deployed).catch(error => { store = undefined; throw error; });
+}
+
+export async function sessionUser(req, { db, secret }) {
+  const claims = await sessionClaims(req, secret);
+  if (!claims) return null;
+  const { rows } = await db.execute({
+    sql: 'SELECT u.id, u.email, u.name, u.created_at, u.mobile FROM auth_users u JOIN auth_sessions s ON s.user_id = u.id WHERE s.id = ? AND u.id = ? AND s.expires_at > ?',
+    args: [claims.jti, claims.sub, Math.floor(Date.now() / 1000)],
+  });
+  return rows[0] ? publicUser(rows[0]) : null;
+}
+
+export function isOrderStaff(env, userId) {
+  return (env.ORDER_STAFF_USER_IDS ?? '').split(',').some(id => id.trim() === userId);
+}
+
+export function requireStorefrontRequest(req, res, deployed) {
+  if (!['GET', 'POST'].includes(req.method)) {
+    res.setHeader('Allow', 'GET, POST');
+    throw new AuthError(405, 'Method not allowed.');
+  }
+  const secure = deployed || Boolean(req.socket.encrypted);
+  if (req.method === 'POST' && req.headers.origin !== `${secure ? 'https' : 'http'}://${req.headers.host}`) {
+    throw new AuthError(403, 'This request must come from the storefront.');
+  }
+  return secure;
+}
+
+export function createAuthHandler(env, deployed = false, getStore = createStoreAccess(env, deployed)) {
 
   return async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    const send = (status, body) => { res.statusCode = status; res.end(JSON.stringify(body)); };
+    const send = (status, body) => {
+      if (body.user) body.user.order_staff = isOrderStaff(env, body.user.id);
+      res.statusCode = status;
+      res.end(JSON.stringify(body));
+    };
 
     try {
-      const secure = deployed || Boolean(req.socket.encrypted);
-      if (!['GET', 'POST'].includes(req.method)) {
-        res.setHeader('Allow', 'GET, POST');
-        throw new AuthError(405, 'Method not allowed.');
-      }
-      if (req.method === 'POST' && req.headers.origin !== `${secure ? 'https' : 'http'}://${req.headers.host}`) {
-        throw new AuthError(403, 'This request must come from the storefront.');
-      }
-
-      store ??= openStore(env, deployed).catch(error => { store = undefined; throw error; });
-      const { db, secret } = await store;
+      const secure = requireStorefrontRequest(req, res, deployed);
+      const { db, secret } = await getStore();
       if (req.method === 'GET') {
-        const claims = await sessionClaims(req, secret);
-        if (!claims) return send(200, { user: null });
-        const { rows } = await db.execute({
-          sql: 'SELECT u.id, u.email, u.name, u.created_at, u.mobile FROM auth_users u JOIN auth_sessions s ON s.user_id = u.id WHERE s.id = ? AND u.id = ? AND s.expires_at > ?',
-          args: [claims.jti, claims.sub, Math.floor(Date.now() / 1000)],
-        });
-        return send(200, { user: rows[0] ? publicUser(rows[0]) : null });
+        return send(200, { user: await sessionUser(req, { db, secret }) });
       }
 
       const { action, password, currentPassword, ...fields } = (await readBody(req)) ?? {};

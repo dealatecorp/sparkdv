@@ -50,7 +50,11 @@ Scientific claims, prices and testimonials are reproduced from SPARK-DV source m
 
 ## Forms and commerce
 
-The enquiry form prepares an email for the visitor to review and send. Checkout opens a WhatsApp draft addressed to the site's published contact number. It includes the selected products, quantities, prices, subtotal, and clickable product photo links. The visitor sends the draft in WhatsApp, where the team can confirm availability, shipping, and payment. [WhatsApp click to chat](https://faq.whatsapp.com/5913398998672934)
+The enquiry form prepares an email for the visitor to review and send. Signed-in customers can save an order at checkout, then send the WhatsApp draft with the order reference, products, quantities, prices and photo links. The team confirms availability, shipping and payment in WhatsApp. Customers can follow the checkpoint timeline and any courier information from **Profile → My orders**. [WhatsApp click to chat](https://faq.whatsapp.com/5913398998672934)
+
+Set `ORDER_STAFF_USER_IDS` to a comma-separated list of authorised account references from **Profile → Account reference**. Staff see **Manage orders** in their profile and can record confirmations, dispatch details, out-for-delivery and delivery updates, or cancellation. The API checks staff access against account IDs.
+
+For checkpoint email, connect the Resend free plan in Vercel, verify the sender domain, and set `ORDER_EMAIL_FROM` to a verified sender such as `SPARK-DV Orders <updates@orders.sparkdv.com>`. Vercel supplies `RESEND_API_KEY` through the integration. Checkpoints appear on the tracking page immediately, and staff can retry a failed email during the provider's idempotency window. Run `node scripts/orders-qa.mjs` to test storage, access, concurrent updates, and notification retries without sending email. [Resend Marketplace integration](https://vercel.com/marketplace/resend)
 
 Before public launch, connect an approved submission/order service if automated fulfilment is required, and supply approved privacy, terms and shipping-policy copy. All three policy destinations returned 404 on the original site; their content has not been fabricated. The source download centre states that brochures are coming soon. Research-request links route to a real enquiry path where the source did not expose downloadable studies.
 

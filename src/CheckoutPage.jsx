@@ -1,10 +1,49 @@
-import { Link } from 'react-router-dom';
+import { useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MessageCircle, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
-import { ProductImage, productImageSrc } from './Editorial';
-import { money, products } from './data';
-import { whatsappDraft } from './lib/enquiry';
+import { ProductImage } from './Editorial';
+import { money } from './data';
+import { useAuth } from './components/auth-provider';
+import { orderRequest, whatsappOrderDraft } from './lib/orders';
 
-export default function CheckoutPage({ cart, update, remove }) {
+export default function CheckoutPage({ cart, update, remove, completeOrder }) {
+  const { status, user } = useAuth();
+  const navigate = useNavigate();
+  const attempt = useRef(null);
+  const inFlight = useRef(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  async function placeOrder() {
+    if (!user || inFlight.current) return;
+    inFlight.current = true;
+    setSaving(true);
+    setError('');
+    const items = cart.map(({ slug, qty }) => ({ slug, qty })).sort((a, b) => a.slug.localeCompare(b.slug));
+    const key = `sparkdv-checkout:${user.id}:${JSON.stringify(items)}`;
+    let savedId;
+    try { savedId = sessionStorage.getItem(key); } catch { /* Storage may be blocked. */ }
+    const id = savedId || (attempt.current?.key === key ? attempt.current.id : crypto.randomUUID());
+    attempt.current = { key, id };
+    try { sessionStorage.setItem(key, id); } catch { /* Keep the retry key in memory. */ }
+
+    const draftWindow = window.open('', '_blank');
+    if (draftWindow) draftWindow.opener = null;
+    try {
+      const { order } = await orderRequest({}, { action: 'place', id, items });
+      try { sessionStorage.removeItem(key); } catch { /* The order is already saved. */ }
+      completeOrder(items);
+      navigate(`/orders/${order.id}`, { replace: true });
+      if (draftWindow && !draftWindow.closed) draftWindow.location.replace(whatsappOrderDraft(order));
+    } catch (failure) {
+      draftWindow?.close();
+      setError(failure instanceof Error ? failure.message : 'We couldn’t save your order. Try again.');
+    } finally {
+      inFlight.current = false;
+      setSaving(false);
+    }
+  }
+
   if (!cart.length) {
     return (
       <section className="checkout-shell wrap checkout-empty">
@@ -21,26 +60,6 @@ export default function CheckoutPage({ cart, update, remove }) {
   const subtotal = cart.some(item => item.price != null)
     ? cart.reduce((sum, item) => sum + (item.price ?? 0) * item.qty, 0)
     : null;
-  // Local previews need an image host that the WhatsApp recipient can reach.
-  const photoOrigin = import.meta.env.DEV || ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname)
-    ? 'https://sparkdv.vercel.app'
-    : window.location.origin;
-
-  const draftItems = cart.map(item => {
-    const photo = products.find(product => product.slug === item.slug)?.shareImage ?? productImageSrc(item);
-    const description = [item.name, item.variant].filter(Boolean).join(' · ');
-    const pricing = item.price == null
-      ? 'Request pricing'
-      : `${money(item.price)} each · ${money(item.price * item.qty)}`;
-    return `${description}\nQuantity: ${item.qty} · ${pricing}\nPhoto: ${new URL(photo, photoOrigin).href}`;
-  });
-  const draft = whatsappDraft([
-    'Hello SPARK-DV, I’d like to order:',
-    ...draftItems,
-    `Product subtotal: ${money(subtotal)}`,
-    'Please confirm availability, shipping, and payment details.',
-  ].join('\n\n'));
-
   return (
     <section className="checkout-shell wrap">
       <Link className="checkout-return" to="/cart">
@@ -50,7 +69,7 @@ export default function CheckoutPage({ cart, update, remove }) {
         <h1>Checkout</h1>
         <span>{count} {count === 1 ? 'item' : 'items'} in your order</span>
       </div>
-      <p className="checkout-notice">Review your items, then open your order draft in WhatsApp.</p>
+      <p className="checkout-notice">Place your order to save it to your account, then send the WhatsApp draft so our team can confirm it.</p>
 
       <div className="checkout-layout">
         <section className="checkout-step" aria-labelledby="checkout-items-title">
@@ -68,14 +87,14 @@ export default function CheckoutPage({ cart, update, remove }) {
                   <Link to={`/products/${item.slug}`}><h3>{item.name}</h3></Link>
                   <p>{item.price == null ? 'Request pricing' : `${money(item.price)} each`}</p>
                   <div className="checkout-quantity">
-                    <button type="button" aria-label={`Decrease ${item.name}`} onClick={() => update(item.slug, -1)}>
+                    <button type="button" disabled={saving} aria-label={`Decrease ${item.name}`} onClick={() => update(item.slug, -1)}>
                       <Minus size={15} aria-hidden="true" />
                     </button>
                     <span aria-live="polite">{item.qty}</span>
-                    <button type="button" aria-label={`Increase ${item.name}`} onClick={() => update(item.slug, 1)}>
+                    <button type="button" disabled={saving || item.qty >= 99} aria-label={`Increase ${item.name}`} onClick={() => update(item.slug, 1)}>
                       <Plus size={15} aria-hidden="true" />
                     </button>
-                    <button type="button" className="checkout-remove" aria-label={`Remove ${item.name}`} onClick={() => remove(item.slug)}>
+                    <button type="button" disabled={saving} className="checkout-remove" aria-label={`Remove ${item.name}`} onClick={() => remove(item.slug)}>
                       <Trash2 size={16} aria-hidden="true" />
                     </button>
                   </div>
@@ -95,10 +114,18 @@ export default function CheckoutPage({ cart, update, remove }) {
             </div>
           </dl>
           {hasUnpricedItems && <p>Items marked “Request pricing” will be quoted in chat.</p>}
-          <a className="button checkout-whatsapp" href={draft} target="_blank" rel="noopener noreferrer">
-            <MessageCircle size={18} aria-hidden="true" /> Open WhatsApp draft
-          </a>
-          <p>Review and send the draft in WhatsApp. Our team will confirm availability, shipping, and payment there.</p>
+          {status === 'loading' && <p role="status">Checking your account…</p>}
+          {status === 'unavailable' && <p role="alert">The account service is unavailable. Refresh this page to try again.</p>}
+          {status === 'signed-out' && (
+            <Link className="button checkout-whatsapp" to="/login" state={{ from: '/checkout' }}>Sign in to place order</Link>
+          )}
+          {user && (
+            <button type="button" className="button checkout-whatsapp" disabled={saving} onClick={placeOrder}>
+              <MessageCircle size={18} aria-hidden="true" /> {saving ? 'Saving order…' : 'Place order & open WhatsApp'}
+            </button>
+          )}
+          {error && <p role="alert">{error}</p>}
+          <p>Follow delivery updates from My orders. Availability, shipping and payment are confirmed in WhatsApp.</p>
           <Link to="/shipping" className="checkout-terms-link">Shipping &amp; returns policy</Link>
         </aside>
       </div>

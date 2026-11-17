@@ -1,3 +1,4 @@
+import { randomInt, randomUUID } from 'node:crypto';
 import { chromium, expect } from '@playwright/test';
 
 const browser = await chromium.launch({ channel: 'chromium' });
@@ -104,6 +105,20 @@ try {
   await desktop.getByRole('button', { name: 'Continue to checkout' }).click();
   await expect(desktop).toHaveURL(/\/checkout$/);
   await desktop.getByRole('button', { name: 'Increase Nanion Lite' }).click();
+  await desktop.getByRole('link', { name: 'Sign in to place order' }).click();
+  await desktop.getByRole('link', { name: 'Create an account' }).click();
+  await desktop.getByLabel('Full name').fill('Storefront QA');
+  await desktop.getByLabel('Email', { exact: true }).fill(`order-qa-${randomUUID()}@example.com`);
+  await desktop.getByLabel('Mobile number', { exact: true }).fill(`+120255501${String(randomInt(100)).padStart(2, '0')}`);
+  await desktop.getByLabel('Password', { exact: true }).fill(randomUUID());
+  await desktop.getByRole('button', { name: 'Create an account', exact: true }).click();
+  await expect(desktop).toHaveURL(/\/checkout$/);
+  await desktop.context().route('https://wa.me/**', route => route.fulfill({ body: 'WhatsApp handoff captured' }));
+  const [chat] = await Promise.all([
+    desktop.waitForEvent('popup'),
+    desktop.getByRole('button', { name: 'Place order & open WhatsApp' }).click(),
+  ]);
+  await expect(desktop).toHaveURL(/\/orders\/[a-f0-9-]{36}$/);
   const whatsapp = desktop.getByRole('link', { name: 'Open WhatsApp draft' });
   const whatsappUrl = new URL(await whatsapp.getAttribute('href'));
   expect(whatsappUrl.origin + whatsappUrl.pathname).toBe('https://wa.me/917981546939');
@@ -113,13 +128,14 @@ try {
   expect(whatsappUrl.searchParams.get('text')).toContain('Product subtotal: ₹1,198');
   await expect(desktop.getByText(/Demo Payment Gateway/i)).toHaveCount(0);
 
-  await desktop.context().route('https://wa.me/**', route => route.fulfill({ body: 'WhatsApp handoff captured' }));
-  const [chat] = await Promise.all([desktop.waitForEvent('popup'), whatsapp.click()]);
   await expect(chat).toHaveURL(whatsappUrl.href);
   await expect(chat.getByText('WhatsApp handoff captured')).toBeVisible();
   await chat.close();
-  await expect(desktop.getByRole('button', { name: 'Open cart, 2 items' })).toBeVisible();
-  await desktop.getByRole('button', { name: 'Remove Nanion Lite' }).click();
+  await expect(desktop.getByRole('button', { name: 'Open cart, 0 items' })).toBeVisible();
+  await expect(desktop.getByRole('heading', { name: 'Order placed', exact: true })).toBeVisible();
+  await desktop.getByRole('link', { name: 'My orders', exact: true }).click();
+  await expect(desktop.getByRole('link', { name: /Nanion Lite.*Track order/ })).toBeVisible();
+  await visit('/checkout');
   await expect(desktop.getByRole('heading', { name: 'Your cart is empty' })).toBeVisible();
   await expect(whatsapp).toHaveCount(0);
 

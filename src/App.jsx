@@ -7,6 +7,7 @@ import ContactWithGlobe from './components/ui/contact-with-globe';
 import DistributorPage from './DistributorPage';
 import { CinematicFooter } from './components/ui/motion-footer';
 import UserProfile from './components/ui/user-profile';
+import OrdersPage from './components/orders-page';
 import MercuryLogin from './components/ui/mercury-login';
 import { useAuth } from './components/auth-provider';
 import { rememberProduct } from './lib/recent-products';
@@ -120,6 +121,12 @@ function App() {
   useEffect(() => {
     localStorage.setItem("spark-cart", JSON.stringify(cart));
   }, [cart]);
+  function completeOrder(items) {
+    const quantities = new Map(items.map(item => [item.slug, item.qty]));
+    setCart(current => current
+      .map(item => ({ ...item, qty: item.qty - (quantities.get(item.slug) ?? 0) }))
+      .filter(item => item.qty > 0));
+  }
   useEffect(() => {
     if (loc.hash && loc.pathname !== '/login')
       requestAnimationFrame(() =>
@@ -181,8 +188,11 @@ function App() {
   useEffect(() => {
     const page = sourceContent[loc.pathname];
     const p = products.find((p) => loc.pathname === "/products/" + p.slug);
+    const orderTitle = loc.pathname.startsWith('/manage/orders/') ? 'Order details'
+      : loc.pathname.startsWith('/orders/') ? 'Track order' : null;
     document.title =
       (p?.name ||
+        orderTitle ||
         (page?.title !== "404" ? page?.title : null) ||
         {
           "/science": "Biomaterials Science & R&D",
@@ -196,6 +206,8 @@ function App() {
           "/shipping": "Shipping & Returns",
           "/cart": "Your selection",
           "/checkout": "Checkout",
+          "/orders": "My orders",
+          "/manage/orders": "Manage orders",
         }[loc.pathname] ||
         "Page not found") + " | SPARK-DV";
     const description =
@@ -510,7 +522,7 @@ function App() {
         </div>
       </header>
       <main id="main">
-        <RoutesView add={add} cartQty={qty} cart={cart} update={update} remove={remove} />
+        <RoutesView add={add} cartQty={qty} cart={cart} update={update} remove={remove} completeOrder={completeOrder} />
       </main>
       {loc.pathname === '/checkout' ? <footer className="checkout-footer"><strong><BrandWordmark /></strong><span>Questions about your order? <Link to="/contact">Contact our team</Link></span><div><Link to="/privacy">Privacy</Link><Link to="/terms">Terms</Link><Link to="/shipping">Shipping & returns</Link></div></footer> : <CinematicFooter />}
       <ClinicalChatbot />
@@ -754,7 +766,7 @@ function FlyingCartItem({ item, onArrival }) {
     </div>
   );
 }
-function RoutesView({ add, cartQty, cart, update, remove }) {
+function RoutesView({ add, cartQty, cart, update, remove, completeOrder }) {
   const location = useLocation();
   const { status, user } = useAuth();
   const path = location.pathname;
@@ -780,7 +792,16 @@ function RoutesView({ add, cartQty, cart, update, remove }) {
   if (path === "/contact") return <Contact />;
   if (path === "/distributor" || path === "/distributor-pricing" || path === "/distributors")
     return <DistributorPage />;
-  if (path === "/checkout") return <CheckoutPage cart={cart} update={update} remove={remove} />;
+  if (path === "/checkout") return <CheckoutPage cart={cart} update={update} remove={remove} completeOrder={completeOrder} />;
+  const ordersRoute = /^\/(manage\/)?orders(?:\/([a-f0-9-]{36}))?$/.exec(path);
+  if (ordersRoute) {
+    const staff = Boolean(ordersRoute[1]);
+    if (status === 'loading') return <p className="wrap py-20" role="status">Checking your account…</p>;
+    if (status === 'unavailable') return <p className="wrap py-20" role="alert">The account service is unavailable. Refresh this page to try again.</p>;
+    if (!user) return <Navigate to="/login" replace state={{ from: path }} />;
+    if (staff && !user.order_staff) return <NotFound />;
+    return <OrdersPage key={`${user.id}:${path}`} id={ordersRoute[2]} staff={staff} />;
+  }
   if (path === "/account" || path === "/profile") {
     if (status === 'loading') return <p className="mx-auto max-w-5xl px-5 py-20" role="status">Checking your session…</p>;
     if (user) return <UserProfile key={user.id} user={user} cartQty={cartQty} />;

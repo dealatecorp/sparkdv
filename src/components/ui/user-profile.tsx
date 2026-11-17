@@ -1,7 +1,7 @@
 import { BrandWordmark } from '@/components/ui/brand-wordmark';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, History, LogOut, MessageCircle, ShieldCheck, ShoppingBag, Store, UserRound } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, History, LogOut, MessageCircle, Package, ShieldCheck, ShoppingBag, Store, Truck, UserRound } from 'lucide-react';
 import { useAuth } from '../auth-provider';
 import type { AccountUser } from '../../lib/auth';
 import { readRecentProducts } from '../../lib/recent-products';
@@ -44,6 +44,8 @@ export default function UserProfile({ user, cartQty }: { user: AccountUser; cart
           </Link>
           <nav className="profile-nav" aria-label="Profile navigation">
             <Link to="/profile" aria-current="page"><UserRound size={17} aria-hidden="true" /> Profile</Link>
+            <Link to="/orders"><Package size={17} aria-hidden="true" /> My orders</Link>
+            {user.order_staff && <Link to="/manage/orders"><Truck size={17} aria-hidden="true" /> Manage orders</Link>}
             <Link to="/products"><Store size={17} aria-hidden="true" /> Products</Link>
             <Link to="/cart"><ShoppingBag size={17} aria-hidden="true" /> Cart</Link>
             <Link to="/login?mode=change"><ShieldCheck size={17} aria-hidden="true" /> Security</Link>
@@ -104,7 +106,8 @@ export default function UserProfile({ user, cartQty }: { user: AccountUser; cart
                 <MessageCircle size={19} aria-hidden="true" />
                 <h2 id="profile-help-heading">Order support</h2>
               </div>
-              <p>Ask the <BrandWordmark /> team about an order, delivery, or product availability.</p>
+              <p>Read delivery updates in My orders or ask the <BrandWordmark /> team a question.</p>
+              <Link className="profile-inline-link" to="/orders">Track an order <ArrowUpRight size={15} aria-hidden="true" /></Link>
               <Link className="profile-inline-link" to="/contact">Contact us <ArrowUpRight size={15} aria-hidden="true" /></Link>
             </section>
           </div>
@@ -135,6 +138,10 @@ export default function UserProfile({ user, cartQty }: { user: AccountUser; cart
           <Link className="profile-password" to="/login?mode=change">
             <ShieldCheck size={17} aria-hidden="true" /> Change password <ArrowUpRight size={15} aria-hidden="true" />
           </Link>
+          <details className="profile-membership profile-account-reference">
+            <summary>Account reference</summary>
+            <code>{user.id}</code>
+          </details>
         </aside>
       </div>
     </div>

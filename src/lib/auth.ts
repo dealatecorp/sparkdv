@@ -4,6 +4,7 @@ export interface AccountUser {
   mobile: string | null;
   name: string;
   created_at: string;
+  order_staff?: boolean;
 }
 
 export async function authRequest(action?: string, fields?: Record<string, string>): Promise<AccountUser | null> {
